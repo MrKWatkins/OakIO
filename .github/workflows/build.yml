@@ -1,0 +1,20 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  BuildAndTest:
+    name: Build and Test
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build
+        uses: MrKWatkins/dotnet-build@main
+        with:
+          name: MrKWatkins.OakIO
+          directory: src

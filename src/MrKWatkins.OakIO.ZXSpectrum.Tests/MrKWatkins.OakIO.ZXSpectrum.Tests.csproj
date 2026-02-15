@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\*.*" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.OakIO.ZXSpectrum\MrKWatkins.OakIO.ZXSpectrum.csproj" />
+    </ItemGroup>
+</Project>

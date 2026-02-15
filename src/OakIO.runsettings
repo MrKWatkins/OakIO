@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <!-- Use Microsoft's built-in Code Coverage collector -->
+      <DataCollector friendlyName="Code Coverage">
+        <Configuration>
+          <CodeCoverage>
+            <!-- Exclude our test and shared testing assemblies from instrumentation -->
+            <ModulePaths>
+              <Exclude>
+                <ModulePath>.*/.*\.Tests\.dll$</ModulePath>
+                <ModulePath>.*/.*\.Testing\.dll$</ModulePath>
+              </Exclude>
+            </ModulePaths>
+            <!-- Ignore common attributes -->
+            <Attributes>
+              <Exclude>
+                <Attribute>^System\.Diagnostics\.CodeAnalysis\.ExcludeFromCodeCoverageAttribute$</Attribute>
+                <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+                <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
+                <Attribute>^System\.ObsoleteAttribute$</Attribute>
+              </Exclude>
+            </Attributes>
+            <!-- Ignore build output files -->
+            <Sources>
+              <Exclude>
+                <Source>.*/bin/.*</Source>
+                <Source>.*/obj/.*</Source>
+                <Source>.*\.g\.cs$</Source>
+              </Exclude>
+            </Sources>
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

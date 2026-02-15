@@ -1,0 +1,67 @@
+using MrKWatkins.BinaryPrimitives;
+
+namespace MrKWatkins.OakIO.ZXSpectrum.Tzx;
+
+// https://worldofspectrum.net/TZXformat.html
+// https://worldofspectrum.net/zx-modules/fileformats/tzxformat.html
+public sealed class TzxFormat : TapeFormat<TzxFile>
+{
+    public static readonly TzxFormat Instance = new();
+
+    private TzxFormat()
+        : base("TZX Tape", "tzx")
+    {
+    }
+
+    protected override TzxFile ReadTape(Stream stream)
+    {
+        var header = ReadHeader(stream);
+        var blocks = ReadBlocks(stream).ToList();
+
+        return new TzxFile(header, blocks);
+    }
+
+    private static IEnumerable<TzxBlock> ReadBlocks(Stream stream)
+    {
+        while (true)
+        {
+            var typeByte = stream.ReadByte();
+            if (typeByte == -1)
+            {
+                yield break;
+            }
+
+            var type = (TzxBlockType)typeByte;
+            yield return type switch
+            {
+                TzxBlockType.ArchiveInfo => new ArchiveInfoBlock(stream),
+                TzxBlockType.GroupStart => new GroupStartBlock(stream),
+                TzxBlockType.GroupEnd => new GroupEndBlock(stream),
+                TzxBlockType.LoopStart => new LoopStartBlock(stream),
+                TzxBlockType.LoopEnd => new LoopEndBlock(stream),
+                TzxBlockType.Pause => new PauseBlock(stream),
+                TzxBlockType.PulseSequence => new PulseSequenceBlock(stream),
+                TzxBlockType.PureData => new PureDataBlock(stream),
+                TzxBlockType.PureTone => new PureToneBlock(stream),
+                TzxBlockType.StandardSpeedData => new StandardSpeedDataBlock(stream),
+                TzxBlockType.StopTheTapeIf48K => new StopTheTapeIf48KBlock(stream),
+                TzxBlockType.TextDescription => new TextDescriptionBlock(stream),
+                TzxBlockType.TurboSpeedData => new TurboSpeedDataBlock(stream),
+                _ => throw new NotSupportedException($"The block type {type} is not supported.")
+            };
+        }
+    }
+
+    [MustUseReturnValue]
+    private static TzxHeader ReadHeader(Stream stream)
+    {
+        var bytes = stream.ReadExactly(TzxHeader.ExpectedLength);
+        var header = new TzxHeader(bytes);
+        return header.IsValid ? header : throw new IOException("Not a valid TZX file.");
+    }
+
+    protected override void Write(TzxFile file, Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+}
