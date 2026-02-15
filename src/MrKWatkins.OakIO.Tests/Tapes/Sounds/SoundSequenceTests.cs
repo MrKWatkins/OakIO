@@ -5,6 +5,29 @@ namespace MrKWatkins.OakIO.Tests.Tapes.Sounds;
 public sealed class SoundSequenceTests
 {
     [Test]
+    public void Constructor_EmptySoundsThrows()
+    {
+        AssertThat.Invoking(() => new SoundSequence([])).Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void Constructor_IEnumerable()
+    {
+        var pulses = new List<Sound> { new Pulse(10), new Pulse(20) };
+        var sequence = new SoundSequence(pulses);
+
+        sequence.Sounds.Should().HaveCount(2);
+    }
+
+    [Test]
+    public void ToString_ReturnsFormattedString()
+    {
+        var sequence = new SoundSequence(new Pulse(10), new Pulse(20));
+
+        sequence.ToString().Should().Equal("[P:10, P:20]");
+    }
+
+    [Test]
     public void Advance()
     {
         var pulse0 = new Pulse(50);
