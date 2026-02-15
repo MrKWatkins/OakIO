@@ -4,6 +4,7 @@ using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Z80Snapshot;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class Z80SnapshotFormatTests : ZXSpectrumTestFixture
 {
     [Test]

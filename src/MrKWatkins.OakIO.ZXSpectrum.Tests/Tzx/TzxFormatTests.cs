@@ -4,6 +4,7 @@ using MrKWatkins.OakIO.ZXSpectrum.Tzx;
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tzx;
 
 [SuppressMessage("Maintainability", "CA1506:Avoid excessive class coupling")]
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class TzxFormatTests
 {
     private static byte[] BuildTzxData()
@@ -194,6 +195,7 @@ public sealed class TzxFormatTests
         loopEnd.ToString().Should().Equal("LoopEnd");
 
         // Stop The Tape If 48K.
+        // ReSharper disable once InconsistentNaming
         var stop48k = file.Blocks[10].Should().BeOfType<StopTheTapeIf48KBlock>().Value;
         stop48k.Header.Type.Should().Equal(TzxBlockType.StopTheTapeIf48K);
         stop48k.ToString().Should().Equal("StopTheTapeIf48K");

@@ -16,7 +16,7 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
     private List<Pulse> ReadPulses()
     {
         var pulses = new List<Pulse>();
-        var enumerator = MemoryMarshal.Cast<byte, ushort>(AsSpan()).GetEnumerator();
+        using var enumerator = MemoryMarshal.Cast<byte, ushort>(AsSpan()).GetEnumerator();
         while (true)
         {
             if (!enumerator.MoveNext())

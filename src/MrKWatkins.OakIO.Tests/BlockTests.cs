@@ -156,7 +156,7 @@ public sealed class BlockTests
     {
         var header = new TestHeader();
         var trailer = new TestTrailer([0xAB]);
-        var block = new TestBlockWithTrailer(header, trailer, 3, (IEnumerable<byte>)[1, 2, 3]);
+        var block = new TestBlockWithTrailer(header, trailer, 3, [1, 2, 3]);
         block.Length.Should().Equal(3);
         block.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
         block.Header.Should().BeTheSameInstanceAs(header);
