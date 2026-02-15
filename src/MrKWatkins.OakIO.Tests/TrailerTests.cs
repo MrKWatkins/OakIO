@@ -22,7 +22,7 @@ public sealed class TrailerTests
     [Test]
     public void Constructor_Int_IEnumerable()
     {
-        var trailer = new TestTrailer(3, (IEnumerable<byte>)[1, 2, 3]);
+        var trailer = new TestTrailer(3, [1, 2, 3]);
         trailer.Length.Should().Equal(3);
         trailer.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
     }

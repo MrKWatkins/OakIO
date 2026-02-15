@@ -36,7 +36,7 @@ public sealed class TapFileTests : TapTestFixture
     [Test]
     public void CreateCode_MultipleBlocks()
     {
-        var file = TapFile.CreateCode("multi", ((ushort)0x8000, new byte[] { 0xF3, 0xAF }), ((ushort)0xC000, new byte[] { 0x00, 0x01 }));
+        var file = TapFile.CreateCode("multi", (0x8000, [0xF3, 0xAF]), (0xC000, [0x00, 0x01]));
 
         file.Blocks.Should().HaveCount(4);
 
@@ -54,7 +54,7 @@ public sealed class TapFileTests : TapTestFixture
     [Test]
     public void CreateLoader_WithoutEntryPoint()
     {
-        var file = TapFile.CreateLoader("loader", ((ushort)0x8000, new byte[] { 0xF3, 0xAF }));
+        var file = TapFile.CreateLoader("loader", (0x8000, [0xF3, 0xAF]));
 
         // Should have: loader header, loader data, code header, code data.
         file.Blocks.Should().HaveCount(4);
@@ -76,7 +76,7 @@ public sealed class TapFileTests : TapTestFixture
     [Test]
     public void CreateLoader_WithEntryPoint()
     {
-        var file = TapFile.CreateLoader("loader", (ushort)0x8000, ((ushort)0x8000, new byte[] { 0xF3, 0xAF }));
+        var file = TapFile.CreateLoader("loader", 0x8000, (0x8000, [0xF3, 0xAF]));
 
         file.Blocks.Should().HaveCount(4);
 
@@ -87,7 +87,7 @@ public sealed class TapFileTests : TapTestFixture
     [Test]
     public void CreateLoader_MultipleCodeBlocks()
     {
-        var file = TapFile.CreateLoader("loader", ((ushort)0x8000, new byte[] { 0xF3 }), ((ushort)0xC000, new byte[] { 0xAF }));
+        var file = TapFile.CreateLoader("loader", (0x8000, [0xF3]), (0xC000, [0xAF]));
 
         // Should have: loader header, loader data, code1 header, code1 data, code2 header, code2 data.
         file.Blocks.Should().HaveCount(6);
@@ -130,11 +130,9 @@ public sealed class TapFileTests : TapTestFixture
     public void TryLoadInto_ReturnsFalse_WhenFirstBlockIsNotHeader()
     {
         var dataBlock = DataBlock.Create([0xF3, 0xAF]);
-        var file = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
         // Create a file that starts with a data block instead of a header.
-        var brokenFile = file + TapFile.CreateCode("x", 0, [0]);
-        var blocks = new[] { dataBlock, dataBlock };
+        TapBlock[] blocks = [dataBlock, dataBlock];
         var brokenTapFile = CreateTapFileFromBlocks(blocks);
 
         var memory = new byte[65536];

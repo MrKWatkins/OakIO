@@ -22,7 +22,7 @@ public sealed class HeaderTests
     [Test]
     public void Constructor_Int_IEnumerable()
     {
-        var header = new TestHeader(3, (IEnumerable<byte>)[1, 2, 3]);
+        var header = new TestHeader(3, [1, 2, 3]);
         header.Length.Should().Equal(3);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
     }

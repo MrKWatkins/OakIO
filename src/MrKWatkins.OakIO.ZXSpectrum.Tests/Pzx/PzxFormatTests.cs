@@ -4,6 +4,7 @@ using DataBlock = MrKWatkins.OakIO.ZXSpectrum.Pzx.DataBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Pzx;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class PzxFormatTests
 {
     private static byte[] BuildPzxData()

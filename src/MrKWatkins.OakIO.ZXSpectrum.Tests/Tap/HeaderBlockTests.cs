@@ -42,10 +42,6 @@ public sealed class HeaderBlockTests
     [Test]
     public void Location_ThrowsForUnsupportedType()
     {
-        // Create a block with NumberArray type by writing raw data.
-        var file = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
-        var headerBlock = (HeaderBlock)file.Blocks[0];
-
         // Modify the type to NumberArray. Since we can't modify directly, we create one
         // through the format reader with a custom stream.
         using var stream = new MemoryStream();

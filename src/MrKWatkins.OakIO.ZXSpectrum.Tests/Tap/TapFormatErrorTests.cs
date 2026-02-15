@@ -2,6 +2,7 @@ using MrKWatkins.OakIO.ZXSpectrum.Tap;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tap;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class TapFormatErrorTests
 {
     [Test]
