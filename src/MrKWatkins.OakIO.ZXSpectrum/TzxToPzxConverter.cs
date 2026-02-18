@@ -28,6 +28,13 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     private const byte PzxMajorVersion = 1;
     private const byte PzxMinorVersion = 0;
 
+    // PZX format limits.
+    private const uint MaxPulseDuration = 0x7FFFFFFF;
+    private const ushort MaxRepeatCount = 0x7FFF;
+
+    // Maximum nesting level for loop/call blocks to prevent infinite recursion (matches pzxtools reference).
+    private const int MaxNestingLevel = 10;
+
     [Pure]
     public PzxFile Convert(TzxFile source)
     {
@@ -45,7 +52,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
     private static void ProcessBlocks(IReadOnlyList<TzxBlock> blocks, ref int index, ConversionContext context, TzxBlockType? endType, int nestingLevel)
     {
-        if (nestingLevel > 10)
+        if (nestingLevel > MaxNestingLevel)
         {
             return;
         }
@@ -172,6 +179,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
                 break;
             }
         }
+        // Default title used by the pzxtools reference implementation when no title is found.
         context.AddInfo(title ?? "Some tape");
 
         // Second pass: extract other entries (matching tzx_convert_info with title_only=false).
@@ -229,6 +237,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     private static void RenderData(ConversionContext context, IReadOnlyList<byte> data, int dataSize, int bitsInLastByte,
         ushort bit0Cycles, ushort bit1Cycles, ushort tailCycles, ushort pauseMs)
     {
+        // Adjust total bit count when the last byte is partial: remove 8 bits for the full byte, add actual used bits.
         var bitCount = (uint)(8 * dataSize);
         if (bitsInLastByte <= 8 && bitCount >= 8)
         {
@@ -264,8 +273,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             context.Level = ((lastByte & bitMask) != 0) ? finalLevel1 : finalLevel0;
         }
 
-        if (pauseMs > 0)
-        {
+        // Emit separate pause block unless it's a 1ms pause with tail and data (the tail pulse serves as the pause).
+        if (pauseMs > 0)        {
             context.Level = false;
             if (pauseMs > 1 || tailCycles == 0 || bitCount == 0)
             {
@@ -368,10 +377,10 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
                 return;
             }
 
-            if (duration > 0x7FFFFFFF)
+            if (duration > MaxPulseDuration)
             {
-                PzxOut(0x7FFFFFFF, level);
-                PzxOut(duration - 0x7FFFFFFF, level);
+                PzxOut(MaxPulseDuration, level);
+                PzxOut(duration - MaxPulseDuration, level);
                 return;
             }
 
@@ -384,11 +393,11 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
             _lastDuration += duration;
 
-            if (_lastDuration > 0x7FFFFFFF)
+            if (_lastDuration > MaxPulseDuration)
             {
-                StorePulse(0x7FFFFFFF);
+                StorePulse(MaxPulseDuration);
                 StorePulse(0);
-                _lastDuration -= 0x7FFFFFFF;
+                _lastDuration -= MaxPulseDuration;
             }
         }
 
@@ -399,7 +408,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         {
             if (_pendingPulseCount > 0)
             {
-                if (_pendingPulseDuration == duration && _pendingPulseCount < 0x7FFF)
+                if (_pendingPulseDuration == duration && _pendingPulseCount < MaxRepeatCount)
                 {
                     _pendingPulseCount++;
                     return;
