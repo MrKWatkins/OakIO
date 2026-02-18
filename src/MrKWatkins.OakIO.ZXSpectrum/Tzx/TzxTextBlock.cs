@@ -9,6 +9,10 @@ public abstract class TzxTextBlock<THeader> : TzxBlock<THeader>
     {
     }
 
+    private protected TzxTextBlock(THeader header, byte[] data) : base(header, data)
+    {
+    }
+
     public string Text => Encoding.ASCII.GetString(AsSpan());
 
     public override string ToString() => $"{Header}: {Text}";

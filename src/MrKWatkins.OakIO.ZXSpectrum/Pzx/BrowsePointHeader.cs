@@ -11,4 +11,9 @@ public sealed class BrowsePointHeader : PzxBlockHeader
         : base(PzxBlockType.BrowsePoint, 4, stream)
     {
     }
+
+    internal BrowsePointHeader(byte[] data)
+        : base(PzxBlockType.BrowsePoint, data)
+    {
+    }
 }

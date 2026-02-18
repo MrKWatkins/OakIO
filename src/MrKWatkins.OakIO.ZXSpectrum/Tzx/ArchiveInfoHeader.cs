@@ -14,6 +14,11 @@ public sealed class ArchiveInfoHeader : TzxBlockHeader
     {
     }
 
+    internal ArchiveInfoHeader(byte[] data)
+        : base(TzxBlockType.ArchiveInfo, data)
+    {
+    }
+
     public ushort LengthOfWholeBlock => GetWord(0);
 
     public byte NumberOfTextStrings => GetByte(2);

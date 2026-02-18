@@ -9,6 +9,11 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
         Pulses = ReadPulses();
     }
 
+    internal PulseSequenceBlock(byte[] headerData, byte[] data) : base(new PulseSequenceHeader(headerData), data)
+    {
+        Pulses = ReadPulses();
+    }
+
     public IReadOnlyList<Pulse> Pulses { get; }
 
     public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses)}";
@@ -25,7 +30,7 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
             }
 
             ushort count = 1;
-            var duration = enumerator.Current;
+            uint duration = enumerator.Current;
             if (duration >= 0x8000)
             {
                 count = (ushort)(duration & 0x7FFF);

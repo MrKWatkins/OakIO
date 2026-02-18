@@ -3,9 +3,15 @@ using System.Runtime.InteropServices;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Pzx;
 
-// TODO: Variable length header, move pulses into header.
-public sealed class DataBlock(Stream stream) : PzxBlock<DataHeader>(new DataHeader(stream), stream)
+public sealed class DataBlock : PzxBlock<DataHeader>
 {
+    public DataBlock(Stream stream) : base(new DataHeader(stream), stream)
+    {
+    }
+
+    internal DataBlock(byte[] headerData, byte[] data) : base(new DataHeader(headerData), data)
+    {
+    }
     private const int IndexOfZeroBitPulseSequence = 0;
 
     private int LengthOfZeroBitPulseSequence => Header.NumberOfPulseInZeroBitSequence * 2;

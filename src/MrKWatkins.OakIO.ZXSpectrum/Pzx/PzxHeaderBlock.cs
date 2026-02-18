@@ -10,6 +10,11 @@ public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
         Info = ReadInfos().ToList();
     }
 
+    internal PzxHeaderBlock(byte[] headerData, byte[] data) : base(new PzxHeader(headerData), data)
+    {
+        Info = ReadInfos().ToList();
+    }
+
     public IReadOnlyList<Info> Info { get; }
 
     public override string ToString()

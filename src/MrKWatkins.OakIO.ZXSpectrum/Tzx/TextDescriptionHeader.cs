@@ -14,5 +14,10 @@ public sealed class TextDescriptionHeader : TzxBlockHeader
     {
     }
 
+    internal TextDescriptionHeader(byte[] data)
+        : base(TzxBlockType.TextDescription, data)
+    {
+    }
+
     public override int BlockLength => GetByte(0);
 }

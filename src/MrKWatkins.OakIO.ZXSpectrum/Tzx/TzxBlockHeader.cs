@@ -14,6 +14,12 @@ public abstract class TzxBlockHeader : Header
         Type = type;
     }
 
+    protected TzxBlockHeader(TzxBlockType type, byte[] data)
+        : base(data)
+    {
+        Type = type;
+    }
+
     public TzxBlockType Type { get; }
 
     public virtual int BlockLength => 0;

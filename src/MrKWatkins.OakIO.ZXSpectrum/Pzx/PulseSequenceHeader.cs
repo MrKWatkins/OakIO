@@ -11,4 +11,9 @@ public sealed class PulseSequenceHeader : PzxBlockHeader
         : base(PzxBlockType.PulseSequence, 4, stream)
     {
     }
+
+    internal PulseSequenceHeader(byte[] data)
+        : base(PzxBlockType.PulseSequence, data)
+    {
+    }
 }

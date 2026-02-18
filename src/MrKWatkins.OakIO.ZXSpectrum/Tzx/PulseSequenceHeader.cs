@@ -14,6 +14,11 @@ public sealed class PulseSequenceHeader : TzxBlockHeader
     {
     }
 
+    internal PulseSequenceHeader(byte[] data)
+        : base(TzxBlockType.PulseSequence, data)
+    {
+    }
+
     public byte NumberOfPulses => GetByte(0);
 
     public override int BlockLength => NumberOfPulses * 2;  // Each is a word.

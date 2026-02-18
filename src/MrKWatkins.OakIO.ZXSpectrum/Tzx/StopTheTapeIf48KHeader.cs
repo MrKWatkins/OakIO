@@ -13,4 +13,9 @@ public sealed class StopTheTapeIf48KHeader : TzxBlockHeader
         : base(TzxBlockType.StopTheTapeIf48K, Size, stream)
     {
     }
+
+    internal StopTheTapeIf48KHeader(byte[] data)
+        : base(TzxBlockType.StopTheTapeIf48K, data)
+    {
+    }
 }
