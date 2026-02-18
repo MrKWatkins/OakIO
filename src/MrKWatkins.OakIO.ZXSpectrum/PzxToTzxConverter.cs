@@ -12,12 +12,14 @@ namespace MrKWatkins.OakIO.ZXSpectrum;
 /// </summary>
 public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 {
+    private const byte TzxMajorVersion = 1;
+    private const byte TzxMinorVersion = 20;
     private const ushort MillisecondCycles = 3500;
 
     [Pure]
     public TzxFile Convert(PzxFile source)
     {
-        var header = new TzxHeader(1, 20);
+        var header = new TzxHeader(TzxMajorVersion, TzxMinorVersion);
         var blocks = new List<TzxBlock>();
 
         foreach (var pzxBlock in source.Blocks)
