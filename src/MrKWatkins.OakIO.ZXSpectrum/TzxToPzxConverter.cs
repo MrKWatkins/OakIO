@@ -11,11 +11,10 @@ using TzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tzx.PulseSequenceBlock
 namespace MrKWatkins.OakIO.ZXSpectrum;
 
 /// <summary>
-/// Converts TZX tape files to PZX format. Based on the conversion logic defined in the pzxtools reference implementation (tzx.cpp + pzx.cpp).
+/// Converts TZX tape files to PZX format.
 /// </summary>
 public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 {
-    // Standard ZX Spectrum ROM loader constants (from tap.h).
     private const ushort LeaderCycles = 2168;
     private const ushort ShortLeaderCount = 3223;
     private const ushort LongLeaderCount = 8063;
@@ -33,7 +32,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     private const uint MaxPulseDuration = 0x7FFFFFFF;
     private const ushort MaxRepeatCount = 0x7FFF;
 
-    // Maximum nesting level for loop/call blocks to prevent infinite recursion (matches pzxtools reference).
+    // Maximum nesting level for loop/call blocks to prevent infinite recursion.
     private const int MaxNestingLevel = 10;
 
     [Pure]
@@ -194,8 +193,6 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             _ => "Info",
         };
 
-    // --- Rendering helpers (equivalent to tzx.cpp functions) ---
-
     private static void RenderPulse(ConversionContext context, uint duration)
     {
         context.PzxOut(duration, context.Level);
@@ -278,8 +275,6 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         context.EmitPauseBlock((uint)durationMs * MillisecondCycles, context.Level);
     }
 
-    // --- Header block construction ---
-
     [Pure]
     private static PzxHeaderBlock BuildHeaderBlock(List<string> infoStrings)
     {
@@ -292,8 +287,6 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
         return new PzxHeaderBlock(header, infoBytes);
     }
-
-    // --- Pulse accumulation context (mirrors pzx.cpp state machine) ---
 
     private sealed class ConversionContext : IDisposable
     {
@@ -312,7 +305,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         public void AddInfo(string text) => InfoEntries.Add(text);
 
         /// <summary>
-        /// Equivalent to pzx_out in pzx.cpp - output pulse of given duration at given level.
+        /// Outputs a pulse of the given duration at the given level, accumulating consecutive same-level durations.
         /// </summary>
         public void PzxOut(uint duration, bool level)
         {
@@ -346,7 +339,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
 
         /// <summary>
-        /// Equivalent to pzx_pulse in pzx.cpp - store pulse of given duration.
+        /// Stores a pulse of the given duration, compressing runs of identical durations.
         /// </summary>
         private void StorePulse(uint duration)
         {
@@ -364,7 +357,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
 
         /// <summary>
-        /// Equivalent to pzx_store in pzx.cpp - encode pulse to PULS buffer.
+        /// Encodes a pulse with the given count and duration to the pulse buffer.
         /// </summary>
         private void EncodePulse(uint count, uint duration)
         {
@@ -385,7 +378,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
 
         /// <summary>
-        /// Equivalent to pzx_flush in pzx.cpp - flush accumulated pulses to output.
+        /// Flushes accumulated pulses to output as a pulse sequence block.
         /// </summary>
         public void FlushPulses()
         {

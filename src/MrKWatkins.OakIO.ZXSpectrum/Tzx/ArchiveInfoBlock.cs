@@ -10,6 +10,12 @@ public sealed class ArchiveInfoBlock : TzxBlock<ArchiveInfoHeader>
         Entries = GetEntries(Header.NumberOfTextStrings, AsSpan());
     }
 
+    internal ArchiveInfoBlock(byte[] headerData, byte[] data)
+        : base(new ArchiveInfoHeader(headerData), data)
+    {
+        Entries = GetEntries(Header.NumberOfTextStrings, AsSpan());
+    }
+
     public IReadOnlyList<ArchiveInfoEntry> Entries { get; }
 
     [Pure]

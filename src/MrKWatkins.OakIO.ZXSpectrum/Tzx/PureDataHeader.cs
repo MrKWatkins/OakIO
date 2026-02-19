@@ -15,6 +15,11 @@ public sealed class PureDataHeader : TzxBlockHeader
     {
     }
 
+    internal PureDataHeader(byte[] data)
+        : base(TzxBlockType.PureData, data)
+    {
+    }
+
     public ushort TStatesInZeroBitPulse => GetWord(0);
 
     public ushort TStatesInOneBitPulse => GetWord(2);

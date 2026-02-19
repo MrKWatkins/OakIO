@@ -9,7 +9,7 @@ using TzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tzx.PauseBlock;
 namespace MrKWatkins.OakIO.ZXSpectrum;
 
 /// <summary>
-/// Converts PZX tape files to TZX format. Based on the mapping defined in the pzxtools reference implementation.
+/// Converts PZX tape files to TZX format.
 /// </summary>
 public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 {
@@ -55,23 +55,22 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             yield break;
         }
 
-        using var entriesStream = new MemoryStream();
+        var entriesSize = entries.Sum(e => 2 + e.Bytes.Length);
+        var header = new byte[3];
+        header.SetWord(0, (ushort)(entriesSize + 1));
+        header[2] = (byte)entries.Count;
+
+        var body = new byte[entriesSize];
+        var offset = 0;
         foreach (var (type, bytes) in entries)
         {
-            entriesStream.WriteByte((byte)type);
-            entriesStream.WriteByte((byte)bytes.Length);
-            entriesStream.Write(bytes);
+            body[offset++] = (byte)type;
+            body[offset++] = (byte)bytes.Length;
+            Array.Copy(bytes, 0, body, offset, bytes.Length);
+            offset += bytes.Length;
         }
 
-        var entriesData = entriesStream.ToArray();
-        var wholeBlockLength = (ushort)(entriesData.Length + 1);
-
-        using var stream = new MemoryStream();
-        stream.WriteWord(wholeBlockLength);
-        stream.WriteByte((byte)entries.Count);
-        stream.Write(entriesData);
-        stream.Position = 0;
-        yield return new ArchiveInfoBlock(stream);
+        yield return new ArchiveInfoBlock(header, body);
     }
 
     [Pure]
@@ -109,11 +108,10 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
                     yield return flushed;
                 }
 
-                using var stream = new MemoryStream();
-                stream.WriteWord((ushort)Math.Min(pulse.Duration, ushort.MaxValue));
-                stream.WriteWord(pulse.Count);
-                stream.Position = 0;
-                yield return new PureToneBlock(stream);
+                var header = new byte[4];
+                header.SetWord(0, (ushort)Math.Min(pulse.Duration, ushort.MaxValue));
+                header.SetWord(2, pulse.Count);
+                yield return new PureToneBlock(header);
             }
             else
             {
@@ -131,15 +129,18 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
     {
         foreach (var chunk in pulses.Chunk(255))
         {
-            using var stream = new MemoryStream();
-            stream.WriteByte((byte)chunk.Length);
+            var header = new byte[1];
+            header[0] = (byte)chunk.Length;
+
+            var body = new byte[chunk.Length * 2];
+            var offset = 0;
             foreach (var pulse in chunk)
             {
-                stream.WriteWord(pulse);
+                body.SetWord(offset, pulse);
+                offset += 2;
             }
 
-            stream.Position = 0;
-            yield return new TzxPulseSequenceBlock(stream);
+            yield return new TzxPulseSequenceBlock(header, body);
         }
 
         pulses.Clear();
@@ -162,38 +163,34 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
         var dataStream = block.DataStream;
 
-        using var stream = new MemoryStream();
-        stream.WriteWord(zeroBitTStates);
-        stream.WriteWord(oneBitTStates);
-        stream.WriteByte(usedBitsInLastByte);
-        stream.WriteWord(0);
-        stream.WriteUInt24(dataStream.Length);
-        stream.Write(dataStream);
-        stream.Position = 0;
-        yield return new PureDataBlock(stream);
+        var header = new byte[10];
+        header.SetWord(0, zeroBitTStates);
+        header.SetWord(2, oneBitTStates);
+        header[4] = usedBitsInLastByte;
+        header.SetWord(5, 0);
+        header.SetUInt24(7, dataStream.Length);
+
+        yield return new PureDataBlock(header, dataStream.ToArray());
     }
 
     private static IEnumerable<TzxBlock> ConvertPauseBlock(Pzx.PauseBlock block)
     {
         var durationMs = (ushort)Math.Min(block.Header.Duration / MillisecondCycles, ushort.MaxValue);
 
-        using var stream = new MemoryStream();
-        stream.WriteWord(durationMs);
-        stream.Position = 0;
-        yield return new TzxPauseBlock(stream);
+        var header = new byte[2];
+        header.SetWord(0, durationMs);
+        yield return new TzxPauseBlock(header);
     }
 
     private static IEnumerable<TzxBlock> ConvertStopBlock(StopBlock block)
     {
         if (block.Header.Only48k)
         {
-            using var stream = new MemoryStream([0x00, 0x00, 0x00, 0x00]);
-            yield return new StopTheTapeIf48KBlock(stream);
+            yield return new StopTheTapeIf48KBlock([0x00, 0x00, 0x00, 0x00]);
         }
         else
         {
-            using var stream = new MemoryStream([0x00, 0x00]);
-            yield return new TzxPauseBlock(stream);
+            yield return new TzxPauseBlock([0x00, 0x00]);
         }
     }
 
@@ -202,10 +199,9 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         var textBytes = Encoding.ASCII.GetBytes(block.Text);
         var length = Math.Min(textBytes.Length, 255);
 
-        using var stream = new MemoryStream();
-        stream.WriteByte((byte)length);
-        stream.Write(textBytes, 0, length);
-        stream.Position = 0;
-        yield return new TextDescriptionBlock(stream);
+        var header = new byte[1];
+        header[0] = (byte)length;
+
+        yield return new TextDescriptionBlock(header, textBytes[..length]);
     }
 }

@@ -8,3 +8,6 @@ Use the extension methods from `MrKWatkins.BinaryPrimitives` (e.g. `stream.Write
 
 ## LINQ
 Use LINQ over normal `for` loops where possible. Prefer `foreach`, `Select`, `Where`, `FirstOrDefault`, `Sum`, `Take`, `Chunk` etc. over index-based iteration.
+
+## Comments
+Do not use separator comments (e.g. `// --- Section Name ---`) to divide sections of code.

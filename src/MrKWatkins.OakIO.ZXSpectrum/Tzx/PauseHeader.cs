@@ -14,6 +14,11 @@ public sealed class PauseHeader : TzxBlockHeader
     {
     }
 
+    internal PauseHeader(byte[] data)
+        : base(TzxBlockType.Pause, data)
+    {
+    }
+
     public ushort PauseMs => GetWord(0);
 
     public TimeSpan Pause => TimeSpan.FromMilliseconds(PauseMs);

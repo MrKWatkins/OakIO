@@ -14,6 +14,11 @@ public sealed class PureToneHeader : TzxBlockHeader
     {
     }
 
+    internal PureToneHeader(byte[] data)
+        : base(TzxBlockType.PureTone, data)
+    {
+    }
+
     public ushort LengthOfPulse => GetWord(0);
 
     public ushort NumberOfPulses => GetWord(2);
