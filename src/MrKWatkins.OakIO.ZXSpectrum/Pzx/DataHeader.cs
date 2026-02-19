@@ -12,6 +12,11 @@ public sealed class DataHeader : PzxBlockHeader
     {
     }
 
+    internal DataHeader(byte[] data)
+        : base(PzxBlockType.Data, data)
+    {
+    }
+
     public uint SizeInBits => GetUInt32(StartIndex) & 0x7FFFFFFF;
 
     public uint SizeInBytes => SizeInBits / 8;

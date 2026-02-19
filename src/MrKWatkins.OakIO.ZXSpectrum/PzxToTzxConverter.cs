@@ -45,31 +45,22 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
     private static IEnumerable<TzxBlock> ConvertHeaderBlock(PzxHeaderBlock block)
     {
-        if (block.Info.Count == 0)
+        var entries = block.Info
+            .Select(info => (Type: MapInfoType(info.Type), Bytes: Encoding.ASCII.GetBytes(info.Text)))
+            .Where(e => e.Bytes.Length <= 255)
+            .ToList();
+
+        if (entries.Count == 0)
         {
             yield break;
         }
 
         using var entriesStream = new MemoryStream();
-        byte count = 0;
-        foreach (var info in block.Info)
+        foreach (var (type, bytes) in entries)
         {
-            var type = MapInfoType(info.Type);
-            var textBytes = Encoding.ASCII.GetBytes(info.Text);
-            if (textBytes.Length > 255)
-            {
-                continue;
-            }
-
             entriesStream.WriteByte((byte)type);
-            entriesStream.WriteByte((byte)textBytes.Length);
-            entriesStream.Write(textBytes);
-            count++;
-        }
-
-        if (count == 0)
-        {
-            yield break;
+            entriesStream.WriteByte((byte)bytes.Length);
+            entriesStream.Write(bytes);
         }
 
         var entriesData = entriesStream.ToArray();
@@ -77,7 +68,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
         using var stream = new MemoryStream();
         stream.WriteWord(wholeBlockLength);
-        stream.WriteByte(count);
+        stream.WriteByte((byte)entries.Count);
         stream.Write(entriesData);
         stream.Position = 0;
         yield return new ArchiveInfoBlock(stream);
@@ -138,21 +129,17 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
     private static IEnumerable<TzxBlock> FlushSinglePulses(List<ushort> pulses)
     {
-        var index = 0;
-        while (index < pulses.Count)
+        foreach (var chunk in pulses.Chunk(255))
         {
-            var count = Math.Min(255, pulses.Count - index);
-
             using var stream = new MemoryStream();
-            stream.WriteByte((byte)count);
-            for (var i = 0; i < count; i++)
+            stream.WriteByte((byte)chunk.Length);
+            foreach (var pulse in chunk)
             {
-                stream.WriteWord(pulses[index + i]);
+                stream.WriteWord(pulse);
             }
 
             stream.Position = 0;
             yield return new TzxPulseSequenceBlock(stream);
-            index += count;
         }
 
         pulses.Clear();

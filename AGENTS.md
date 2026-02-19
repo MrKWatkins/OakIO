@@ -5,3 +5,6 @@ Prefer methods that return lazy `IEnumerable<T>` enumerations using `yield retur
 
 ## Binary Primitives
 Use the extension methods from `MrKWatkins.BinaryPrimitives` (e.g. `stream.WriteWord()`, `stream.WriteUInt24()`, `stream.WriteUInt32()`) for reading and writing binary data. Do not create custom binary write helpers.
+
+## LINQ
+Use LINQ over normal `for` loops where possible. Prefer `foreach`, `Select`, `Where`, `FirstOrDefault`, `Sum`, `Take`, `Chunk` etc. over index-based iteration.

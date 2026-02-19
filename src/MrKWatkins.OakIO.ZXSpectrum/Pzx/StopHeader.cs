@@ -12,6 +12,11 @@ public sealed class StopHeader : PzxBlockHeader
     {
     }
 
+    internal StopHeader(byte[] data)
+        : base(PzxBlockType.Stop, data)
+    {
+    }
+
     // ReSharper disable once InconsistentNaming
     public bool Only48k => GetWord(StartIndex) == 1;
 }

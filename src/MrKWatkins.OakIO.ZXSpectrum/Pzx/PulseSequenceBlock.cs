@@ -9,6 +9,11 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
         Pulses = ReadPulses();
     }
 
+    internal PulseSequenceBlock(byte[] headerData, byte[] data) : base(new PulseSequenceHeader(headerData), data)
+    {
+        Pulses = ReadPulses();
+    }
+
     public IReadOnlyList<Pulse> Pulses { get; }
 
     public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses)}";

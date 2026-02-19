@@ -44,8 +44,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         ProcessBlocks(source.Blocks, ref index, context, null, 0);
         context.FlushPulses();
 
-        var blocks = new List<PzxBlock>();
-        blocks.Add(BuildHeaderBlock(context.InfoEntries));
+        var blocks = new List<PzxBlock> { BuildHeaderBlock(context.InfoEntries) };
         blocks.AddRange(context.OutputBlocks);
 
         return new PzxFile(blocks);
@@ -141,10 +140,9 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
     private static void ConvertPulseSequence(TzxPulseSequenceBlock block, ConversionContext context)
     {
-        var pulses = block.Pulses;
-        for (var i = 0; i < pulses.Length; i++)
+        foreach (var pulse in block.Pulses)
         {
-            RenderPulse(context, pulses[i]);
+            RenderPulse(context, pulse);
         }
     }
 
@@ -170,27 +168,11 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
     private static void ConvertArchiveInfo(ArchiveInfoBlock block, ConversionContext context)
     {
-        // First pass: extract title (matching tzx_convert_info with title_only=true).
-        string? title = null;
-        foreach (var entry in block.Entries)
-        {
-            if (entry.Type == ArchiveInfoType.FullTitle)
-            {
-                title = entry.Text;
-                break;
-            }
-        }
-        // Default title used by the pzxtools reference implementation when no title is found.
-        context.AddInfo(title ?? "Some tape");
+        var title = block.Entries.FirstOrDefault(e => e.Type == ArchiveInfoType.FullTitle)?.Text ?? "Some tape";
+        context.AddInfo(title);
 
-        // Second pass: extract other entries (matching tzx_convert_info with title_only=false).
-        foreach (var entry in block.Entries)
+        foreach (var entry in block.Entries.Where(e => e.Type != ArchiveInfoType.FullTitle))
         {
-            if (entry.Type == ArchiveInfoType.FullTitle)
-            {
-                continue;
-            }
-
             context.AddInfo(GetInfoTypeName(entry.Type));
             context.AddInfo(entry.Text);
         }
@@ -259,11 +241,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         {
             var tail = pauseMs > 0 ? tailCycles : (ushort)0;
             var dataByteCount = (int)((bitCount + 7) / 8);
-            var dataBytes = new byte[dataByteCount];
-            for (var i = 0; i < dataByteCount && i < data.Count; i++)
-            {
-                dataBytes[i] = data[i];
-            }
+            var dataBytes = data.Take(dataByteCount).ToArray();
 
             context.EmitDataBlock(dataBytes, bitCount, initialLevel, numZero, numOne, s0, s1, tail);
 
@@ -275,7 +253,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
 
         // Emit separate pause block unless it's a 1ms pause with tail and data (the tail pulse serves as the pause).
-        if (pauseMs > 0)        {
+        if (pauseMs > 0)
+        {
             context.Level = false;
             if (pauseMs > 1 || tailCycles == 0 || bitCount == 0)
             {
@@ -304,34 +283,14 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     [Pure]
     private static PzxHeaderBlock BuildHeaderBlock(List<string> infoStrings)
     {
-        using var stream = new MemoryStream();
+        var infoBytes = Encoding.ASCII.GetBytes(string.Join('\0', infoStrings));
 
-        var infoDataSize = 0;
-        for (var i = 0; i < infoStrings.Count; i++)
-        {
-            if (i > 0)
-            {
-                infoDataSize++;
-            }
-            infoDataSize += Encoding.ASCII.GetByteCount(infoStrings[i]);
-        }
+        var header = new byte[6];
+        header.SetUInt32(0, (uint)(2 + infoBytes.Length));
+        header[4] = PzxMajorVersion;
+        header[5] = PzxMinorVersion;
 
-        var size = (uint)(2 + infoDataSize);
-        stream.WriteUInt32(size);
-        stream.WriteByte(PzxMajorVersion);
-        stream.WriteByte(PzxMinorVersion);
-
-        for (var i = 0; i < infoStrings.Count; i++)
-        {
-            if (i > 0)
-            {
-                stream.WriteByte(0);
-            }
-            stream.Write(Encoding.ASCII.GetBytes(infoStrings[i]));
-        }
-
-        stream.Position = 0;
-        return new PzxHeaderBlock(stream);
+        return new PzxHeaderBlock(header, infoBytes);
     }
 
     // --- Pulse accumulation context (mirrors pzx.cpp state machine) ---
@@ -454,11 +413,10 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             var pulseData = _pulseBuffer.ToArray();
             _pulseBuffer.SetLength(0);
 
-            using var stream = new MemoryStream();
-            stream.WriteUInt32((uint)pulseData.Length);
-            stream.Write(pulseData);
-            stream.Position = 0;
-            OutputBlocks.Add(new PzxPulseSequenceBlock(stream));
+            var header = new byte[4];
+            header.SetUInt32(0, (uint)pulseData.Length);
+
+            OutputBlocks.Add(new PzxPulseSequenceBlock(header, pulseData));
         }
 
         public void EmitDataBlock(byte[] data, uint bitCount, bool initialLevel, byte numZero, byte numOne, ushort[] zeroPulseSeq, ushort[] onePulseSeq, ushort tailCycles)
@@ -466,47 +424,52 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             FlushPulses();
 
             var dataByteCount = (int)((bitCount + 7) / 8);
-            var size = (uint)(8 + numZero * 2 + numOne * 2 + dataByteCount);
 
-            using var stream = new MemoryStream();
-            stream.WriteUInt32(size);
-            stream.WriteUInt32((initialLevel ? 0x80000000u : 0) | bitCount);
-            stream.WriteWord(tailCycles);
-            stream.WriteByte(numZero);
-            stream.WriteByte(numOne);
+            var header = new byte[12];
+            header.SetUInt32(0, (uint)(8 + numZero * 2 + numOne * 2 + dataByteCount));
+            header.SetUInt32(4, (initialLevel ? 0x80000000u : 0) | bitCount);
+            header.SetWord(8, tailCycles);
+            header[10] = numZero;
+            header[11] = numOne;
+
+            var bodySize = numZero * 2 + numOne * 2 + dataByteCount;
+            var body = new byte[bodySize];
+            var offset = 0;
             foreach (var p in zeroPulseSeq)
             {
-                stream.WriteWord(p);
+                body.SetWord(offset, p);
+                offset += 2;
             }
             foreach (var p in onePulseSeq)
             {
-                stream.WriteWord(p);
+                body.SetWord(offset, p);
+                offset += 2;
             }
-            stream.Write(data, 0, dataByteCount);
-            stream.Position = 0;
-            OutputBlocks.Add(new PzxDataBlock(stream));
+            Array.Copy(data, 0, body, offset, dataByteCount);
+
+            OutputBlocks.Add(new PzxDataBlock(header, body));
         }
 
         public void EmitPauseBlock(uint durationTStates, bool level)
         {
             FlushPulses();
 
-            using var stream = new MemoryStream();
-            stream.WriteUInt32(4);
-            stream.WriteUInt32((level ? 0x80000000u : 0) | (durationTStates & 0x7FFFFFFF));
-            stream.Position = 0;
-            OutputBlocks.Add(new PzxPauseBlock(stream));
+            var header = new byte[8];
+            header.SetUInt32(0, 4);
+            header.SetUInt32(4, (level ? 0x80000000u : 0) | (durationTStates & 0x7FFFFFFF));
+
+            OutputBlocks.Add(new PzxPauseBlock(header));
         }
 
         public void EmitStopBlock(ushort flags)
         {
             FlushPulses();
 
-            using var stream = new MemoryStream();
-            stream.WriteUInt32(2);
-            stream.WriteWord(flags);
-            stream.Position = 0;
-            OutputBlocks.Add(new StopBlock(stream));
+            var header = new byte[6];
+            header.SetUInt32(0, 2);
+            header.SetWord(4, flags);
+
+            OutputBlocks.Add(new StopBlock(header));
         }
 
         public void EmitBrowseBlock(string text)
@@ -514,11 +477,11 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             FlushPulses();
 
             var textBytes = Encoding.ASCII.GetBytes(text);
-            using var stream = new MemoryStream();
-            stream.WriteUInt32((uint)textBytes.Length);
-            stream.Write(textBytes);
-            stream.Position = 0;
-            OutputBlocks.Add(new BrowsePointBlock(stream));
+
+            var header = new byte[4];
+            header.SetUInt32(0, (uint)textBytes.Length);
+
+            OutputBlocks.Add(new BrowsePointBlock(header, textBytes));
         }
     }
 }
