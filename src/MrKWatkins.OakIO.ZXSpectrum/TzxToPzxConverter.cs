@@ -1,4 +1,5 @@
 using System.Text;
+using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.ZXSpectrum.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tzx;
 using PzxDataBlock = MrKWatkins.OakIO.ZXSpectrum.Pzx.DataBlock;
@@ -316,7 +317,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
 
         var size = (uint)(2 + infoDataSize);
-        WriteUInt32LE(stream, size);
+        stream.WriteUInt32(size);
         stream.WriteByte(PzxMajorVersion);
         stream.WriteByte(PzxMinorVersion);
 
@@ -331,22 +332,6 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
         stream.Position = 0;
         return new PzxHeaderBlock(stream);
-    }
-
-    // --- Binary helpers ---
-
-    private static void WriteWordLE(Stream stream, ushort value)
-    {
-        stream.WriteByte((byte)(value & 0xFF));
-        stream.WriteByte((byte)((value >> 8) & 0xFF));
-    }
-
-    private static void WriteUInt32LE(Stream stream, uint value)
-    {
-        stream.WriteByte((byte)(value & 0xFF));
-        stream.WriteByte((byte)((value >> 8) & 0xFF));
-        stream.WriteByte((byte)((value >> 16) & 0xFF));
-        stream.WriteByte((byte)((value >> 24) & 0xFF));
     }
 
     // --- Pulse accumulation context (mirrors pzx.cpp state machine) ---
@@ -426,17 +411,17 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         {
             if (count > 1 || duration > 0xFFFF)
             {
-                WriteWordLE(_pulseBuffer, (ushort)(0x8000 | count));
+                _pulseBuffer.WriteWord((ushort)(0x8000 | count));
             }
 
             if (duration < 0x8000)
             {
-                WriteWordLE(_pulseBuffer, (ushort)duration);
+                _pulseBuffer.WriteWord((ushort)duration);
             }
             else
             {
-                WriteWordLE(_pulseBuffer, (ushort)(0x8000 | (duration >> 16)));
-                WriteWordLE(_pulseBuffer, (ushort)(duration & 0xFFFF));
+                _pulseBuffer.WriteWord((ushort)(0x8000 | (duration >> 16)));
+                _pulseBuffer.WriteWord((ushort)(duration & 0xFFFF));
             }
         }
 
@@ -470,7 +455,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             _pulseBuffer.SetLength(0);
 
             using var stream = new MemoryStream();
-            WriteUInt32LE(stream, (uint)pulseData.Length);
+            stream.WriteUInt32((uint)pulseData.Length);
             stream.Write(pulseData);
             stream.Position = 0;
             OutputBlocks.Add(new PzxPulseSequenceBlock(stream));
@@ -484,18 +469,18 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             var size = (uint)(8 + numZero * 2 + numOne * 2 + dataByteCount);
 
             using var stream = new MemoryStream();
-            WriteUInt32LE(stream, size);
-            WriteUInt32LE(stream, (initialLevel ? 0x80000000u : 0) | bitCount);
-            WriteWordLE(stream, tailCycles);
+            stream.WriteUInt32(size);
+            stream.WriteUInt32((initialLevel ? 0x80000000u : 0) | bitCount);
+            stream.WriteWord(tailCycles);
             stream.WriteByte(numZero);
             stream.WriteByte(numOne);
             foreach (var p in zeroPulseSeq)
             {
-                WriteWordLE(stream, p);
+                stream.WriteWord(p);
             }
             foreach (var p in onePulseSeq)
             {
-                WriteWordLE(stream, p);
+                stream.WriteWord(p);
             }
             stream.Write(data, 0, dataByteCount);
             stream.Position = 0;
@@ -507,8 +492,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             FlushPulses();
 
             using var stream = new MemoryStream();
-            WriteUInt32LE(stream, 4);
-            WriteUInt32LE(stream, (level ? 0x80000000u : 0) | (durationTStates & 0x7FFFFFFF));
+            stream.WriteUInt32(4);
+            stream.WriteUInt32((level ? 0x80000000u : 0) | (durationTStates & 0x7FFFFFFF));
             stream.Position = 0;
             OutputBlocks.Add(new PzxPauseBlock(stream));
         }
@@ -518,8 +503,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             FlushPulses();
 
             using var stream = new MemoryStream();
-            WriteUInt32LE(stream, 2);
-            WriteWordLE(stream, flags);
+            stream.WriteUInt32(2);
+            stream.WriteWord(flags);
             stream.Position = 0;
             OutputBlocks.Add(new StopBlock(stream));
         }
@@ -530,7 +515,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
             var textBytes = Encoding.ASCII.GetBytes(text);
             using var stream = new MemoryStream();
-            WriteUInt32LE(stream, (uint)textBytes.Length);
+            stream.WriteUInt32((uint)textBytes.Length);
             stream.Write(textBytes);
             stream.Position = 0;
             OutputBlocks.Add(new BrowsePointBlock(stream));

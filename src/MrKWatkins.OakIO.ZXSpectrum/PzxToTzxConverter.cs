@@ -1,4 +1,5 @@
 using System.Text;
+using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.ZXSpectrum.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tzx;
 using PzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Pzx.PulseSequenceBlock;
@@ -24,37 +25,29 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
         foreach (var pzxBlock in source.Blocks)
         {
-            switch (pzxBlock)
-            {
-                case PzxHeaderBlock headerBlock:
-                    ConvertHeaderBlock(headerBlock, blocks);
-                    break;
-                case PzxPulseSequenceBlock pulseBlock:
-                    ConvertPulseSequenceBlock(pulseBlock, blocks);
-                    break;
-                case DataBlock dataBlock:
-                    ConvertDataBlock(dataBlock, blocks);
-                    break;
-                case Pzx.PauseBlock pauseBlock:
-                    ConvertPauseBlock(pauseBlock, blocks);
-                    break;
-                case StopBlock stopBlock:
-                    ConvertStopBlock(stopBlock, blocks);
-                    break;
-                case BrowsePointBlock browseBlock:
-                    ConvertBrowsePointBlock(browseBlock, blocks);
-                    break;
-            }
+            blocks.AddRange(ConvertBlock(pzxBlock));
         }
 
         return new TzxFile(header, blocks);
     }
 
-    private static void ConvertHeaderBlock(PzxHeaderBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertBlock(PzxBlock pzxBlock) =>
+        pzxBlock switch
+        {
+            PzxHeaderBlock headerBlock => ConvertHeaderBlock(headerBlock),
+            PzxPulseSequenceBlock pulseBlock => ConvertPulseSequenceBlock(pulseBlock),
+            DataBlock dataBlock => ConvertDataBlock(dataBlock),
+            Pzx.PauseBlock pauseBlock => ConvertPauseBlock(pauseBlock),
+            StopBlock stopBlock => ConvertStopBlock(stopBlock),
+            BrowsePointBlock browseBlock => ConvertBrowsePointBlock(browseBlock),
+            _ => [],
+        };
+
+    private static IEnumerable<TzxBlock> ConvertHeaderBlock(PzxHeaderBlock block)
     {
         if (block.Info.Count == 0)
         {
-            return;
+            yield break;
         }
 
         using var entriesStream = new MemoryStream();
@@ -76,18 +69,18 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
         if (count == 0)
         {
-            return;
+            yield break;
         }
 
         var entriesData = entriesStream.ToArray();
         var wholeBlockLength = (ushort)(entriesData.Length + 1);
 
         using var stream = new MemoryStream();
-        WriteWordLE(stream, wholeBlockLength);
+        stream.WriteWord(wholeBlockLength);
         stream.WriteByte(count);
         stream.Write(entriesData);
         stream.Position = 0;
-        output.Add(new ArchiveInfoBlock(stream));
+        yield return new ArchiveInfoBlock(stream);
     }
 
     [Pure]
@@ -107,7 +100,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             _ => ArchiveInfoType.Comments,
         };
 
-    private static void ConvertPulseSequenceBlock(PzxPulseSequenceBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertPulseSequenceBlock(PzxPulseSequenceBlock block)
     {
         var singlePulses = new List<ushort>();
 
@@ -120,13 +113,16 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
 
             if (pulse.Count > 1)
             {
-                FlushSinglePulses(singlePulses, output);
+                foreach (var flushed in FlushSinglePulses(singlePulses))
+                {
+                    yield return flushed;
+                }
 
                 using var stream = new MemoryStream();
-                WriteWordLE(stream, (ushort)Math.Min(pulse.Duration, ushort.MaxValue));
-                WriteWordLE(stream, pulse.Count);
+                stream.WriteWord((ushort)Math.Min(pulse.Duration, ushort.MaxValue));
+                stream.WriteWord(pulse.Count);
                 stream.Position = 0;
-                output.Add(new PureToneBlock(stream));
+                yield return new PureToneBlock(stream);
             }
             else
             {
@@ -134,10 +130,13 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             }
         }
 
-        FlushSinglePulses(singlePulses, output);
+        foreach (var flushed in FlushSinglePulses(singlePulses))
+        {
+            yield return flushed;
+        }
     }
 
-    private static void FlushSinglePulses(List<ushort> pulses, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> FlushSinglePulses(List<ushort> pulses)
     {
         var index = 0;
         while (index < pulses.Count)
@@ -148,18 +147,18 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             stream.WriteByte((byte)count);
             for (var i = 0; i < count; i++)
             {
-                WriteWordLE(stream, pulses[index + i]);
+                stream.WriteWord(pulses[index + i]);
             }
 
             stream.Position = 0;
-            output.Add(new TzxPulseSequenceBlock(stream));
+            yield return new TzxPulseSequenceBlock(stream);
             index += count;
         }
 
         pulses.Clear();
     }
 
-    private static void ConvertDataBlock(DataBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertDataBlock(DataBlock block)
     {
         var zeroBitSeq = block.ZeroBitPulseSequence;
         var oneBitSeq = block.OneBitPulseSequence;
@@ -177,41 +176,41 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         var dataStream = block.DataStream;
 
         using var stream = new MemoryStream();
-        WriteWordLE(stream, zeroBitTStates);
-        WriteWordLE(stream, oneBitTStates);
+        stream.WriteWord(zeroBitTStates);
+        stream.WriteWord(oneBitTStates);
         stream.WriteByte(usedBitsInLastByte);
-        WriteWordLE(stream, 0);
-        WriteUInt24LE(stream, dataStream.Length);
+        stream.WriteWord(0);
+        stream.WriteUInt24(dataStream.Length);
         stream.Write(dataStream);
         stream.Position = 0;
-        output.Add(new PureDataBlock(stream));
+        yield return new PureDataBlock(stream);
     }
 
-    private static void ConvertPauseBlock(Pzx.PauseBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertPauseBlock(Pzx.PauseBlock block)
     {
         var durationMs = (ushort)Math.Min(block.Header.Duration / MillisecondCycles, ushort.MaxValue);
 
         using var stream = new MemoryStream();
-        WriteWordLE(stream, durationMs);
+        stream.WriteWord(durationMs);
         stream.Position = 0;
-        output.Add(new TzxPauseBlock(stream));
+        yield return new TzxPauseBlock(stream);
     }
 
-    private static void ConvertStopBlock(StopBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertStopBlock(StopBlock block)
     {
         if (block.Header.Only48k)
         {
             using var stream = new MemoryStream([0x00, 0x00, 0x00, 0x00]);
-            output.Add(new StopTheTapeIf48KBlock(stream));
+            yield return new StopTheTapeIf48KBlock(stream);
         }
         else
         {
             using var stream = new MemoryStream([0x00, 0x00]);
-            output.Add(new TzxPauseBlock(stream));
+            yield return new TzxPauseBlock(stream);
         }
     }
 
-    private static void ConvertBrowsePointBlock(BrowsePointBlock block, List<TzxBlock> output)
+    private static IEnumerable<TzxBlock> ConvertBrowsePointBlock(BrowsePointBlock block)
     {
         var textBytes = Encoding.ASCII.GetBytes(block.Text);
         var length = Math.Min(textBytes.Length, 255);
@@ -220,19 +219,6 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         stream.WriteByte((byte)length);
         stream.Write(textBytes, 0, length);
         stream.Position = 0;
-        output.Add(new TextDescriptionBlock(stream));
-    }
-
-    private static void WriteWordLE(Stream stream, ushort value)
-    {
-        stream.WriteByte((byte)(value & 0xFF));
-        stream.WriteByte((byte)((value >> 8) & 0xFF));
-    }
-
-    private static void WriteUInt24LE(Stream stream, int value)
-    {
-        stream.WriteByte((byte)(value & 0xFF));
-        stream.WriteByte((byte)((value >> 8) & 0xFF));
-        stream.WriteByte((byte)((value >> 16) & 0xFF));
+        yield return new TextDescriptionBlock(stream);
     }
 }
