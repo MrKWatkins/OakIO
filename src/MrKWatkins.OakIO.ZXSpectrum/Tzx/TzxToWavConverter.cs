@@ -34,9 +34,13 @@ public sealed class TzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
                     break;
 
                 case LoopEndBlock:
-                    var loopBlocks = result.GetRange(loopStartIndex, result.Count - loopStartIndex);
-                    result.RemoveRange(loopStartIndex, result.Count - loopStartIndex);
-                    result.Add(new TapeLoopBlock(loopCount - 1, loopBlocks));
+                    var loopLength = result.Count - loopStartIndex;
+                    var loopBlocks = result.Skip(loopStartIndex).ToList();
+                    result.RemoveRange(loopStartIndex, loopLength);
+                    if (loopCount > 0)
+                        result.Add(new TapeLoopBlock(loopCount - 1, loopBlocks));
+                    else
+                        result.AddRange(loopBlocks);
                     loopStartIndex = -1;
                     break;
 
