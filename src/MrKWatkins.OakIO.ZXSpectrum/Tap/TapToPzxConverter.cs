@@ -38,12 +38,11 @@ public sealed class TapToPzxConverter : IFormatConverter<TapFile, PzxFile>
     [Pure]
     private static PzxHeaderBlock BuildHeaderBlock()
     {
-        using var stream = new MemoryStream();
-        stream.WriteUInt32(2);
-        stream.WriteByte(1);
-        stream.WriteByte(0);
-        stream.Position = 0;
-        return new PzxHeaderBlock(stream);
+        var bytes = new byte[6];
+        bytes.SetUInt32(0, 2);
+        bytes[4] = 1;
+        bytes[5] = 0;
+        return new PzxHeaderBlock(new MemoryStream(bytes));
     }
 
     [Pure]
@@ -69,53 +68,41 @@ public sealed class TapToPzxConverter : IFormatConverter<TapFile, PzxFile>
     [Pure]
     private static PulseSequenceBlock BuildPulsBlock(ushort pilotCount)
     {
-        using var pulseStream = new MemoryStream();
-        pulseStream.WriteWord((ushort)(0x8000 | pilotCount));
-        pulseStream.WriteWord(PilotPulseLength);
-        pulseStream.WriteWord(Sync1Length);
-        pulseStream.WriteWord(Sync2Length);
-
-        var size = (uint)pulseStream.Length;
-        using var stream = new MemoryStream();
-        stream.WriteUInt32(size);
-        pulseStream.Position = 0;
-        pulseStream.CopyTo(stream);
-        stream.Position = 0;
-        return new PulseSequenceBlock(stream);
+        const int pulseDataLength = 8;
+        var bytes = new byte[4 + pulseDataLength];
+        bytes.SetUInt32(0, pulseDataLength);
+        bytes.SetWord(4, (ushort)(0x8000 | pilotCount));
+        bytes.SetWord(6, PilotPulseLength);
+        bytes.SetWord(8, Sync1Length);
+        bytes.SetWord(10, Sync2Length);
+        return new PulseSequenceBlock(new MemoryStream(bytes));
     }
 
     [Pure]
     private static PzxDataBlock BuildDataBlock(byte[] blockData)
     {
         var sizeInBitsWithLevel = (uint)(blockData.Length * 8) | 0x80000000u;
-
-        using var bodyStream = new MemoryStream();
-        bodyStream.WriteWord(ZeroBitPulseLength);
-        bodyStream.WriteWord(ZeroBitPulseLength);
-        bodyStream.WriteWord(OneBitPulseLength);
-        bodyStream.WriteWord(OneBitPulseLength);
-        bodyStream.Write(blockData);
-
-        var size = (uint)(8 + bodyStream.Length);
-        using var stream = new MemoryStream();
-        stream.WriteUInt32(size);
-        stream.WriteUInt32(sizeInBitsWithLevel);
-        stream.WriteWord(TailPulseLength);
-        stream.WriteByte(2);
-        stream.WriteByte(2);
-        bodyStream.Position = 0;
-        bodyStream.CopyTo(stream);
-        stream.Position = 0;
-        return new PzxDataBlock(stream);
+        var bodyLength = 4 * 2 + blockData.Length;
+        var bytes = new byte[4 + 8 + bodyLength];
+        bytes.SetUInt32(0, (uint)(8 + bodyLength));
+        bytes.SetUInt32(4, sizeInBitsWithLevel);
+        bytes.SetWord(8, TailPulseLength);
+        bytes[10] = 2;
+        bytes[11] = 2;
+        bytes.SetWord(12, ZeroBitPulseLength);
+        bytes.SetWord(14, ZeroBitPulseLength);
+        bytes.SetWord(16, OneBitPulseLength);
+        bytes.SetWord(18, OneBitPulseLength);
+        blockData.CopyTo(bytes, 20);
+        return new PzxDataBlock(new MemoryStream(bytes));
     }
 
     [Pure]
     private static PzxPauseBlock BuildPausBlock()
     {
-        using var stream = new MemoryStream();
-        stream.WriteUInt32(4);
-        stream.WriteUInt32(PauseAfterBlockTStates);
-        stream.Position = 0;
-        return new PzxPauseBlock(stream);
+        var bytes = new byte[8];
+        bytes.SetUInt32(0, 4);
+        bytes.SetUInt32(4, PauseAfterBlockTStates);
+        return new PzxPauseBlock(new MemoryStream(bytes));
     }
 }

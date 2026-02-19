@@ -30,10 +30,10 @@ public sealed class DataBlock : TapeBlock
     }
 
     [Pure]
-    public static DataBlock Create(IReadOnlyList<byte> data) => new(data);
+    internal static DataBlock Create(IReadOnlyList<byte> data) => new(data);
 
     [Pure]
-    public static DataBlock Create(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null) =>
+    internal static DataBlock Create(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null) =>
         new(data, zeroBitSound, oneBitSound, lengthOfTailPulse, usedBitsInLastByte, initialSignal);
 
     public IReadOnlyList<byte> Data { get; }
