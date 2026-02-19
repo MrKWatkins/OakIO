@@ -40,7 +40,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             Pzx.PauseBlock pauseBlock => ConvertPauseBlock(pauseBlock),
             StopBlock stopBlock => ConvertStopBlock(stopBlock),
             BrowsePointBlock browseBlock => ConvertBrowsePointBlock(browseBlock),
-            _ => [],
+            _ => []
         };
 
     private static IEnumerable<TzxBlock> ConvertHeaderBlock(PzxHeaderBlock block)
@@ -87,7 +87,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             "Protection" => ArchiveInfoType.ProtectionSchemeOrLoader,
             "Origin" => ArchiveInfoType.Origin,
             "Comment" => ArchiveInfoType.Comments,
-            _ => ArchiveInfoType.Comments,
+            _ => throw new NotSupportedException($"The {nameof(ArchiveInfoType)} {type} is not supported.")
         };
 
     private static IEnumerable<TzxBlock> ConvertPulseSequenceBlock(PzxPulseSequenceBlock block)

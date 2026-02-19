@@ -29,6 +29,13 @@ public sealed class DataBlock : TapeBlock
         lastBitOfLastByte = 8 - usedBitsInLastByte;
     }
 
+    [Pure]
+    internal static DataBlock Create(IReadOnlyList<byte> data) => new(data);
+
+    [Pure]
+    internal static DataBlock Create(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null) =>
+        new(data, zeroBitSound, oneBitSound, lengthOfTailPulse, usedBitsInLastByte, initialSignal);
+
     public IReadOnlyList<byte> Data { get; }
 
     public int DataLength => Data.Count;

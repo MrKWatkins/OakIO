@@ -1,5 +1,4 @@
 using MrKWatkins.OakIO.Tape;
-using MrKWatkins.OakIO.Tape.Sounds;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
 

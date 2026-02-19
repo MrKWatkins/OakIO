@@ -14,6 +14,11 @@ public sealed class StandardSpeedDataHeader : TzxBlockHeader
     {
     }
 
+    internal StandardSpeedDataHeader(byte[] data)
+        : base(TzxBlockType.StandardSpeedData, data)
+    {
+    }
+
     public ushort PauseAfterBlockMs => GetWord(0);
 
     public TimeSpan PauseAfter => TimeSpan.FromMilliseconds(PauseAfterBlockMs);

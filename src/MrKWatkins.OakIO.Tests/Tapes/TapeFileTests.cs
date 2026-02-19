@@ -1,5 +1,4 @@
 using MrKWatkins.OakIO.Tape;
-using MrKWatkins.OakIO.Tape.Sounds;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
 
@@ -104,7 +103,7 @@ public sealed class TapeFileTests
         // Signal is true so first 10 samples should be high (0xC0).
         for (var i = 0; i < 10; i++)
         {
-            wav.SampleData[i].Should().Equal((byte)0xC0);
+            wav.SampleData[i].Should().Equal(0xC0);
         }
     }
 
@@ -121,7 +120,7 @@ public sealed class TapeFileTests
         // Signal is false so first 10 samples should be low (0x40).
         for (var i = 0; i < 10; i++)
         {
-            wav.SampleData[i].Should().Equal((byte)0x40);
+            wav.SampleData[i].Should().Equal(0x40);
         }
     }
 }

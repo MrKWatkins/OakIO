@@ -2,6 +2,7 @@ using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.Tests.Wav;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class WavFormatTests
 {
     [Test]
@@ -46,7 +47,7 @@ public sealed class WavFormatTests
     [Test]
     public void Read_MissingRiffHeader()
     {
-        var bytes = new byte[] { (byte)'X', (byte)'I', (byte)'F', (byte)'F' };
+        var bytes = "XIFF"u8.ToArray();
         using var stream = new MemoryStream(bytes);
 
         AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()

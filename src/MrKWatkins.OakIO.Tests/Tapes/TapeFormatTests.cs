@@ -2,6 +2,7 @@ using MrKWatkins.OakIO.Tape;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class TapeFormatTests
 {
     [Test]

@@ -16,7 +16,7 @@ public abstract class PzxBlockHeader : Header
         Type = type;
     }
 
-    protected PzxBlockHeader(PzxBlockType type, byte[] data)
+    internal PzxBlockHeader(PzxBlockType type, byte[] data)
         : base(data)
     {
         Type = type;

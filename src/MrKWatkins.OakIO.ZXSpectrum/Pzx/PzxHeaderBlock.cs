@@ -10,6 +10,11 @@ public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
         Info = ReadInfos().ToList();
     }
 
+    internal PzxHeaderBlock(byte[] headerData) : base(new PzxHeader(headerData), [])
+    {
+        Info = ReadInfos().ToList();
+    }
+
     internal PzxHeaderBlock(byte[] headerData, byte[] data) : base(new PzxHeader(headerData), data)
     {
         Info = ReadInfos().ToList();

@@ -1,6 +1,5 @@
 using MrKWatkins.OakIO.ZXSpectrum.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tzx;
-using DataBlock = MrKWatkins.OakIO.ZXSpectrum.Pzx.DataBlock;
 using TzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tzx.PauseBlock;
 using TzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tzx.PulseSequenceBlock;
 

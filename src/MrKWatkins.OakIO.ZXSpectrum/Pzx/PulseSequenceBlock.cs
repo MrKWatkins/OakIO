@@ -9,7 +9,7 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
         Pulses = ReadPulses();
     }
 
-    internal PulseSequenceBlock(byte[] headerData, byte[] data) : base(new PulseSequenceHeader(headerData), data)
+    internal PulseSequenceBlock(byte[] headerData, byte[] bodyData) : base(new PulseSequenceHeader(headerData), bodyData)
     {
         Pulses = ReadPulses();
     }

@@ -14,7 +14,7 @@ public abstract class TzxBlockHeader : Header
         Type = type;
     }
 
-    protected TzxBlockHeader(TzxBlockType type, byte[] data)
+    internal TzxBlockHeader(TzxBlockType type, byte[] data)
         : base(data)
     {
         Type = type;

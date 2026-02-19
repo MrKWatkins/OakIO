@@ -38,9 +38,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     [Pure]
     public PzxFile Convert(TzxFile source)
     {
-        using var context = new ConversionContext();
-        var index = 0;
-        ProcessBlocks(source.Blocks, ref index, context, null, 0);
+        using var context = new ConversionContext(source);
+        ProcessBlocks(context, 0, null, 0);
         context.FlushPulses();
 
         var blocks = new List<PzxBlock> { BuildHeaderBlock(context.InfoEntries) };
@@ -49,42 +48,42 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         return new PzxFile(blocks);
     }
 
-    private static void ProcessBlocks(IReadOnlyList<TzxBlock> blocks, ref int index, ConversionContext context, TzxBlockType? endType, int nestingLevel)
+    private static int ProcessBlocks(ConversionContext context, int index, TzxBlockType? endType, int nestingLevel)
     {
         if (nestingLevel > MaxNestingLevel)
         {
-            return;
+            return index;
         }
 
-        while (index < blocks.Count)
+        while (index < context.Blocks.Count)
         {
-            var block = blocks[index];
+            var block = context.Blocks[index];
             index++;
 
             if (endType == TzxBlockType.LoopEnd && block is LoopEndBlock)
             {
-                return;
+                return index;
             }
 
             switch (block)
             {
                 case StandardSpeedDataBlock stdBlock:
-                    ConvertStandardSpeedData(stdBlock, context);
+                    ConvertStandardSpeedData(context, stdBlock);
                     break;
                 case TurboSpeedDataBlock turboBlock:
-                    ConvertTurboSpeedData(turboBlock, context);
+                    ConvertTurboSpeedData(context, turboBlock);
                     break;
                 case PureToneBlock toneBlock:
-                    ConvertPureTone(toneBlock, context);
+                    ConvertPureTone(context, toneBlock);
                     break;
                 case TzxPulseSequenceBlock pulseBlock:
-                    ConvertPulseSequence(pulseBlock, context);
+                    ConvertPulseSequence(context, pulseBlock);
                     break;
                 case PureDataBlock dataBlock:
-                    ConvertPureData(dataBlock, context);
+                    ConvertPureData(context, dataBlock);
                     break;
                 case TzxPauseBlock pauseBlock:
-                    ConvertPause(pauseBlock, context);
+                    ConvertPause(context, pauseBlock);
                     break;
                 case StopTheTapeIf48KBlock:
                     context.EmitStopBlock(1);
@@ -98,25 +97,26 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
                     context.EmitBrowseBlock(textBlock.Text);
                     break;
                 case ArchiveInfoBlock archiveBlock:
-                    ConvertArchiveInfo(archiveBlock, context);
+                    ConvertArchiveInfo(context, archiveBlock);
                     break;
                 case LoopStartBlock loopBlock:
-                {
-                    var bodyStart = index;
-                    for (var i = 0; i < loopBlock.Header.NumberOfRepetitions; i++)
                     {
-                        index = bodyStart;
-                        ProcessBlocks(blocks, ref index, context, TzxBlockType.LoopEnd, nestingLevel + 1);
+                        var bodyStart = index;
+                        for (var i = 0; i < loopBlock.Header.NumberOfRepetitions; i++)
+                        {
+                            index = ProcessBlocks(context, bodyStart, TzxBlockType.LoopEnd, nestingLevel + 1);
+                        }
+                        break;
                     }
-                    break;
-                }
                 case LoopEndBlock:
                     break;
             }
         }
+
+        return index;
     }
 
-    private static void ConvertStandardSpeedData(StandardSpeedDataBlock block, ConversionContext context)
+    private static void ConvertStandardSpeedData(ConversionContext context, StandardSpeedDataBlock block)
     {
         var data = block.Data;
         var leaderCount = data.Count > 0 && data[0] < 128 ? LongLeaderCount : ShortLeaderCount;
@@ -124,7 +124,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         RenderData(context, data, data.Count, 8, Bit0Cycles, Bit1Cycles, TailCycles, block.Header.PauseAfterBlockMs);
     }
 
-    private static void ConvertTurboSpeedData(TurboSpeedDataBlock block, ConversionContext context)
+    private static void ConvertTurboSpeedData(ConversionContext context, TurboSpeedDataBlock block)
     {
         var header = block.Header;
         RenderPilot(context, header.PulsesInPilotTone, header.TStatesInPilotPulse, header.TStatesInSyncFirstPulse, header.TStatesInSyncSecondPulse);
@@ -132,12 +132,12 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, 0, header.PauseAfterBlockMs);
     }
 
-    private static void ConvertPureTone(PureToneBlock block, ConversionContext context)
+    private static void ConvertPureTone(ConversionContext context, PureToneBlock block)
     {
         RenderPulses(context, block.Header.NumberOfPulses, block.Header.LengthOfPulse);
     }
 
-    private static void ConvertPulseSequence(TzxPulseSequenceBlock block, ConversionContext context)
+    private static void ConvertPulseSequence(ConversionContext context, TzxPulseSequenceBlock block)
     {
         foreach (var pulse in block.Pulses)
         {
@@ -145,14 +145,14 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
     }
 
-    private static void ConvertPureData(PureDataBlock block, ConversionContext context)
+    private static void ConvertPureData(ConversionContext context, PureDataBlock block)
     {
         var header = block.Header;
         RenderData(context, block.Data, block.Data.Count, header.UsedBitsInLastByte,
             header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, 0, header.PauseAfterBlockMs);
     }
 
-    private static void ConvertPause(TzxPauseBlock block, ConversionContext context)
+    private static void ConvertPause(ConversionContext context, TzxPauseBlock block)
     {
         var durationMs = block.Header.PauseMs;
         if (durationMs > 0)
@@ -165,7 +165,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         }
     }
 
-    private static void ConvertArchiveInfo(ArchiveInfoBlock block, ConversionContext context)
+    private static void ConvertArchiveInfo(ConversionContext context, ArchiveInfoBlock block)
     {
         var title = block.Entries.FirstOrDefault(e => e.Type == ArchiveInfoType.FullTitle)?.Text ?? "Some tape";
         context.AddInfo(title);
@@ -190,7 +190,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             ArchiveInfoType.ProtectionSchemeOrLoader => "Protection",
             ArchiveInfoType.Origin => "Origin",
             ArchiveInfoType.Comments => "Comment",
-            _ => "Info",
+            _ => "Info"
         };
 
     private static void RenderPulse(ConversionContext context, uint duration)
@@ -248,7 +248,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
             var bitIndex = (int)(bitCount - 1);
             var bitMask = 0x80 >> (bitIndex & 7);
             var lastByte = dataBytes[bitIndex / 8];
-            context.Level = ((lastByte & bitMask) != 0) ? finalLevel1 : finalLevel0;
+            context.Level = (lastByte & bitMask) != 0 ? finalLevel1 : finalLevel0;
         }
 
         if (pauseMs > 0)
@@ -286,16 +286,17 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         return new PzxHeaderBlock(header, infoBytes);
     }
 
-    private sealed class ConversionContext : IDisposable
+    private sealed class ConversionContext(TzxFile source) : IDisposable
     {
-        private uint _lastDuration;
-        private bool _lastLevel;
-        private uint _pendingPulseCount;
-        private uint _pendingPulseDuration;
-        private readonly MemoryStream _pulseBuffer = new();
+        private uint lastDuration;
+        private bool lastLevel;
+        private uint pendingPulseCount;
+        private uint pendingPulseDuration;
+        private readonly MemoryStream pulseBuffer = new();
 
-        public void Dispose() => _pulseBuffer.Dispose();
+        public void Dispose() => pulseBuffer.Dispose();
 
+        public IReadOnlyList<TzxBlock> Blocks { get; } = source.Blocks;
         public List<PzxBlock> OutputBlocks { get; } = [];
         public List<string> InfoEntries { get; } = [];
         public bool Level { get; set; }
@@ -319,20 +320,20 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
                 return;
             }
 
-            if (_lastLevel != level)
+            if (lastLevel != level)
             {
-                StorePulse(_lastDuration);
-                _lastDuration = 0;
-                _lastLevel = level;
+                StorePulse(lastDuration);
+                lastDuration = 0;
+                lastLevel = level;
             }
 
-            _lastDuration += duration;
+            lastDuration += duration;
 
-            if (_lastDuration > MaxPulseDuration)
+            if (lastDuration > MaxPulseDuration)
             {
                 StorePulse(MaxPulseDuration);
                 StorePulse(0);
-                _lastDuration -= MaxPulseDuration;
+                lastDuration -= MaxPulseDuration;
             }
         }
 
@@ -341,17 +342,17 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         /// </summary>
         private void StorePulse(uint duration)
         {
-            if (_pendingPulseCount > 0)
+            if (pendingPulseCount > 0)
             {
-                if (_pendingPulseDuration == duration && _pendingPulseCount < MaxRepeatCount)
+                if (pendingPulseDuration == duration && pendingPulseCount < MaxRepeatCount)
                 {
-                    _pendingPulseCount++;
+                    pendingPulseCount++;
                     return;
                 }
-                EncodePulse(_pendingPulseCount, _pendingPulseDuration);
+                EncodePulse(pendingPulseCount, pendingPulseDuration);
             }
-            _pendingPulseDuration = duration;
-            _pendingPulseCount = 1;
+            pendingPulseDuration = duration;
+            pendingPulseCount = 1;
         }
 
         /// <summary>
@@ -361,17 +362,17 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         {
             if (count > 1 || duration > 0xFFFF)
             {
-                _pulseBuffer.WriteWord((ushort)(0x8000 | count));
+                pulseBuffer.WriteWord((ushort)(0x8000 | count));
             }
 
             if (duration < 0x8000)
             {
-                _pulseBuffer.WriteWord((ushort)duration);
+                pulseBuffer.WriteWord((ushort)duration);
             }
             else
             {
-                _pulseBuffer.WriteWord((ushort)(0x8000 | (duration >> 16)));
-                _pulseBuffer.WriteWord((ushort)(duration & 0xFFFF));
+                pulseBuffer.WriteWord((ushort)(0x8000 | (duration >> 16)));
+                pulseBuffer.WriteWord((ushort)(duration & 0xFFFF));
             }
         }
 
@@ -380,20 +381,20 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         /// </summary>
         public void FlushPulses()
         {
-            if (_lastDuration > 0)
+            if (lastDuration > 0)
             {
-                StorePulse(_lastDuration);
-                _lastDuration = 0;
-                _lastLevel = false;
+                StorePulse(lastDuration);
+                lastDuration = 0;
+                lastLevel = false;
             }
 
-            if (_pendingPulseCount > 0)
+            if (pendingPulseCount > 0)
             {
-                EncodePulse(_pendingPulseCount, _pendingPulseDuration);
-                _pendingPulseCount = 0;
+                EncodePulse(pendingPulseCount, pendingPulseDuration);
+                pendingPulseCount = 0;
             }
 
-            if (_pulseBuffer.Length > 0)
+            if (pulseBuffer.Length > 0)
             {
                 EmitPulseSequenceBlock();
             }
@@ -401,8 +402,8 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
 
         private void EmitPulseSequenceBlock()
         {
-            var pulseData = _pulseBuffer.ToArray();
-            _pulseBuffer.SetLength(0);
+            var pulseData = pulseBuffer.ToArray();
+            pulseBuffer.SetLength(0);
 
             var header = new byte[4];
             header.SetUInt32(0, (uint)pulseData.Length);
