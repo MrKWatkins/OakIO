@@ -120,6 +120,30 @@ public sealed class PzxToTzxConverterTests
     }
 
     [Test]
+    public void Convert_PulseSequenceBlock_LongDuration_SplitsIntoMultiplePulses()
+    {
+        using var stream = new MemoryStream();
+        stream.Write(BuildMinimalPzxHeader());
+
+        // PULS block with a single pulse of duration 70000 (> ushort.MaxValue = 65535).
+        // Encoded as 3 words: count word 0x8001, extended duration high 0x8001, extended duration low 0x1170.
+        stream.Write("PULS"u8);
+        stream.Write([0x06, 0x00, 0x00, 0x00]);
+        stream.Write([0x01, 0x80]); // 0x8000 | 1 = count 1 (needed because duration > 0xFFFF).
+        stream.Write([0x01, 0x80]); // 0x8000 | (70000 >> 16) = extended duration high.
+        stream.Write([0x70, 0x11]); // 70000 & 0xFFFF = extended duration low.
+
+        var pzx = ReadPzx(stream.ToArray());
+        var converter = new PzxToTzxConverter();
+
+        var tzx = converter.Convert(pzx);
+
+        // 70000 should be split into 65535 + 4465.
+        var pulseSeq = tzx.Blocks[0].Should().BeOfType<TzxPulseSequenceBlock>().Value;
+        pulseSeq.Pulses.ToArray().Should().SequenceEqual(new ushort[] { 65535, 4465 });
+    }
+
+    [Test]
     public void Convert_PulseSequenceBlock_RepeatedPulses_ConvertsToPureToneBlock()
     {
         using var stream = new MemoryStream();

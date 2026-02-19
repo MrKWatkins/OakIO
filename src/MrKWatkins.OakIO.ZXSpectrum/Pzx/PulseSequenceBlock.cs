@@ -30,7 +30,7 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
             }
 
             ushort count = 1;
-            var duration = enumerator.Current;
+            uint duration = enumerator.Current;
             if (duration >= 0x8000)
             {
                 count = (ushort)(duration & 0x7FFF);

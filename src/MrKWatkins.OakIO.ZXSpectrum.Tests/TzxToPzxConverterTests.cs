@@ -117,7 +117,7 @@ public sealed class TzxToPzxConverterTests
         dataBlock.Header.NumberOfPulseInOneBitSequence.Should().Equal(2);
         dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
         dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
-        dataBlock.Header.Tail.Should().Equal(945);
+        dataBlock.Header.Tail.Should().Equal(0);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA, 0x55);
 
         var pause = pzx.Blocks[2].Should().BeOfType<PzxPauseBlock>().Value;
@@ -171,7 +171,33 @@ public sealed class TzxToPzxConverterTests
         // Expect: PZXT header + DATA block (no PAUS since pause = 0).
         pzx.Blocks.Should().HaveCount(2);
         var dataBlock = pzx.Blocks[1].Should().BeOfType<PzxDataBlock>().Value;
-        dataBlock.Header.Tail.Should().Equal(0); // No tail when no pause.
+        dataBlock.Header.Tail.Should().Equal(0);
+    }
+
+    [Test]
+    public void Convert_PureDataBlock_BitsInLastByteZero_TreatedAs8()
+    {
+        using var stream = new MemoryStream();
+        stream.Write(BuildMinimalTzxHeader());
+
+        // Pure Data: 2 bytes, UsedBitsInLastByte = 0 (means 8 per TZX spec).
+        stream.WriteByte(0x14);
+        stream.Write([0x57, 0x03]); // 855.
+        stream.Write([0xAE, 0x06]); // 1710.
+        stream.WriteByte(0x00);     // UsedBitsInLastByte = 0 (means 8).
+        stream.Write([0x00, 0x00]); // PauseAfterBlockMs = 0.
+        stream.Write([0x02, 0x00, 0x00]); // BlockLength = 2.
+        stream.Write([0xAA, 0x55]);
+
+        var tzx = ReadTzx(stream.ToArray());
+        var converter = new TzxToPzxConverter();
+
+        var pzx = converter.Convert(tzx);
+
+        pzx.Blocks.Should().HaveCount(2);
+        var dataBlock = pzx.Blocks[1].Should().BeOfType<PzxDataBlock>().Value;
+        dataBlock.Header.SizeInBits.Should().Equal(16u);
+        dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA, 0x55);
     }
 
     [Test]
@@ -462,7 +488,7 @@ public sealed class TzxToPzxConverterTests
         dataBlock.Header.SizeInBits.Should().Equal(8u);
         dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
         dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
-        dataBlock.Header.Tail.Should().Equal(945);
+        dataBlock.Header.Tail.Should().Equal(0);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA);
     }
 
@@ -618,12 +644,12 @@ public sealed class TzxToPzxConverterTests
     }
 
     [Test]
-    public void Convert_PureDataBlock_Pause1ms_SkipsPauseWhenTailPresent()
+    public void Convert_PureDataBlock_Pause1ms_EmitsPauseBlock()
     {
         using var stream = new MemoryStream();
         stream.Write(BuildMinimalTzxHeader());
 
-        // Pure Data: 1 byte, pause = 1ms. With tail cycles and data, pause is omitted.
+        // Pure Data: 1 byte, pause = 1ms. Always emits a separate PAUS block.
         stream.WriteByte(0x14);
         stream.Write([0x57, 0x03]); // 855.
         stream.Write([0xAE, 0x06]); // 1710.
@@ -637,10 +663,13 @@ public sealed class TzxToPzxConverterTests
 
         var pzx = converter.Convert(tzx);
 
-        // Expect: PZXT header + DATA (with tail). No PAUS block because pause=1ms, tail>0, bits>0.
-        pzx.Blocks.Should().HaveCount(2);
+        // Expect: PZXT header + DATA (no tail for PureData) + PAUS.
+        pzx.Blocks.Should().HaveCount(3);
 
         var dataBlock = pzx.Blocks[1].Should().BeOfType<PzxDataBlock>().Value;
-        dataBlock.Header.Tail.Should().Equal(945);
+        dataBlock.Header.Tail.Should().Equal(0);
+
+        var pause = pzx.Blocks[2].Should().BeOfType<PzxPauseBlock>().Value;
+        pause.Header.Duration.Should().Equal(3500u); // 1ms * 3500.
     }
 }

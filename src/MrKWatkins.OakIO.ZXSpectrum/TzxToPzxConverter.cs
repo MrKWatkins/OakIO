@@ -129,7 +129,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
         var header = block.Header;
         RenderPilot(context, header.PulsesInPilotTone, header.TStatesInPilotPulse, header.TStatesInSyncFirstPulse, header.TStatesInSyncSecondPulse);
         RenderData(context, block.Data, block.Data.Count, header.UsedBitsInLastByte,
-            header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, TailCycles, header.PauseAfterBlockMs);
+            header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, 0, header.PauseAfterBlockMs);
     }
 
     private static void ConvertPureTone(PureToneBlock block, ConversionContext context)
@@ -149,7 +149,7 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     {
         var header = block.Header;
         RenderData(context, block.Data, block.Data.Count, header.UsedBitsInLastByte,
-            header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, TailCycles, header.PauseAfterBlockMs);
+            header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, 0, header.PauseAfterBlockMs);
     }
 
     private static void ConvertPause(TzxPauseBlock block, ConversionContext context)
@@ -217,9 +217,13 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     private static void RenderData(ConversionContext context, IReadOnlyList<byte> data, int dataSize, int bitsInLastByte,
         ushort bit0Cycles, ushort bit1Cycles, ushort tailCycles, ushort pauseMs)
     {
-        // Adjust total bit count when the last byte is partial: remove 8 bits for the full byte, add actual used bits.
+        if (bitsInLastByte == 0 && dataSize > 0)
+        {
+            bitsInLastByte = 8;
+        }
+
         var bitCount = (uint)(8 * dataSize);
-        if (bitsInLastByte <= 8 && bitCount >= 8)
+        if (bitsInLastByte < 8 && bitCount >= 8)
         {
             bitCount -= 8;
             bitCount += (uint)bitsInLastByte;
@@ -236,27 +240,21 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     {
         if (bitCount > 0)
         {
-            var tail = pauseMs > 0 ? tailCycles : (ushort)0;
             var dataByteCount = (int)((bitCount + 7) / 8);
             var dataBytes = data.Take(dataByteCount).ToArray();
 
-            context.EmitDataBlock(dataBytes, bitCount, initialLevel, numZero, numOne, s0, s1, tail);
+            context.EmitDataBlock(dataBytes, bitCount, initialLevel, numZero, numOne, s0, s1, tailCycles);
 
-            // Adjust level based on last bit output.
             var bitIndex = (int)(bitCount - 1);
             var bitMask = 0x80 >> (bitIndex & 7);
             var lastByte = dataBytes[bitIndex / 8];
             context.Level = ((lastByte & bitMask) != 0) ? finalLevel1 : finalLevel0;
         }
 
-        // Emit separate pause block unless it's a 1ms pause with tail and data (the tail pulse serves as the pause).
         if (pauseMs > 0)
         {
             context.Level = false;
-            if (pauseMs > 1 || tailCycles == 0 || bitCount == 0)
-            {
-                context.EmitPauseBlock((uint)pauseMs * MillisecondCycles, context.Level);
-            }
+            context.EmitPauseBlock((uint)pauseMs * MillisecondCycles, context.Level);
         }
     }
 

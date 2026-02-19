@@ -101,7 +101,20 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
                 continue;
             }
 
-            if (pulse.Count > 1)
+            if (pulse.Duration > ushort.MaxValue)
+            {
+                foreach (var flushed in FlushSinglePulses(singlePulses))
+                {
+                    yield return flushed;
+                }
+
+                var splitPulses = SplitDuration(pulse.Duration).ToArray();
+                for (var i = 0; i < pulse.Count; i++)
+                {
+                    singlePulses.AddRange(splitPulses);
+                }
+            }
+            else if (pulse.Count > 1)
             {
                 foreach (var flushed in FlushSinglePulses(singlePulses))
                 {
@@ -109,19 +122,33 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
                 }
 
                 var header = new byte[4];
-                header.SetWord(0, (ushort)Math.Min(pulse.Duration, ushort.MaxValue));
+                header.SetWord(0, (ushort)pulse.Duration);
                 header.SetWord(2, pulse.Count);
                 yield return new PureToneBlock(header);
             }
             else
             {
-                singlePulses.Add((ushort)Math.Min(pulse.Duration, ushort.MaxValue));
+                singlePulses.Add((ushort)pulse.Duration);
             }
         }
 
         foreach (var flushed in FlushSinglePulses(singlePulses))
         {
             yield return flushed;
+        }
+    }
+
+    private static IEnumerable<ushort> SplitDuration(uint duration)
+    {
+        while (duration > ushort.MaxValue)
+        {
+            yield return ushort.MaxValue;
+            duration -= ushort.MaxValue;
+        }
+
+        if (duration > 0)
+        {
+            yield return (ushort)duration;
         }
     }
 
