@@ -12,6 +12,11 @@ public sealed class PzxHeader : PzxBlockHeader
     {
     }
 
+    internal PzxHeader(byte[] data)
+        : base(PzxBlockType.Header, data)
+    {
+    }
+
     public byte MajorVersionNumber => GetByte(StartIndex);
 
     public byte MinorVersionNumber => GetByte(StartIndex + 1);

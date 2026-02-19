@@ -23,11 +23,10 @@ public sealed class TapToTzxConverter : IFormatConverter<TapFile, TzxFile>
     private static StandardSpeedDataBlock ConvertBlock(TapBlock block)
     {
         var data = BuildBlockData(block);
-        var bytes = new byte[4 + data.Length];
-        bytes.SetWord(0, 1000);
-        bytes.SetWord(2, (ushort)data.Length);
-        data.CopyTo(bytes, 4);
-        return new StandardSpeedDataBlock(new MemoryStream(bytes));
+        var headerData = new byte[4];
+        headerData.SetWord(0, 1000);
+        headerData.SetWord(2, (ushort)data.Length);
+        return new StandardSpeedDataBlock(headerData, data);
     }
 
     [Pure]

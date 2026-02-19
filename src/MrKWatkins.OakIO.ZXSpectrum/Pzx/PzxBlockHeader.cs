@@ -16,6 +16,12 @@ public abstract class PzxBlockHeader : Header
         Type = type;
     }
 
+    internal PzxBlockHeader(PzxBlockType type, byte[] data)
+        : base(data)
+    {
+        Type = type;
+    }
+
     public PzxBlockType Type { get; }
 
     public int SizeOfBlockExcludingTagAndSizeField => (int)GetUInt32(0);

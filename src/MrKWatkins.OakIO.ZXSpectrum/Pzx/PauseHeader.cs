@@ -12,6 +12,11 @@ public sealed class PauseHeader : PzxBlockHeader
     {
     }
 
+    internal PauseHeader(byte[] data)
+        : base(PzxBlockType.Pause, data)
+    {
+    }
+
     public uint Duration => GetUInt32(StartIndex) & 0x7FFFFFFF;
 
     public bool InitialPulseLevel => GetBit(StartIndex + 3, 7);

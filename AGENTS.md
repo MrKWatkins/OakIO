@@ -4,7 +4,7 @@
 
 Use `MrKWatkins.BinaryPrimitives` extension methods for binary I/O (`stream.WriteWord()`, `stream.WriteUInt32()`, `array.SetWord()`, `array.SetUInt32()`, etc.). Do not create custom binary write helpers.
 
-Prefer building binary data as byte arrays using `array.SetWord(...)`, `array.SetUInt32(...)`, etc., over writing to a `MemoryStream`. Only create a `MemoryStream` when a `Stream` is required (e.g. to pass to a block constructor).
+Prefer building binary data as byte arrays using `array.SetWord(...)`, `array.SetUInt32(...)`, etc., over writing to a `MemoryStream`. Where block classes accept byte-array constructors, pass the byte arrays directly — do not wrap them in a `MemoryStream`.
 
 ## Code Style
 
