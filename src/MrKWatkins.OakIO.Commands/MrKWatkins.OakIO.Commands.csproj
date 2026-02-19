@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.OakIO.ZXSpectrum\MrKWatkins.OakIO.ZXSpectrum.csproj" />
+    </ItemGroup>
+</Project>
