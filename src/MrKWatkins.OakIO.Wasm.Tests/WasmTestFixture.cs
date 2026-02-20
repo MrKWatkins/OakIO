@@ -7,22 +7,12 @@ namespace MrKWatkins.OakIO.Wasm.Tests;
 public abstract class WasmTestFixture
 {
     [Pure]
-    protected static string GetInfo(string inputFilename, byte[] inputData)
-    {
-        using var inputStream = new MemoryStream(inputData);
-        using var output = new StringWriter();
-        InfoCommand.Execute(inputFilename, inputStream, output);
-        return output.ToString();
-    }
+    protected static string GetInfo(string inputFilename, byte[] inputData) =>
+        InfoCommand.Execute(inputFilename, inputData);
 
     [Pure]
-    protected static byte[] Convert(string inputFilename, byte[] inputData, string outputFilename)
-    {
-        using var inputStream = new MemoryStream(inputData);
-        using var outputStream = new MemoryStream();
-        ConvertCommand.Execute(inputFilename, inputStream, outputFilename, outputStream);
-        return outputStream.ToArray();
-    }
+    protected static byte[] Convert(string inputFilename, byte[] inputData, string outputFilename) =>
+        ConvertCommand.Execute(inputFilename, inputData, outputFilename);
 
     [Pure]
     protected static byte[] CreateTapData()

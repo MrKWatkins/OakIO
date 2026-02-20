@@ -7,6 +7,15 @@ namespace MrKWatkins.OakIO.Commands;
 
 public sealed class InfoCommand
 {
+    [Pure]
+    public static string Execute(string inputFilename, byte[] inputData)
+    {
+        using var inputStream = new MemoryStream(inputData);
+        using var output = new StringWriter();
+        Execute(inputFilename, inputStream, output);
+        return output.ToString();
+    }
+
     public static void Execute(string inputFilename, Stream inputStream, TextWriter output)
     {
         var file = ZXSpectrumFile.Read(inputFilename, inputStream);

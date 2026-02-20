@@ -11,6 +11,15 @@ public sealed class ConvertCommand
     private static readonly IReadOnlyList<FileFormat> SupportedOutputFormats =
         [.. ZXSpectrumFile.TapeFormats, WavFormat.Instance];
 
+    [Pure]
+    public static byte[] Execute(string inputFilename, byte[] inputData, string outputFilename)
+    {
+        using var inputStream = new MemoryStream(inputData);
+        using var outputStream = new MemoryStream();
+        Execute(inputFilename, inputStream, outputFilename, outputStream);
+        return outputStream.ToArray();
+    }
+
     public static void Execute(string inputFilename, Stream inputStream, string outputFilename, Stream outputStream)
     {
         var inputFile = ZXSpectrumFile.Read(inputFilename, inputStream);
