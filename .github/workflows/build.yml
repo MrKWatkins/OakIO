@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install WASM Workload
+        run: dotnet workload install wasm-tools
+
       - name: Build
         uses: MrKWatkins/dotnet-build@main
         with:
