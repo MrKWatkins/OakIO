@@ -300,14 +300,16 @@ public sealed class PzxFormatTests
     }
 
     [Test]
-    public void Write_ThrowsNotImplemented()
+    public void Write_RoundTrips()
     {
         var data = BuildPzxData();
-        using var stream = new MemoryStream(data);
-        var file = PzxFormat.Instance.Read(stream);
+        using var readStream = new MemoryStream(data);
+        var file = PzxFormat.Instance.Read(readStream);
 
-        using var output = new MemoryStream();
-        AssertThat.Invoking(() => PzxFormat.Instance.Write(file, output)).Should().Throw<NotImplementedException>();
+        using var writeStream = new MemoryStream();
+        PzxFormat.Instance.Write(file, writeStream);
+
+        writeStream.ToArray().Should().SequenceEqual(data);
     }
 
     [Test]

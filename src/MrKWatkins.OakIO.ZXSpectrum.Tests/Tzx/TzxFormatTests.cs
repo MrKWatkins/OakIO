@@ -279,14 +279,16 @@ public sealed class TzxFormatTests
     }
 
     [Test]
-    public void Write_ThrowsNotImplemented()
+    public void Write_RoundTrips()
     {
         var data = BuildTzxData();
-        using var stream = new MemoryStream(data);
-        var file = TzxFormat.Instance.Read(stream);
+        using var readStream = new MemoryStream(data);
+        var file = TzxFormat.Instance.Read(readStream);
 
-        using var output = new MemoryStream();
-        AssertThat.Invoking(() => TzxFormat.Instance.Write(file, output)).Should().Throw<NotImplementedException>();
+        using var writeStream = new MemoryStream();
+        TzxFormat.Instance.Write(file, writeStream);
+
+        writeStream.ToArray().Should().SequenceEqual(data);
     }
 
     [Test]

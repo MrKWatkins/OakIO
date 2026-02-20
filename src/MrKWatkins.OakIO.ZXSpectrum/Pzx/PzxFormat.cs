@@ -52,6 +52,13 @@ public sealed class PzxFormat : TapeFormat<PzxFile>
 
     protected override void Write(PzxFile file, Stream stream)
     {
-        throw new NotImplementedException();
+        Span<byte> tagBytes = stackalloc byte[4];
+        foreach (var block in file.Blocks)
+        {
+            System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(tagBytes, (uint)block.Header.Type);
+            stream.Write(tagBytes);
+            block.Header.Write(stream);
+            block.Write(stream);
+        }
     }
 }

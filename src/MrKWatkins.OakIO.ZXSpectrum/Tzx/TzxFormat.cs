@@ -62,6 +62,12 @@ public sealed class TzxFormat : TapeFormat<TzxFile>
 
     protected override void Write(TzxFile file, Stream stream)
     {
-        throw new NotImplementedException();
+        file.Header.Write(stream);
+        foreach (var block in file.Blocks)
+        {
+            stream.WriteByte((byte)block.Header.Type);
+            block.Header.Write(stream);
+            block.Write(stream);
+        }
     }
 }

@@ -1,6 +1,11 @@
 copilot.data.*.xml
 temp/**
 
+# Web project
+web/node_modules/
+web/dist/
+web/dotnet/
+
 # VerifyTests
 *.received.*
 

@@ -1,0 +1,93 @@
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.subtitle {
+  color: #888;
+  margin-top: -0.5em;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tabs button {
+  flex: 1;
+}
+
+.tabs button.active {
+  border-color: #646cff;
+  background-color: #646cff;
+  color: #fff;
+}
+
+.panel {
+  text-align: left;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-row label {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.form-row select {
+  padding: 0.5em;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: inherit;
+  font-size: 1em;
+}
+
+.result {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error {
+  background: #3a1a1a;
+  border: 1px solid #a33;
+  color: #faa;
+  border-radius: 8px;
+  padding: 0.75em 1em;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .form-row select {
+    background: #f9f9f9;
+    border-color: #ccc;
+  }
+
+  .result {
+    background: #f5f5f5;
+    border-color: #ddd;
+  }
+
+  .error {
+    background: #fee;
+    border-color: #c33;
+    color: #a00;
+  }
+}
