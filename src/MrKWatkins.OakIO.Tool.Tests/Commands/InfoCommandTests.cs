@@ -122,4 +122,3 @@ public sealed class InfoCommandTests : ToolTestFixture
         return output.ToString();
     }
 }
-

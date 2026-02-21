@@ -92,4 +92,3 @@ public sealed class ConvertCommandTests : CommandsTestFixture
             .Should().Throw<NotSupportedException>();
     }
 }
-
