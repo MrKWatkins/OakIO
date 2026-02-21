@@ -21,7 +21,7 @@ public sealed class SnaFormat : SnapshotFormat<SnaFile>
         var remaining = stream.Length - stream.Position;
         return remaining == 49152
             ? Read48k(stream, headerBytes)
-            : Read128k(stream, headerBytes, remaining);
+            : Read128k(stream, headerBytes);
     }
 
     [MustUseReturnValue]
@@ -44,14 +44,11 @@ public sealed class SnaFormat : SnapshotFormat<SnaFile>
     }
 
     [MustUseReturnValue]
-    private static Sna128kFile Read128k(Stream stream, byte[] headerBytes, long remaining)
+    private static Sna128kFile Read128k(Stream stream, byte[] headerBytes)
     {
-        var banks = new byte[8][];
+        var banks = Enumerable.Range(0, 8).Select(_ => new byte[16384]).ToArray();
 
-        banks[5] = new byte[16384];
         stream.ReadExactly(banks[5]);
-
-        banks[2] = new byte[16384];
         stream.ReadExactly(banks[2]);
 
         var pagedBankData = new byte[16384];
@@ -67,19 +64,12 @@ public sealed class SnaFormat : SnapshotFormat<SnaFile>
 
         foreach (var bankNumber in new byte[] { 0, 1, 3, 4, 6, 7 })
         {
-            if (banks[bankNumber] != null)
+            if (bankNumber == pagedBank)
             {
                 continue;
             }
 
-            banks[bankNumber] = new byte[16384];
             stream.ReadExactly(banks[bankNumber]);
-        }
-
-        // Ensure all banks are initialized.
-        for (var i = 0; i < 8; i++)
-        {
-            banks[i] ??= new byte[16384];
         }
 
         return new Sna128kFile(header, banks, footerData);
