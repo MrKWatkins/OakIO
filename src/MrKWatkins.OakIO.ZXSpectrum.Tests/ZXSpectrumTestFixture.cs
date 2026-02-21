@@ -21,6 +21,7 @@ public abstract class ZXSpectrumTestFixture
     {
         // I believe Gremlin have given the rights to share and distribute their old games, according to
         // https://rk.nvg.ntnu.no/sinclair/faq/whereis1.html#CG, hence using Auf Wiedersehen Monty.
+        public const string AufWiedersehenMontySna = "AufWiedersehenMonty.sna";
         public const string AufWiedersehenMontyZ80V1Compressed = "AufWiedersehenMonty_z80v1_Compressed.z80";
         public const string AufWiedersehenMontyZ80V1Uncompressed = "AufWiedersehenMonty_z80v1_Uncompressed.z80";
         public const string AufWiedersehenMontyZ80V2 = "AufWiedersehenMonty_z80v2.z80";
