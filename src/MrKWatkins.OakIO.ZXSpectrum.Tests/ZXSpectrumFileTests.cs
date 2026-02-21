@@ -1,4 +1,4 @@
-using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests;
 
@@ -11,7 +11,7 @@ public sealed class ZXSpectrumFileTests : ZXSpectrumTestFixture
     {
         using var file = GetResourceAsTemporaryFile(resource);
         var snapshot = ZXSpectrumFile.Read(file.Path);
-        snapshot.Should().BeOfType<Z80SnapshotV2File>();
+        snapshot.Should().BeOfType<Z80V2File>();
     }
 
     [Test]
@@ -27,7 +27,7 @@ public sealed class ZXSpectrumFileTests : ZXSpectrumTestFixture
     {
         using var monty = OpenResource(resource);
         var snapshot = ZXSpectrumFile.Read(resource, monty);
-        snapshot.Should().BeOfType<Z80SnapshotV2File>();
+        snapshot.Should().BeOfType<Z80V2File>();
     }
 
     [Test]

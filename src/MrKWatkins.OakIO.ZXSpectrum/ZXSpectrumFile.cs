@@ -1,16 +1,18 @@
-using MrKWatkins.OakIO.ZXSpectrum.Nex;
-using MrKWatkins.OakIO.ZXSpectrum.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.SnaSnapshot;
-using MrKWatkins.OakIO.ZXSpectrum.Tap;
-using MrKWatkins.OakIO.ZXSpectrum.Tzx;
-using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
+using MrKWatkins.OakIO.ZXSpectrum.Tape;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.ZXSpectrum;
 
 public static class ZXSpectrumFile
 {
     public static readonly IReadOnlyList<TapeFormat> TapeFormats = [PzxFormat.Instance, TapFormat.Instance, TzxFormat.Instance];
-    public static readonly IReadOnlyList<SnapshotFormat> SnapshotFormats = [NexFormat.Instance, SnaSnapshotFormat.Instance, Z80SnapshotFormat.Instance];
+    public static readonly IReadOnlyList<SnapshotFormat> SnapshotFormats = [NexFormat.Instance, SnaFormat.Instance, Z80Format.Instance];
     public static readonly IReadOnlyList<FileFormat> AllFormats = TapeFormats.Cast<FileFormat>().Concat(SnapshotFormats).ToArray();
 
     [Pure]

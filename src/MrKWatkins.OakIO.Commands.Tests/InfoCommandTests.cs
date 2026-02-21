@@ -1,7 +1,7 @@
 using MrKWatkins.OakIO.Testing;
-using MrKWatkins.OakIO.ZXSpectrum.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.Tzx;
-using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.Commands.Tests;
 
@@ -89,7 +89,7 @@ public sealed class InfoCommandTests : CommandsTestFixture
     {
         using var inputFile = CreateZ80File();
         var lines = RunInfoCommand(inputFile);
-        var snapshot = (Z80SnapshotV1File)Z80SnapshotFormat.Instance.Read(inputFile.Bytes);
+        var snapshot = (Z80V1File)Z80Format.Instance.Read(inputFile.Bytes);
         var registers = snapshot.Registers;
         lines[1].Should().Equal($"AF: 0x{registers.AF:X4}");
         lines[2].Should().Equal($"BC: 0x{registers.BC:X4}");

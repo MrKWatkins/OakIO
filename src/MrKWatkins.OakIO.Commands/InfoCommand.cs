@@ -1,7 +1,8 @@
 using MrKWatkins.OakIO.ZXSpectrum;
-using MrKWatkins.OakIO.ZXSpectrum.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.Tap;
-using MrKWatkins.OakIO.ZXSpectrum.Tzx;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.Commands;
 

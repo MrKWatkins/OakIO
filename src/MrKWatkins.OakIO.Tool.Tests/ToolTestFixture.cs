@@ -1,6 +1,6 @@
 using MrKWatkins.OakIO.Testing;
-using MrKWatkins.OakIO.ZXSpectrum.Tap;
-using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
+using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
 namespace MrKWatkins.OakIO.Tool.Tests;
 
@@ -51,7 +51,7 @@ public abstract class ToolTestFixture
     protected static TemporaryFile CreateZ80File()
     {
         var memory = new byte[48 * 1024];
-        var snapshot = Z80SnapshotV1File.Create48k(memory);
+        var snapshot = Z80V1File.Create48k(memory);
         snapshot.Header.Registers.PC = 0x1000;
         using var stream = new MemoryStream();
         snapshot.Write(stream);
