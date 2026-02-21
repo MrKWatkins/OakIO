@@ -74,4 +74,3 @@ public sealed class ConvertCommandTests : ToolTestFixture
         return app.Run(["convert", inputPath, outputPath]);
     }
 }
-

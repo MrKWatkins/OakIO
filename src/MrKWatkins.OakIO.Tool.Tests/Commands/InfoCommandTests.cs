@@ -1,4 +1,3 @@
-using MrKWatkins.OakIO.Testing;
 using MrKWatkins.OakIO.Tool.Commands;
 using Spectre.Console.Cli;
 
@@ -122,4 +121,3 @@ public sealed class InfoCommandTests : ToolTestFixture
         return output.ToString();
     }
 }
-

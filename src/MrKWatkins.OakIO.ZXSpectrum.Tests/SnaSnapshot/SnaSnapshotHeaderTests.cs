@@ -36,7 +36,7 @@ public sealed class SnaSnapshotHeaderTests
         var bytes = new byte[27];
         var header = new SnaSnapshotHeader(bytes);
 
-        header.InterruptMode.Should().Equal((byte)0);
+        header.InterruptMode.Should().Equal(0);
         header.InterruptMode = interruptMode;
 
         var expected = new byte[27];

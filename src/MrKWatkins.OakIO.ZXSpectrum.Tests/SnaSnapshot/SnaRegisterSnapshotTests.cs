@@ -1,4 +1,3 @@
-using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.ZXSpectrum.SnaSnapshot;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.SnaSnapshot;
@@ -38,13 +37,13 @@ public sealed class SnaRegisterSnapshotTests
         var footerData = new byte[2];
         var registers = new SnaRegisterSnapshot(headerBytes, footerData);
 
-        registers.PC.Should().Equal((ushort)0);
+        registers.PC.Should().Equal(0);
 
         registers.PC = 0x1234;
-        registers.PC.Should().Equal((ushort)0x1234);
+        registers.PC.Should().Equal(0x1234);
 
-        footerData[0].Should().Equal((byte)0x34);
-        footerData[1].Should().Equal((byte)0x12);
+        footerData[0].Should().Equal(0x34);
+        footerData[1].Should().Equal(0x12);
     }
 
     [Test]
@@ -55,10 +54,10 @@ public sealed class SnaRegisterSnapshotTests
         var footerData = new byte[2];
         RegisterSnapshot registers = new SnaRegisterSnapshot(headerBytes, footerData);
 
-        registers.IR.Should().Equal((ushort)0);
+        registers.IR.Should().Equal(0);
 
         registers.IR = 0xFEDC;
-        registers.IR.Should().Equal((ushort)0xFEDC);
+        registers.IR.Should().Equal(0xFEDC);
 
         var expected = new byte[27];
         expected[0] = 0xDC;

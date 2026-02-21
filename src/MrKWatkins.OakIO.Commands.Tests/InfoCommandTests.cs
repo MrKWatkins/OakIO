@@ -1,11 +1,11 @@
 using MrKWatkins.OakIO.Testing;
 using MrKWatkins.OakIO.ZXSpectrum.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.Tap;
 using MrKWatkins.OakIO.ZXSpectrum.Tzx;
 using MrKWatkins.OakIO.ZXSpectrum.Z80Snapshot;
 
 namespace MrKWatkins.OakIO.Commands.Tests;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class InfoCommandTests : CommandsTestFixture
 {
     [Test]

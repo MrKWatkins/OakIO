@@ -3,6 +3,7 @@ using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.Commands.Tests;
 
+[SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class ConvertCommandTests : CommandsTestFixture
 {
     [Test]
@@ -92,4 +93,3 @@ public sealed class ConvertCommandTests : CommandsTestFixture
             .Should().Throw<NotSupportedException>();
     }
 }
-

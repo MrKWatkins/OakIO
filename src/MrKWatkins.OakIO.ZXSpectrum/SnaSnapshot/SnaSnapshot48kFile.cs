@@ -1,5 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.SnaSnapshot;
 
+// ReSharper disable once InconsistentNaming
 public sealed class SnaSnapshot48kFile : SnaSnapshotFile
 {
     private readonly byte[] ram;

@@ -3,6 +3,7 @@ using MrKWatkins.BinaryPrimitives;
 namespace MrKWatkins.OakIO.ZXSpectrum.SnaSnapshot;
 
 // https://worldofspectrum.net/zx-modules/fileformats/snaformat.html
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class SnaSnapshotFormat : SnapshotFormat<SnaSnapshotFile>
 {
     public static readonly SnaSnapshotFormat Instance = new();

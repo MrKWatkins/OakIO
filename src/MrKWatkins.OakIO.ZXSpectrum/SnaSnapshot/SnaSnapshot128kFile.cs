@@ -1,5 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.SnaSnapshot;
 
+// ReSharper disable once InconsistentNaming
 public sealed class SnaSnapshot128kFile : SnaSnapshotFile
 {
     private readonly byte[][] banks;
@@ -20,6 +21,7 @@ public sealed class SnaSnapshot128kFile : SnaSnapshotFile
         return banks[bankNumber];
     }
 
+    // ReSharper disable once InconsistentNaming
     public byte Port7FFD => footerData[2];
 
     public bool TrDosRomPaged => footerData[3] != 0;
