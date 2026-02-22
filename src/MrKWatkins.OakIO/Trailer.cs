@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO;
 
-public abstract class Trailer : FileComponent
+public abstract class Trailer : IOFileComponent
 {
     protected Trailer(int length) : base(length)
     {

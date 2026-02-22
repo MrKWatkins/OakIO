@@ -1,16 +1,26 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Tape;
+using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 // https://worldofspectrum.net/TZXformat.html
 // https://worldofspectrum.net/zx-modules/fileformats/tzxformat.html
-public sealed class TzxFormat : TapeFormat<TzxFile>
+public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
 {
     public static readonly TzxFormat Instance = new();
 
     private TzxFormat()
         : base("TZX Tape", "tzx")
     {
+    }
+
+    protected override IEnumerable<IOFileConverter> CreateConverters()
+    {
+        var tzxToTape = new TzxToTapeConverter();
+        yield return new TzxToPzxConverter();
+        yield return tzxToTape;
+        yield return new WavFileViaTapeConverter<TzxFile>(Instance, tzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
     protected override TzxFile ReadTape(Stream stream)

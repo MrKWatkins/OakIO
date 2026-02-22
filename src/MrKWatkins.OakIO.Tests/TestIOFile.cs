@@ -5,7 +5,7 @@ internal sealed class TestIOFile : IOFile
     private readonly bool canLoad;
 
     internal TestIOFile(bool canLoad = true)
-        : base(TestFileFormat.Instance)
+        : base(TestIOFileFormat.Instance)
     {
         this.canLoad = canLoad;
     }
@@ -14,7 +14,7 @@ internal sealed class TestIOFile : IOFile
     {
         if (canLoad)
         {
-            TestFileFormat.Contents.CopyTo(memory);
+            TestIOFileFormat.Contents.CopyTo(memory);
             return true;
         }
 

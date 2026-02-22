@@ -1,10 +1,10 @@
 namespace MrKWatkins.OakIO.Tape;
 
-public sealed partial class TapeFile : IOFile
+public sealed class TapeFile : IOFile
 {
     private readonly IReadOnlyList<TapeBlock> allBlocks;
 
-    public TapeFile([InstantHandle] IEnumerable<TapeBlock> blocks)
+    internal TapeFile(IReadOnlyList<TapeBlock> blocks)
         : base(TapeFormat.Instance)
     {
         var blocksList = blocks.ToList();

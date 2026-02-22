@@ -9,11 +9,12 @@ using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.ZXSpectrum;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class ZXSpectrumFile
 {
-    public static readonly IReadOnlyList<TapeFormat> TapeFormats = [PzxFormat.Instance, TapFormat.Instance, TzxFormat.Instance];
-    public static readonly IReadOnlyList<SnapshotFormat> SnapshotFormats = [NexFormat.Instance, SnaFormat.Instance, Z80Format.Instance];
-    public static readonly IReadOnlyList<FileFormat> AllFormats = TapeFormats.Cast<FileFormat>().Concat(SnapshotFormats).ToArray();
+    public static readonly IReadOnlyList<ZXSpectrumTapeFormat> TapeFormats = [PzxFormat.Instance, TapFormat.Instance, TzxFormat.Instance];
+    public static readonly IReadOnlyList<ZXSpectrumSnapshotFormat> SnapshotFormats = [NexFormat.Instance, SnaFormat.Instance, Z80Format.Instance];
+    public static readonly IReadOnlyList<IOFileFormat> AllFormats = TapeFormats.Cast<IOFileFormat>().Concat(SnapshotFormats).ToArray();
 
     [Pure]
     public static IOFile Read([PathReference] string filename) => IOFile.Read(filename, AllFormats);

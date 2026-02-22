@@ -1,14 +1,25 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Tape;
+using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-public sealed class TapFormat : TapeFormat<TapFile>
+public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
 {
     public static readonly TapFormat Instance = new();
 
     private TapFormat()
         : base("TAP Tape", "tap")
     {
+    }
+
+    protected override IEnumerable<IOFileConverter> CreateConverters()
+    {
+        var tapToTape = new TapToTapeConverter();
+        yield return new TapToPzxConverter();
+        yield return new TapToTzxConverter();
+        yield return tapToTape;
+        yield return new WavFileViaTapeConverter<TapFile>(Instance, tapToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
     protected override TapFile ReadTape(Stream stream)

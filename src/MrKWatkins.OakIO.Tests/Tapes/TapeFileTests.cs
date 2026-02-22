@@ -2,6 +2,7 @@ using MrKWatkins.OakIO.Tape;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
 
+
 public sealed class TapeFileTests
 {
     [Test]
@@ -87,40 +88,4 @@ public sealed class TapeFileTests
         tape.IsFinished.Should().BeTrue();
     }
 
-    [Test]
-    public void ToWav()
-    {
-        // A simple tape with a short pause.
-        var tape = new TapeFile([new PauseBlock(100, initialSignal: true)]);
-
-        var wav = tape.ToWav(100m, 10);
-
-        wav.SampleRate.Should().Equal(10u);
-        // tStatesPerSample = round(100 / 10) = 10. Pause=100 T-states.
-        // 10 samples for the pause data + 1 final sample when the block finishes = 11 samples.
-        wav.SampleData.Should().HaveCount(11);
-
-        // Signal is true so first 10 samples should be high (0xC0).
-        for (var i = 0; i < 10; i++)
-        {
-            wav.SampleData[i].Should().Equal(0xC0);
-        }
-    }
-
-    [Test]
-    public void ToWav_LowSignal()
-    {
-        var tape = new TapeFile([new PauseBlock(100, initialSignal: false)]);
-
-        var wav = tape.ToWav(100m, 10);
-
-        wav.SampleRate.Should().Equal(10u);
-        wav.SampleData.Should().HaveCount(11);
-
-        // Signal is false so first 10 samples should be low (0x40).
-        for (var i = 0; i < 10; i++)
-        {
-            wav.SampleData[i].Should().Equal(0x40);
-        }
-    }
 }

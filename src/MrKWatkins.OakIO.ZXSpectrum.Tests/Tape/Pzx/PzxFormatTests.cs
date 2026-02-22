@@ -321,6 +321,20 @@ public sealed class PzxFormatTests
         AssertThat.Invoking(() => PzxFormat.Instance.Write(tapFile, output)).Should().Throw<ArgumentException>();
     }
 
+    [Test]
+    public void ConvertToWav()
+    {
+        var data = BuildPzxData();
+        using var stream = new MemoryStream(data);
+
+        var pzx = PzxFormat.Instance.Read(stream);
+
+        var wav = IOFileConversion.ConvertToWav(pzx, 22050);
+
+        wav.SampleRate.Should().Equal(22050u);
+        wav.SampleData.Should().NotBeEmpty();
+    }
+
     [Explicit]
     [TestCaseSource(nameof(ReadTestCases))]
     public void CanRead([PathReference] string path)

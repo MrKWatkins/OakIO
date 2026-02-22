@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
-public sealed class PzxFile : TapeFile
+public sealed class PzxFile : ZXSpectrumTapeFile
 {
     internal PzxFile(IReadOnlyList<PzxBlock> blocks)
         : base(PzxFormat.Instance)

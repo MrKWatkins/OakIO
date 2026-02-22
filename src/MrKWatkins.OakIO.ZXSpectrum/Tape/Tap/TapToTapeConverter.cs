@@ -1,23 +1,21 @@
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Tape.Sounds;
-using MrKWatkins.OakIO.Wav;
 using OakTapeFile = MrKWatkins.OakIO.Tape.TapeFile;
 using TapeDataBlock = MrKWatkins.OakIO.Tape.DataBlock;
 using TapePauseBlock = MrKWatkins.OakIO.Tape.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-public sealed class TapToWavConverter(decimal tStatesPerSecond = 3_500_000m, uint sampleRateHz = 44100) : IFormatConverter<TapFile, WavFile>
+public sealed class TapToTapeConverter() : IOFileConverter<TapFile, OakTapeFile>(TapFormat.Instance, TapeFormat.Instance)
 {
-    [Pure]
-    public WavFile Convert(TapFile source)
+    public override OakTapeFile Convert(TapFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();
-        return new OakTapeFile(blocks).ToWav(tStatesPerSecond, sampleRateHz);
+        return new OakTapeFile(blocks);
     }
 
     [Pure]
-    private static IEnumerable<TapeBlock> ConvertBlock(TapBlock block)
+    private IEnumerable<TapeBlock> ConvertBlock(TapBlock block)
     {
         var isHeader = block.Header.Type == TapBlockType.Header;
         yield return new SoundBlock(isHeader ? Sound.StandardHeaderPureToneAndSync() : Sound.StandardDataPureToneAndSync());
@@ -25,7 +23,7 @@ public sealed class TapToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
         var blockData = BuildBlockData(block);
         yield return TapeDataBlock.Create(blockData);
 
-        yield return new TapePauseBlock(3_500_000);
+        yield return new TapePauseBlock((int)ZXSpectrumTapeFormat.TStatesPerSecond);
     }
 
     [Pure]

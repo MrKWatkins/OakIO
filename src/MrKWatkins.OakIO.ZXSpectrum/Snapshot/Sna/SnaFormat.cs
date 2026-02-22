@@ -4,7 +4,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 
 // https://worldofspectrum.net/zx-modules/fileformats/snaformat.html
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public sealed class SnaFormat : SnapshotFormat<SnaFile>
+public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
 {
     public static readonly SnaFormat Instance = new();
 

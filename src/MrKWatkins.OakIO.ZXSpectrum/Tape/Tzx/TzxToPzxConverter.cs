@@ -1,19 +1,18 @@
 using System.Text;
 using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 using PzxDataBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.DataBlock;
 using PzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PauseBlock;
 using PzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PulseSequenceBlock;
 using TzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx.PauseBlock;
 using TzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx.PulseSequenceBlock;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Conversion;
+namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 /// <summary>
 /// Converts TZX tape files to PZX format.
 /// </summary>
-public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
+public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
 {
     private const ushort LeaderCycles = 2168;
     private const ushort ShortLeaderCount = 3223;
@@ -35,8 +34,13 @@ public sealed class TzxToPzxConverter : IFormatConverter<TzxFile, PzxFile>
     // Maximum nesting level for loop/call blocks to prevent infinite recursion.
     private const int MaxNestingLevel = 10;
 
+    internal TzxToPzxConverter()
+        : base(TzxFormat.Instance, PzxFormat.Instance)
+    {
+    }
+
     [Pure]
-    public PzxFile Convert(TzxFile source)
+    public override PzxFile Convert(TzxFile source)
     {
         using var context = new ConversionContext(source);
         ProcessBlocks(context, 0, null, 0);

@@ -5,8 +5,10 @@ using PzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-public sealed class TapToPzxConverter : IFormatConverter<TapFile, PzxFile>
+public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
 {
+    public static readonly TapToPzxConverter Default = new();
+
     private const ushort PilotPulseLength = 2168;
     private const ushort HeaderPilotCount = 8063;
     private const ushort DataPilotCount = 3223;
@@ -17,14 +19,13 @@ public sealed class TapToPzxConverter : IFormatConverter<TapFile, PzxFile>
     private const ushort TailPulseLength = 945;
     private const uint PauseAfterBlockTStates = 3_500_000;
 
-    public static readonly TapToPzxConverter Instance = new();
-
-    private TapToPzxConverter()
+    internal TapToPzxConverter()
+        : base(TapFormat.Instance, PzxFormat.Instance)
     {
     }
 
     [Pure]
-    public PzxFile Convert(TapFile source)
+    public override PzxFile Convert(TapFile source)
     {
         var blocks = new List<PzxBlock>();
         blocks.Add(BuildHeaderBlock());

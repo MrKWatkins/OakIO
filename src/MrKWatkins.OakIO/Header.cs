@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO;
 
-public abstract class Header : FileComponent
+public abstract class Header : IOFileComponent
 {
     protected Header(int length)
         : base(length)

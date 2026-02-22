@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.Tape;
 
-public sealed class TapeFormat : FileFormat
+public sealed class TapeFormat : IOFileFormat<TapeFile>
 {
     public static readonly TapeFormat Instance = new();
 
@@ -9,7 +9,7 @@ public sealed class TapeFormat : FileFormat
     {
     }
 
-    public override IOFile Read(Stream stream) => throw new NotSupportedException("Tape files cannot be read from a stream.");
+    public override IOFile Read(Stream stream) => throw new NotSupportedException("Tape files cannot be read.");
 
-    public override void Write(IOFile file, Stream stream) => throw new NotSupportedException("Tape files cannot be written to a stream.");
+    protected override void Write(TapeFile file, Stream stream) => throw new NotSupportedException("Tape files cannot be written.");
 }

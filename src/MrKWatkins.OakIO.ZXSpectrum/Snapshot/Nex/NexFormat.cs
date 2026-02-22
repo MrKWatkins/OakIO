@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 
-public sealed class NexFormat : SnapshotFormat<NexFile>
+public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
 {
     public static readonly NexFormat Instance = new();
 

@@ -8,37 +8,37 @@ public sealed class IOFileTests
     [Test]
     public void Read_File([Values] bool zipped)
     {
-        using var file = TemporaryFile.Create(TestFileFormat.Contents, "File.tst", zipped);
+        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.tst", zipped);
 
-        IOFile.Read(file.Path, TestFileFormat.Instance).Should().BeOfType<TestIOFile>()
-            .That.Format.Should().BeTheSameInstanceAs(TestFileFormat.Instance);
+        IOFile.Read(file.Path, TestIOFileFormat.Instance).Should().BeOfType<TestIOFile>()
+            .That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
 
     [Test]
     public void Read_File_ThrowsForUnsupportedType([Values] bool zipped)
     {
-        using var file = TemporaryFile.Create(TestFileFormat.Contents, "File.txt", zipped);
+        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.txt", zipped);
 
-        AssertThat.Invoking(() => IOFile.Read(file.Path, TestFileFormat.Instance)).Should().Throw<NotSupportedException>();
+        AssertThat.Invoking(() => IOFile.Read(file.Path, TestIOFileFormat.Instance)).Should().Throw<NotSupportedException>();
     }
 
     [Test]
     public void Read_Stream([Values] bool zipped)
     {
-        using var file = TemporaryFile.Create(TestFileFormat.Contents, "File.tst", zipped);
+        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.tst", zipped);
 
         using var stream = file.OpenRead();
-        IOFile.Read(file.Name, stream, TestFileFormat.Instance).Should().BeOfType<TestIOFile>()
-            .That.Format.Should().BeTheSameInstanceAs(TestFileFormat.Instance);
+        IOFile.Read(file.Name, stream, TestIOFileFormat.Instance).Should().BeOfType<TestIOFile>()
+            .That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
 
     [Test]
     public void Read_Stream_ThrowsForUnsupportedType([Values] bool zipped)
     {
-        using var file = TemporaryFile.Create(TestFileFormat.Contents, "File.txt", zipped);
+        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.txt", zipped);
 
         using var stream = file.OpenRead();
-        AssertThat.Invoking(() => IOFile.Read(file.Path, stream, TestFileFormat.Instance)).Should().Throw<NotSupportedException>();
+        AssertThat.Invoking(() => IOFile.Read(file.Path, stream, TestIOFileFormat.Instance)).Should().Throw<NotSupportedException>();
     }
 
     [Test]
@@ -63,7 +63,7 @@ public sealed class IOFileTests
             ioFile.Write(Path.Combine(directory, name), zipped);
             var actual = File.ReadAllBytes(expectedPath);
 
-            using var expected = TemporaryFile.Create(TestFileFormat.Contents, name, zipped: zipped);
+            using var expected = TemporaryFile.Create(TestIOFileFormat.Contents, name, zipped: zipped);
             actual.Should().SequenceEqual(expected.Bytes);
         }
         finally
@@ -85,7 +85,7 @@ public sealed class IOFileTests
             ioFile.Write(directory, name, zipped);
             var actual = File.ReadAllBytes(expectedPath);
 
-            using var expected = TemporaryFile.Create(TestFileFormat.Contents, $"{name}.tst", zipped: zipped);
+            using var expected = TemporaryFile.Create(TestIOFileFormat.Contents, $"{name}.tst", zipped: zipped);
             actual.Should().SequenceEqual(expected.Bytes);
         }
         finally
@@ -104,7 +104,7 @@ public sealed class IOFileTests
             ioFile.Write(stream);
         }
 
-        using var expected = TemporaryFile.Create(TestFileFormat.Contents);
+        using var expected = TemporaryFile.Create(TestIOFileFormat.Contents);
         actual.Bytes.Should().SequenceEqual(expected.Bytes);
     }
 
@@ -113,7 +113,7 @@ public sealed class IOFileTests
     {
         var ioFile = new TestIOFile();
         var actual = ioFile.Write();
-        actual.Should().SequenceEqual(TestFileFormat.Contents);
+        actual.Should().SequenceEqual(TestIOFileFormat.Contents);
     }
 
     [Test]
@@ -122,7 +122,7 @@ public sealed class IOFileTests
         IOFile ioFile = new TestIOFile();
         var buffer = new byte[5];
         ioFile.TryLoadInto(buffer).Should().BeTrue();
-        buffer.Should().SequenceEqual(TestFileFormat.Contents);
+        buffer.Should().SequenceEqual(TestIOFileFormat.Contents);
     }
 
     [Test]
@@ -139,7 +139,7 @@ public sealed class IOFileTests
         IOFile ioFile = new TestIOFile();
         var buffer = new byte[5];
         ioFile.LoadInto(buffer);
-        buffer.Should().SequenceEqual(TestFileFormat.Contents);
+        buffer.Should().SequenceEqual(TestIOFileFormat.Contents);
     }
 
     [Test]
@@ -166,5 +166,5 @@ public sealed class IOFileTests
         ioFile.Invoking(f => f.LoadInto(buffer)).Should().Throw<IOException>();
     }
 
-    private sealed class NonLoadableIOFile() : IOFile(TestFileFormat.Instance);
+    private sealed class NonLoadableIOFile() : IOFile(TestIOFileFormat.Instance);
 }

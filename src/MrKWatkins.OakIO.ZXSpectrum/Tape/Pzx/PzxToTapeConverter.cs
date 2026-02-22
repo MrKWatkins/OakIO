@@ -1,19 +1,17 @@
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Tape.Sounds;
-using MrKWatkins.OakIO.Wav;
 using TapeDataBlock = MrKWatkins.OakIO.Tape.DataBlock;
 using OakTapeFile = MrKWatkins.OakIO.Tape.TapeFile;
 using TapePauseBlock = MrKWatkins.OakIO.Tape.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
-public sealed class PzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uint sampleRateHz = 44100) : IFormatConverter<PzxFile, WavFile>
+public sealed class PzxToTapeConverter() : IOFileConverter<PzxFile, OakTapeFile>(PzxFormat.Instance, TapeFormat.Instance)
 {
-    [Pure]
-    public WavFile Convert(PzxFile source)
+    public override OakTapeFile Convert(PzxFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();
-        return new OakTapeFile(blocks).ToWav(tStatesPerSecond, sampleRateHz);
+        return new OakTapeFile(blocks);
     }
 
     [Pure]
@@ -21,14 +19,18 @@ public sealed class PzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
     {
         switch (pzxBlock)
         {
-            case PulseSequenceBlock puls:
-                foreach (var pulse in puls.Pulses)
+            case PulseSequenceBlock pulseSequence:
+                foreach (var pulse in pulseSequence.Pulses)
+                {
                     yield return new SoundBlock(Sound.PureTone(pulse.Count, (int)pulse.Duration));
+                }
                 break;
 
             case DataBlock data:
                 if (data.Header.SizeInBits == 0)
+                {
                     break;
+                }
                 var zeroBitSound = data.ZeroBitPulseSequence.Length > 0
                     ? Sound.PulseSequence(data.ZeroBitPulseSequence)
                     : Sound.StandardZeroBit();
@@ -42,7 +44,9 @@ public sealed class PzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
 
             case PauseBlock pause:
                 if (pause.Header.Duration > 0)
+                {
                     yield return new TapePauseBlock((int)pause.Header.Duration, pause.Header.InitialPulseLevel);
+                }
                 break;
         }
     }

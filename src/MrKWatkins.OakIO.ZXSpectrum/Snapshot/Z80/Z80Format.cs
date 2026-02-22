@@ -3,7 +3,7 @@ using MrKWatkins.BinaryPrimitives;
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
 // https://worldofspectrum.org/faq/reference/z80format.htm
-public sealed class Z80Format : SnapshotFormat<Z80File>
+public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
 {
     public static readonly Z80Format Instance = new();
 

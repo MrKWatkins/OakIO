@@ -2,7 +2,7 @@ using System.Text;
 
 namespace MrKWatkins.OakIO.Wav;
 
-public sealed class WavFormat : FileFormat<WavFile>
+public sealed class WavFormat : IOFileFormat<WavFile>
 {
     private const int HeaderSize = 44;
 

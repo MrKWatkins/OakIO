@@ -32,7 +32,7 @@ public sealed class InfoCommand
             case PzxFile pzxFile:
                 WriteBlocks(output, pzxFile.Blocks);
                 break;
-            case SnapshotFile snapshot:
+            case ZXSpectrumSnapshotFile snapshot:
                 WriteRegisters(output, snapshot.Registers);
                 break;
         }

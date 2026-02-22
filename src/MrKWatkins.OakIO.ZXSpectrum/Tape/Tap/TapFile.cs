@@ -3,7 +3,7 @@ using static MrKWatkins.OakIO.ZXSpectrum.Basic.Basic;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-public sealed class TapFile : TapeFile
+public sealed class TapFile : ZXSpectrumTapeFile
 {
     internal TapFile(params TapBlock[] blocks)
         : base(TapFormat.Instance)

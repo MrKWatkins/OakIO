@@ -3,19 +3,19 @@ using MrKWatkins.BinaryPrimitives;
 
 namespace MrKWatkins.OakIO;
 
-public abstract class FileComponent(byte[] data)
+public abstract class IOFileComponent(byte[] data)
 {
-    protected FileComponent(int length)
+    protected IOFileComponent(int length)
         : this(CreateHeader(length))
     {
     }
 
-    protected FileComponent(int length, Stream data)
+    protected IOFileComponent(int length, Stream data)
         : this(CreateHeader(length, data))
     {
     }
 
-    protected FileComponent(int length, [InstantHandle] IEnumerable<byte> data)
+    protected IOFileComponent(int length, [InstantHandle] IEnumerable<byte> data)
         : this(CreateHeader(length, data))
     {
     }

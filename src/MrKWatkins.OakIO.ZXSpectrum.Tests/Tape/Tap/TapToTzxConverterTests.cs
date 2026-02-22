@@ -10,7 +10,7 @@ public sealed class TapToTzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var tzx = TapToTzxConverter.Instance.Convert(tap);
+        var tzx = new TapToTzxConverter().Convert(tap);
 
         tzx.Header.MajorVersion.Should().Equal(1);
         tzx.Header.MinorVersion.Should().Equal(20);
@@ -34,7 +34,7 @@ public sealed class TapToTzxConverterTests
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
         var originalDataBlock = (DataBlock)tap.Blocks[1];
 
-        var tzx = TapToTzxConverter.Instance.Convert(tap);
+        var tzx = new TapToTzxConverter().Convert(tap);
 
         var tzxDataBlock = (StandardSpeedDataBlock)tzx.Blocks[1];
         tzxDataBlock.Data[0].Should().Equal(0xFF);
@@ -45,7 +45,7 @@ public sealed class TapToTzxConverterTests
     public void Convert_RoundTrip()
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
-        var tzx = TapToTzxConverter.Instance.Convert(tap);
+        var tzx = new TapToTzxConverter().Convert(tap);
         tzx.Blocks.Should().HaveCount(2);
         foreach (var block in tzx.Blocks)
         {

@@ -4,12 +4,12 @@ namespace MrKWatkins.OakIO.Tests;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 [SuppressMessage("Maintainability", "CA1507:Use nameof to express symbol names")]
-public sealed class FileComponentTests
+public sealed class IOFileComponentTests
 {
     [Test]
     public void Constructor_Int()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         header.AsReadOnlySpan().Length.Should().Equal(3);
         // ReSharper disable once UseUtf8StringLiteral
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(0, 0, 0);
@@ -18,14 +18,14 @@ public sealed class FileComponentTests
     [Test]
     public void Constructor_Int_InvalidSize()
     {
-        AssertThat.Invoking(() => new TestFileComponent(-1))
+        AssertThat.Invoking(() => new TestIOFileComponent(-1))
             .Should().ThrowArgumentOutOfRangeException("length ('-1') must be a non-negative value.", "length", -1);
     }
 
     [Test]
     public void Constructor_ByteArray()
     {
-        var header = new TestFileComponent([1, 2, 3]);
+        var header = new TestIOFileComponent([1, 2, 3]);
         header.AsReadOnlySpan().Length.Should().Equal(3);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
     }
@@ -34,7 +34,7 @@ public sealed class FileComponentTests
     public void Constructor_Int_Stream()
     {
         using var stream = new MemoryStream([1, 2, 3, 4, 5]);
-        var header = new TestFileComponent(3, stream);
+        var header = new TestIOFileComponent(3, stream);
         header.AsReadOnlySpan().Length.Should().Equal(3);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
     }
@@ -43,7 +43,7 @@ public sealed class FileComponentTests
     public void Constructor_Int_Stream_InvalidSize()
     {
         using var stream = new MemoryStream([1, 2, 3]);
-        AssertThat.Invoking(() => new TestFileComponent(-1, stream))
+        AssertThat.Invoking(() => new TestIOFileComponent(-1, stream))
             .Should().ThrowArgumentOutOfRangeException("length ('-1') must be a non-negative value.", "length", -1);
     }
 
@@ -51,14 +51,14 @@ public sealed class FileComponentTests
     public void Constructor_Int_Stream_StreamToShort()
     {
         using var stream = new MemoryStream([1, 2, 3]);
-        AssertThat.Invoking(() => new TestFileComponent(5, stream))
+        AssertThat.Invoking(() => new TestIOFileComponent(5, stream))
             .Should().ThrowArgumentException("Expected value to have at least 5 bytes, found 3.", "stream");
     }
 
     [Test]
     public void Constructor_Int_IEnumerable()
     {
-        var header = new TestFileComponent(3, [1, 2, 3]);
+        var header = new TestIOFileComponent(3, [1, 2, 3]);
         header.AsReadOnlySpan().Length.Should().Equal(3);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(1, 2, 3);
     }
@@ -66,7 +66,7 @@ public sealed class FileComponentTests
     [Test]
     public void Constructor_Int_IEnumerable_InvalidSize()
     {
-        AssertThat.Invoking(() => new TestFileComponent(-1, [1, 2, 3, 4, 5]))
+        AssertThat.Invoking(() => new TestIOFileComponent(-1, [1, 2, 3, 4, 5]))
             .Should().ThrowArgumentOutOfRangeException("length ('-1') must be a non-negative value.", "length", -1);
     }
 
@@ -74,35 +74,35 @@ public sealed class FileComponentTests
     [TestCase(4)]
     public void Constructor_Int_IEnumerable_IncorrectSize(int length)
     {
-        AssertThat.Invoking(() => new TestFileComponent(length, [1, 2, 3]))
+        AssertThat.Invoking(() => new TestIOFileComponent(length, [1, 2, 3]))
             .Should().ThrowArgumentException($"Expected value to have {length} bytes, found 3.", "bytes");
     }
 
     [Test]
     public void Data()
     {
-        var header = new TestFileComponent([1, 2, 3]);
+        var header = new TestIOFileComponent([1, 2, 3]);
         header.Data.Should().SequenceEqual(1, 2, 3);
     }
 
     [Test]
     public void AsReadOnlySpan_IntStart()
     {
-        var header = new TestFileComponent([1, 2, 3, 4, 5]);
+        var header = new TestIOFileComponent([1, 2, 3, 4, 5]);
         header.AsReadOnlySpan(2).ToArray().Should().SequenceEqual(3, 4, 5);
     }
 
     [Test]
     public void AsReadOnlySpan_IndexStart()
     {
-        var header = new TestFileComponent([1, 2, 3, 4, 5]);
+        var header = new TestIOFileComponent([1, 2, 3, 4, 5]);
         header.AsReadOnlySpan(^2).ToArray().Should().SequenceEqual(4, 5);
     }
 
     [Test]
     public void CopyTo()
     {
-        var header = new TestFileComponent([1, 2, 3]);
+        var header = new TestIOFileComponent([1, 2, 3]);
         var buffer = new byte[5];
         header.CopyTo(buffer);
         buffer.Should().SequenceEqual(1, 2, 3, 0, 0);
@@ -111,7 +111,7 @@ public sealed class FileComponentTests
     [Test]
     public void CopyTo_WithStart()
     {
-        var header = new TestFileComponent([1, 2, 3]);
+        var header = new TestIOFileComponent([1, 2, 3]);
         var buffer = new byte[5];
         header.CopyTo(buffer, 2);
         buffer.Should().SequenceEqual(0, 0, 1, 2, 3);
@@ -120,7 +120,7 @@ public sealed class FileComponentTests
     [Test]
     public void AsSpan()
     {
-        var header = new TestFileComponent([1, 2, 3]);
+        var header = new TestIOFileComponent([1, 2, 3]);
         header.SetViaAsSpan(1, 42);
         header.GetByte(1).Should().Equal(42);
     }
@@ -128,7 +128,7 @@ public sealed class FileComponentTests
     [Test]
     public void AsSpan_IntStart()
     {
-        var header = new TestFileComponent([1, 2, 3, 4, 5]);
+        var header = new TestIOFileComponent([1, 2, 3, 4, 5]);
         header.SetViaAsSpan(2, 0, 42);
         header.GetByte(2).Should().Equal(42);
     }
@@ -136,7 +136,7 @@ public sealed class FileComponentTests
     [Test]
     public void AsSpan_IndexStart()
     {
-        var header = new TestFileComponent([1, 2, 3, 4, 5]);
+        var header = new TestIOFileComponent([1, 2, 3, 4, 5]);
         header.SetViaAsSpanFromEnd(^2, 0, 42);
         header.GetByte(3).Should().Equal(42);
     }
@@ -145,7 +145,7 @@ public sealed class FileComponentTests
     public void Write()
     {
         var bytes = new byte[] { 1, 2, 3 };
-        var header = new TestFileComponent(bytes);
+        var header = new TestIOFileComponent(bytes);
 
         using var stream = new MemoryStream();
         header.Write(stream);
@@ -157,7 +157,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void GetByte_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetByte(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -166,7 +166,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void GetByte_IndexOutOfRange_ByteEnum(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetByte<ByteEnum>(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -175,7 +175,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void GetByte_IndexOutOfRange_IntEnum(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetByte<IntEnum>(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -184,7 +184,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void SetByte_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetByte(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -192,7 +192,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetByteAndSetByte()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         header.GetByte(0).Should().Equal(0);
         header.GetByte(1).Should().Equal(0);
         header.GetByte(2).Should().Equal(0);
@@ -216,7 +216,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetByteAndSetByte_ByteEnum()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         header.GetByte<ByteEnum>(0).Should().Equal(ByteEnum.Zero);
         header.GetByte<ByteEnum>(1).Should().Equal(ByteEnum.Zero);
         header.GetByte<ByteEnum>(2).Should().Equal(ByteEnum.Zero);
@@ -240,7 +240,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetByteAndSetByte_IntEnum()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         header.GetByte<IntEnum>(0).Should().Equal(IntEnum.Zero);
         header.GetByte<IntEnum>(1).Should().Equal(IntEnum.Zero);
         header.GetByte<IntEnum>(2).Should().Equal(IntEnum.Zero);
@@ -265,7 +265,7 @@ public sealed class FileComponentTests
     [TestCase(2)]
     public void GetWord_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetWord(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 1. (2)", "index", index);
     }
@@ -274,7 +274,7 @@ public sealed class FileComponentTests
     [TestCase(2)]
     public void SetWord_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetWord(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 1. (2)", "index", index);
     }
@@ -282,7 +282,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetWordAndSetWord()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         header.GetWord(0).Should().Equal(0);
         header.GetWord(0, Endian.Big).Should().Equal(0);
         header.GetWord(1).Should().Equal(0);
@@ -307,7 +307,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void GetUInt24_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetUInt24(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 2. (1)", "index", index);
     }
@@ -316,7 +316,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void SetUInt24_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetUInt24(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 2. (1)", "index", index);
     }
@@ -324,7 +324,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetUInt24AndSetUInt24()
     {
-        var header = new TestFileComponent(4);
+        var header = new TestIOFileComponent(4);
         header.GetUInt24(0).Should().Equal(0);
         header.GetUInt24(0, Endian.Big).Should().Equal(0);
         header.GetUInt24(1).Should().Equal(0);
@@ -349,7 +349,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void GetUInt32_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(4);
+        var header = new TestIOFileComponent(4);
         AssertThat.Invoking(() => header.GetUInt32(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 3. (1)", "index", index);
     }
@@ -358,7 +358,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void SetUInt32_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(4);
+        var header = new TestIOFileComponent(4);
         AssertThat.Invoking(() => header.SetUInt32(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 3. (1)", "index", index);
     }
@@ -366,7 +366,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetUInt32AndSetUInt32()
     {
-        var header = new TestFileComponent(5);
+        var header = new TestIOFileComponent(5);
         header.GetUInt32(0).Should().Equal(0);
         header.GetUInt32(0, Endian.Big).Should().Equal(0);
         header.GetUInt32(1).Should().Equal(0);
@@ -391,7 +391,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void GetInt32_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(4);
+        var header = new TestIOFileComponent(4);
         AssertThat.Invoking(() => header.GetInt32(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 3. (1)", "index", index);
     }
@@ -400,7 +400,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void SetInt32_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(4);
+        var header = new TestIOFileComponent(4);
         AssertThat.Invoking(() => header.SetInt32(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 3. (1)", "index", index);
     }
@@ -408,7 +408,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetInt32AndSetInt32()
     {
-        var header = new TestFileComponent(5);
+        var header = new TestIOFileComponent(5);
         header.GetInt32(0).Should().Equal(0);
         header.GetInt32(0, Endian.Big).Should().Equal(0);
         header.GetInt32(1).Should().Equal(0);
@@ -433,7 +433,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void GetInt64_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(8);
+        var header = new TestIOFileComponent(8);
         AssertThat.Invoking(() => header.GetInt64(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 7. (1)", "index", index);
     }
@@ -442,7 +442,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void SetInt64_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(8);
+        var header = new TestIOFileComponent(8);
         AssertThat.Invoking(() => header.SetInt64(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 7. (1)", "index", index);
     }
@@ -450,7 +450,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetInt64AndSetInt64()
     {
-        var header = new TestFileComponent(9);
+        var header = new TestIOFileComponent(9);
         header.GetInt64(0).Should().Equal(0);
         header.GetInt64(0, Endian.Big).Should().Equal(0);
         header.GetInt64(1).Should().Equal(0);
@@ -475,7 +475,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void GetUInt64_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(8);
+        var header = new TestIOFileComponent(8);
         AssertThat.Invoking(() => header.GetUInt64(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 7. (1)", "index", index);
     }
@@ -484,7 +484,7 @@ public sealed class FileComponentTests
     [TestCase(1)]
     public void SetUInt64_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(8);
+        var header = new TestIOFileComponent(8);
         AssertThat.Invoking(() => header.SetUInt64(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 7. (1)", "index", index);
     }
@@ -492,7 +492,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetUInt64AndSetUInt64()
     {
-        var header = new TestFileComponent(9);
+        var header = new TestIOFileComponent(9);
         header.GetUInt64(0).Should().Equal(0);
         header.GetUInt64(0, Endian.Big).Should().Equal(0);
         header.GetUInt64(1).Should().Equal(0);
@@ -517,7 +517,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void GetBit_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetBit(index, 0))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -526,7 +526,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void SetBit_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetBit(index, 0, true))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -535,7 +535,7 @@ public sealed class FileComponentTests
     [TestCase(8)]
     public void GetBit_BitIndexOutOfRange(int bitIndex)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetBit(0, bitIndex))
             .Should().ThrowArgumentOutOfRangeException("Value must be in the range 0 -> 7.", "bitIndex", bitIndex);
     }
@@ -544,7 +544,7 @@ public sealed class FileComponentTests
     [TestCase(8)]
     public void SetBit_BitIndexOutOfRange(int bitIndex)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetBit(0, bitIndex, true))
             .Should().ThrowArgumentOutOfRangeException("Value must be in the range 0 -> 7.", "bitIndex", bitIndex);
     }
@@ -552,7 +552,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetBitAndSetBit()
     {
-        var header = new TestFileComponent(2);
+        var header = new TestIOFileComponent(2);
         header.GetBit(0, 1).Should().BeFalse();
         header.GetBit(0, 7).Should().BeFalse();
 
@@ -588,7 +588,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetBits()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b11001010);
         header.GetBits(0, 3, 5).Should().Equal(0b00000001);
         header.GetBits(0, 6, 7).Should().Equal(0b00000011);
@@ -598,7 +598,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetBits_ByteEnum()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b11001010);
         header.GetBits<ByteEnum>(0, 3, 5).Should().Equal(ByteEnum.One);
         header.GetBits<ByteEnum>(0, 6, 7).Should().Equal(ByteEnum.Three);
@@ -607,7 +607,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetBits_IntEnum()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b11001010);
         header.GetBits<IntEnum>(0, 3, 5).Should().Equal(IntEnum.One);
         header.GetBits<IntEnum>(0, 6, 7).Should().Equal(IntEnum.Three);
@@ -616,7 +616,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetBits()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b10000001);
         header.SetBits(0, 0b11111111, 3, 5);
         header.GetByte(0).Should().Equal(0b10111001);
@@ -625,7 +625,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetBits_ByteEnum()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b10000001);
         header.SetBits(0, ByteEnum.Three, 3, 5);
         header.GetByte(0).Should().Equal(0b10011001);
@@ -634,7 +634,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetBits_IntEnum()
     {
-        var header = new TestFileComponent(1);
+        var header = new TestIOFileComponent(1);
         header.SetByte(0, 0b10000001);
         header.SetBits(0, IntEnum.Three, 3, 5);
         header.GetByte(0).Should().Equal(0b10011001);
@@ -644,7 +644,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void GetString_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetString(index, 1))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -653,7 +653,7 @@ public sealed class FileComponentTests
     [TestCase(3)]
     public void SetString_IndexOutOfRange(int index)
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(index, 1, ""))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length. (3)", "index", index);
     }
@@ -661,7 +661,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetString_MaximumLengthZero()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetString(0, 0))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than 0.", "maximumLength", 0);
     }
@@ -669,7 +669,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetString_MaximumLengthZero()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(0, 0, ""))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than 0.", "maximumLength", 0);
     }
@@ -677,7 +677,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetString_MaximumLengthNegative()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetString(0, -1))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than 0.", "maximumLength", -1);
     }
@@ -685,7 +685,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetString_MaximumLengthNegative()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(0, -1, ""))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than 0.", "maximumLength", -1);
     }
@@ -693,7 +693,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetString_MaximumLengthTooLong()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.GetString(0, 4))
             .Should().ThrowArgumentOutOfRangeException("index + maximumLength (4) must be less than or equal to Length. (3)", "maximumLength", 4);
     }
@@ -701,7 +701,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetString_MaximumLengthTooLong()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(0, 4, ""))
             .Should().ThrowArgumentOutOfRangeException("index + maximumLength (4) must be less than or equal to Length. (3)", "maximumLength", 4);
     }
@@ -709,7 +709,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetString_StringTooLong()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(0, 2, "ABC"))
             .Should().ThrowArgumentException("Value is longer (3) than maximumLength. (2)", "value");
     }
@@ -717,7 +717,7 @@ public sealed class FileComponentTests
     [Test]
     public void SetString_StringContainsNonAsciiCharacters()
     {
-        var header = new TestFileComponent(3);
+        var header = new TestIOFileComponent(3);
         AssertThat.Invoking(() => header.SetString(0, 3, "A\u00D8"))
             .Should().ThrowArgumentException("Character at index 1 ('\u00D8') is not ASCII.", "value");
     }
@@ -725,7 +725,7 @@ public sealed class FileComponentTests
     [Test]
     public void GetAndSetString()
     {
-        var header = new TestFileComponent(6);
+        var header = new TestIOFileComponent(6);
         header.GetString(1, 4).Should().Equal("");
 
         header.SetString(1, 4, "Test");
@@ -743,21 +743,21 @@ public sealed class FileComponentTests
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual("\0\0\0\0\0\0"u8.ToArray());
     }
 
-    private sealed class TestFileComponent : FileComponent
+    private sealed class TestIOFileComponent : IOFileComponent
     {
-        public TestFileComponent(int length) : base(length)
+        public TestIOFileComponent(int length) : base(length)
         {
         }
 
-        public TestFileComponent(byte[] header) : base(header)
+        public TestIOFileComponent(byte[] header) : base(header)
         {
         }
 
-        public TestFileComponent(int length, Stream stream) : base(length, stream)
+        public TestIOFileComponent(int length, Stream stream) : base(length, stream)
         {
         }
 
-        public TestFileComponent(int length, IEnumerable<byte> bytes) : base(length, bytes)
+        public TestIOFileComponent(int length, IEnumerable<byte> bytes) : base(length, bytes)
         {
         }
 

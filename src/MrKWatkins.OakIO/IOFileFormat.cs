@@ -2,11 +2,43 @@ using System.IO.Compression;
 
 namespace MrKWatkins.OakIO;
 
-public abstract class FileFormat(string name, string fileExtension)
+public abstract class IOFileFormat
 {
-    public string Name { get; } = name;
+    private int convertersRegistered;
 
-    public string FileExtension { get; } = fileExtension;
+    protected IOFileFormat(string name, string fileExtension, Type fileType)
+    {
+        if (!fileType.IsAssignableTo(typeof(IOFile)))
+        {
+            throw new ArgumentException($"Value is not of type {nameof(IOFile)}.", nameof(fileType));
+        }
+
+        Name = name;
+        FileExtension = fileExtension;
+        FileType = fileType;
+    }
+
+    public string Name { get; }
+
+    public string FileExtension { get; }
+
+    public Type FileType { get; }
+
+    /// <summary>
+    /// Call from the IOFile to ensure that converters are registered for this format. The converters depend on the IOFileFormat static Instance field,
+    /// which will not be assigned until the IOFileFormat is fully constructed. Therefore, we cannot register the converters in the constructor and do
+    /// it in the IOFile constructor instead.
+    /// </summary>
+    internal void EnsureConvertersAreRegistered()
+    {
+        if (Interlocked.CompareExchange(ref convertersRegistered, 1, 0) == 0)
+        {
+            IOFileConversion.RegisterConverters(CreateConverters());
+        }
+    }
+
+    [Pure]
+    protected virtual IEnumerable<IOFileConverter> CreateConverters() => [];
 
     [Pure]
     public string GetFilename(string name) => $"{name}.{FileExtension}";
@@ -57,7 +89,7 @@ public abstract class FileFormat(string name, string fileExtension)
     public abstract void Write(IOFile file, Stream stream);
 }
 
-public abstract class FileFormat<TFile>(string name, string fileExtension) : FileFormat(name, fileExtension)
+public abstract class IOFileFormat<TFile>(string name, string fileExtension) : IOFileFormat(name, fileExtension, typeof(TFile))
     where TFile : IOFile
 {
     public sealed override void Write(IOFile file, Stream stream)

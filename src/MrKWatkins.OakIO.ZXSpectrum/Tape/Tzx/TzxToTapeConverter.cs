@@ -1,6 +1,5 @@
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Tape.Sounds;
-using MrKWatkins.OakIO.Wav;
 using OakTapeFile = MrKWatkins.OakIO.Tape.TapeFile;
 using TapeDataBlock = MrKWatkins.OakIO.Tape.DataBlock;
 using TapeLoopBlock = MrKWatkins.OakIO.Tape.LoopBlock;
@@ -8,17 +7,16 @@ using TapePauseBlock = MrKWatkins.OakIO.Tape.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
-public sealed class TzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uint sampleRateHz = 44100) : IFormatConverter<TzxFile, WavFile>
+public sealed class TzxToTapeConverter() : IOFileConverter<TzxFile, OakTapeFile>(TzxFormat.Instance, TapeFormat.Instance)
 {
-    [Pure]
-    public WavFile Convert(TzxFile source)
+    public override OakTapeFile Convert(TzxFile source)
     {
-        var blocks = ConvertBlocks(source.Blocks).ToList();
-        return new OakTapeFile(blocks).ToWav(tStatesPerSecond, sampleRateHz);
+        var blocks = ConvertBlocks(source.Blocks);
+        return new OakTapeFile(blocks);
     }
 
     [Pure]
-    private static IEnumerable<TapeBlock> ConvertBlocks(IReadOnlyList<TzxBlock> tzxBlocks)
+    private static List<TapeBlock> ConvertBlocks(IReadOnlyList<TzxBlock> tzxBlocks)
     {
         var result = new List<TapeBlock>();
         var loopStartIndex = -1;
@@ -38,9 +36,13 @@ public sealed class TzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
                     var loopBlocks = result.Skip(loopStartIndex).ToList();
                     result.RemoveRange(loopStartIndex, loopLength);
                     if (loopCount > 0)
+                    {
                         result.Add(new TapeLoopBlock(loopCount - 1, loopBlocks));
+                    }
                     else
+                    {
                         result.AddRange(loopBlocks);
+                    }
                     loopStartIndex = -1;
                     break;
 
@@ -63,16 +65,20 @@ public sealed class TzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
                 yield return new SoundBlock(flagByte == 0x00 ? Sound.StandardHeaderPureToneAndSync() : Sound.StandardDataPureToneAndSync());
                 yield return TapeDataBlock.Create(standardSpeed.Data.ToArray());
                 if (standardSpeed.Header.PauseAfterBlockMs > 0)
+                {
                     yield return new TapePauseBlock(standardSpeed.Header.PauseAfterBlockMs * 3500);
+                }
                 break;
 
             case TurboSpeedDataBlock turboSpeed:
-                var h = turboSpeed.Header;
-                var usedBits = h.UsedBitsInLastByte == 0 ? 8 : h.UsedBitsInLastByte;
-                yield return new SoundBlock(Sound.PureToneAndSync(h.PulsesInPilotTone, h.TStatesInPilotPulse, h.TStatesInSyncFirstPulse, h.TStatesInSyncSecondPulse));
-                yield return TapeDataBlock.Create(turboSpeed.Data.ToArray(), Sound.Bit(h.TStatesInZeroBitPulse), Sound.Bit(h.TStatesInOneBitPulse), 0, usedBits);
-                if (h.PauseAfterBlockMs > 0)
-                    yield return new TapePauseBlock(h.PauseAfterBlockMs * 3500);
+                var turboSpeedHeader = turboSpeed.Header;
+                var usedBits = turboSpeedHeader.UsedBitsInLastByte == 0 ? 8 : turboSpeedHeader.UsedBitsInLastByte;
+                yield return new SoundBlock(Sound.PureToneAndSync(turboSpeedHeader.PulsesInPilotTone, turboSpeedHeader.TStatesInPilotPulse, turboSpeedHeader.TStatesInSyncFirstPulse, turboSpeedHeader.TStatesInSyncSecondPulse));
+                yield return TapeDataBlock.Create(turboSpeed.Data, Sound.Bit(turboSpeedHeader.TStatesInZeroBitPulse), Sound.Bit(turboSpeedHeader.TStatesInOneBitPulse), 0, usedBits);
+                if (turboSpeedHeader.PauseAfterBlockMs > 0)
+                {
+                    yield return new TapePauseBlock(turboSpeedHeader.PauseAfterBlockMs * 3500);
+                }
                 break;
 
             case PureToneBlock pureTone:
@@ -84,16 +90,20 @@ public sealed class TzxToWavConverter(decimal tStatesPerSecond = 3_500_000m, uin
                 break;
 
             case PureDataBlock pureData:
-                var pd = pureData.Header;
-                var pureUsedBits = pd.UsedBitsInLastByte == 0 ? 8 : pd.UsedBitsInLastByte;
-                yield return TapeDataBlock.Create(pureData.Data.ToArray(), Sound.Bit(pd.TStatesInZeroBitPulse), Sound.Bit(pd.TStatesInOneBitPulse), 0, pureUsedBits);
-                if (pd.PauseAfterBlockMs > 0)
-                    yield return new TapePauseBlock(pd.PauseAfterBlockMs * 3500);
+                var pureDataHeader = pureData.Header;
+                var pureUsedBits = pureDataHeader.UsedBitsInLastByte == 0 ? 8 : pureDataHeader.UsedBitsInLastByte;
+                yield return TapeDataBlock.Create(pureData.Data.ToArray(), Sound.Bit(pureDataHeader.TStatesInZeroBitPulse), Sound.Bit(pureDataHeader.TStatesInOneBitPulse), 0, pureUsedBits);
+                if (pureDataHeader.PauseAfterBlockMs > 0)
+                {
+                    yield return new TapePauseBlock(pureDataHeader.PauseAfterBlockMs * 3500);
+                }
                 break;
 
             case PauseBlock pause:
                 if (pause.Header.PauseMs > 0)
+                {
                     yield return new TapePauseBlock(pause.Header.PauseMs * 3500);
+                }
                 break;
         }
     }

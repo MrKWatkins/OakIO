@@ -1,24 +1,28 @@
 using System.Text;
 using MrKWatkins.BinaryPrimitives;
-using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 using PzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PulseSequenceBlock;
 using TzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx.PulseSequenceBlock;
 using TzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx.PauseBlock;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Conversion;
+namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
 /// <summary>
 /// Converts PZX tape files to TZX format.
 /// </summary>
-public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
+internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
 {
     private const byte TzxMajorVersion = 1;
     private const byte TzxMinorVersion = 20;
     private const ushort MillisecondCycles = 3500;
 
+    internal PzxToTzxConverter()
+        : base(PzxFormat.Instance, TzxFormat.Instance)
+    {
+    }
+
     [Pure]
-    public TzxFile Convert(PzxFile source)
+    public override TzxFile Convert(PzxFile source)
     {
         var header = new TzxHeader(TzxMajorVersion, TzxMinorVersion);
         var blocks = new List<TzxBlock>();
@@ -37,12 +41,13 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             PzxHeaderBlock headerBlock => ConvertHeaderBlock(headerBlock),
             PzxPulseSequenceBlock pulseBlock => ConvertPulseSequenceBlock(pulseBlock),
             DataBlock dataBlock => ConvertDataBlock(dataBlock),
-            Pzx.PauseBlock pauseBlock => ConvertPauseBlock(pauseBlock),
+            PauseBlock pauseBlock => ConvertPauseBlock(pauseBlock),
             StopBlock stopBlock => ConvertStopBlock(stopBlock),
             BrowsePointBlock browseBlock => ConvertBrowsePointBlock(browseBlock),
             _ => []
         };
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertHeaderBlock(PzxHeaderBlock block)
     {
         var entries = block.Info
@@ -90,6 +95,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
             _ => throw new NotSupportedException($"The {nameof(ArchiveInfoType)} {type} is not supported.")
         };
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertPulseSequenceBlock(PzxPulseSequenceBlock block)
     {
         var singlePulses = new List<ushort>();
@@ -109,7 +115,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
                 }
 
                 var splitPulses = SplitDuration(pulse.Duration).ToArray();
-                for (var i = 0; i < pulse.Count; i++)
+                for (var f = 0; f < pulse.Count; f++)
                 {
                     singlePulses.AddRange(splitPulses);
                 }
@@ -138,6 +144,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         }
     }
 
+    [Pure]
     private static IEnumerable<ushort> SplitDuration(uint duration)
     {
         while (duration > ushort.MaxValue)
@@ -152,6 +159,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         }
     }
 
+    [Pure]
     private static IEnumerable<TzxBlock> FlushSinglePulses(List<ushort> pulses)
     {
         foreach (var chunk in pulses.Chunk(255))
@@ -173,6 +181,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         pulses.Clear();
     }
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertDataBlock(DataBlock block)
     {
         var zeroBitSeq = block.ZeroBitPulseSequence;
@@ -200,7 +209,8 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         yield return new PureDataBlock(header, dataStream.ToArray());
     }
 
-    private static IEnumerable<TzxBlock> ConvertPauseBlock(Pzx.PauseBlock block)
+    [Pure]
+    private static IEnumerable<TzxBlock> ConvertPauseBlock(PauseBlock block)
     {
         var durationMs = (ushort)Math.Min(block.Header.Duration / MillisecondCycles, ushort.MaxValue);
 
@@ -209,6 +219,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         yield return new TzxPauseBlock(header);
     }
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertStopBlock(StopBlock block)
     {
         if (block.Header.Only48k)
@@ -221,6 +232,7 @@ public sealed class PzxToTzxConverter : IFormatConverter<PzxFile, TzxFile>
         }
     }
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertBrowsePointBlock(BrowsePointBlock block)
     {
         var textBytes = Encoding.ASCII.GetBytes(block.Text);

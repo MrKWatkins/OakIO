@@ -3,19 +3,25 @@ using System.IO.Compression;
 namespace MrKWatkins.OakIO;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public abstract class IOFile(FileFormat format)
+public abstract class IOFile
 {
-    public FileFormat Format { get; } = format;
+    protected IOFile(IOFileFormat format)
+    {
+        format.EnsureConvertersAreRegistered();
+        Format = format;
+    }
+
+    public IOFileFormat Format { get; }
 
     [Pure]
-    public static IOFile Read([PathReference] string filename, params IReadOnlyList<FileFormat> possibleFormats)
+    public static IOFile Read([PathReference] string filename, params IReadOnlyList<IOFileFormat> possibleFormats)
     {
         using var file = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
         return Read(filename, file, possibleFormats);
     }
 
     [MustUseReturnValue]
-    public static IOFile Read([PathReference] string filename, Stream stream, params IReadOnlyList<FileFormat> possibleFormats)
+    public static IOFile Read([PathReference] string filename, Stream stream, params IReadOnlyList<IOFileFormat> possibleFormats)
     {
         var extension = GetExtension(filename);
         return extension == ".zip"
@@ -24,7 +30,7 @@ public abstract class IOFile(FileFormat format)
     }
 
     [MustUseReturnValue]
-    private static IOFile ReadZip(Stream stream, IReadOnlyList<FileFormat> possibleFormats)
+    private static IOFile ReadZip(Stream stream, IReadOnlyList<IOFileFormat> possibleFormats)
     {
         using var zip = new ZipArchive(stream, ZipArchiveMode.Read, true);
         foreach (var entry in zip.Entries)
@@ -50,11 +56,11 @@ public abstract class IOFile(FileFormat format)
     public byte[] Write() => Format.Write(this);
 
     [Pure]
-    private static FileFormat GetFormat(string extension, IReadOnlyList<FileFormat> possibleFormats) =>
+    private static IOFileFormat GetFormat(string extension, IReadOnlyList<IOFileFormat> possibleFormats) =>
         GetFormatOrNull(extension, possibleFormats) ?? throw new NotSupportedException($"The file extension \"{extension}\" is not supported.");
 
     [Pure]
-    private static FileFormat? GetFormatOrNull(string extension, IReadOnlyList<FileFormat> possibleFormats)
+    private static IOFileFormat? GetFormatOrNull(string extension, IReadOnlyList<IOFileFormat> possibleFormats)
     {
         extension = extension[1..];
         return possibleFormats.FirstOrDefault(f => f.FileExtension == extension);

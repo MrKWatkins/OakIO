@@ -1,17 +1,26 @@
 using System.Text;
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Tape;
+using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
-// TODO: Remove logging.
 // https://github.com/raxoft/pzxtools/blob/master/docs/pzx_format.txt
-public sealed class PzxFormat : TapeFormat<PzxFile>
+public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
 {
     public static readonly PzxFormat Instance = new();
 
     private PzxFormat()
         : base("PZX Tape", "pzx")
     {
+    }
+
+    protected override IEnumerable<IOFileConverter> CreateConverters()
+    {
+        var pzxToTape = new PzxToTapeConverter();
+        yield return new PzxToTzxConverter();
+        yield return pzxToTape;
+        yield return new WavFileViaTapeConverter<PzxFile>(Instance, pzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
     protected override PzxFile ReadTape(Stream stream)

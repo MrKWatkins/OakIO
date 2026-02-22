@@ -2,12 +2,12 @@ using MrKWatkins.BinaryPrimitives;
 
 namespace MrKWatkins.OakIO.Tests;
 
-internal sealed class TestFileFormat : FileFormat<TestIOFile>
+internal sealed class TestIOFileFormat : IOFileFormat<TestIOFile>
 {
-    public static readonly TestFileFormat Instance = new();
+    public static readonly TestIOFileFormat Instance = new();
     public static readonly byte[] Contents = [0x01, 0x02, 0x03, 0x04, 0x05];
 
-    private TestFileFormat()
+    private TestIOFileFormat()
         : base("Test", "tst")
     {
     }

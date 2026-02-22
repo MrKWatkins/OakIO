@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO;
 
-public abstract class Block : FileComponent
+public abstract class Block : IOFileComponent
 {
     protected Block(Header header, Trailer trailer, int length)
         : base(new byte[length])

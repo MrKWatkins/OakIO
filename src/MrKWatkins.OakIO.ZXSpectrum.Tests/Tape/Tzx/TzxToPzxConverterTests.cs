@@ -1,11 +1,10 @@
-using MrKWatkins.OakIO.ZXSpectrum.Tape.Conversion;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 using PzxDataBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.DataBlock;
 using PzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PauseBlock;
 using PzxPulseSequenceBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PulseSequenceBlock;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Conversion;
+namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Tzx;
 
 public sealed class TzxToPzxConverterTests
 {
@@ -28,9 +27,8 @@ public sealed class TzxToPzxConverterTests
     public void Convert_ReturnsValidPzxHeader()
     {
         var tzx = ReadTzx(BuildMinimalTzxHeader());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(1);
         var header = pzx.Blocks[0].Should().BeOfType<PzxHeaderBlock>().Value;
@@ -51,9 +49,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x05, 0x00]); // NumberOfPulses = 5.
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + PULS block.
         pzx.Blocks.Should().HaveCount(2);
@@ -76,9 +73,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0xDF, 0x02]); // 735.
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var pulseBlock = pzx.Blocks[1].Should().BeOfType<PzxPulseSequenceBlock>().Value;
@@ -105,9 +101,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0xAA, 0x55]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + DATA block + PAUS block.
         pzx.Blocks.Should().HaveCount(3);
@@ -116,8 +111,8 @@ public sealed class TzxToPzxConverterTests
         dataBlock.Header.SizeInBits.Should().Equal(16u);
         dataBlock.Header.NumberOfPulseInZeroBitSequence.Should().Equal(2);
         dataBlock.Header.NumberOfPulseInOneBitSequence.Should().Equal(2);
-        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
-        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
+        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(855, 855);
+        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(1710, 1710);
         dataBlock.Header.Tail.Should().Equal(0);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA, 0x55);
 
@@ -141,9 +136,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0xAA, 0x55]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         var dataBlock = pzx.Blocks[1].Should().BeOfType<PzxDataBlock>().Value;
         dataBlock.Header.SizeInBits.Should().Equal(13u); // 8 + 5.
@@ -165,9 +159,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0xFF);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + DATA block (no PAUS since pause = 0).
         pzx.Blocks.Should().HaveCount(2);
@@ -191,9 +184,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0xAA, 0x55]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var dataBlock = pzx.Blocks[1].Should().BeOfType<PzxDataBlock>().Value;
@@ -212,9 +204,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0xF4, 0x01]); // 500ms.
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + PAUS block.
         pzx.Blocks.Should().HaveCount(2);
@@ -234,9 +225,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x00, 0x00]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var stop = pzx.Blocks[1].Should().BeOfType<StopBlock>().Value;
@@ -254,9 +244,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x00, 0x00, 0x00, 0x00]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var stop = pzx.Blocks[1].Should().BeOfType<StopBlock>().Value;
@@ -275,9 +264,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write("Test"u8);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var browse = pzx.Blocks[1].Should().BeOfType<BrowsePointBlock>().Value;
@@ -294,9 +282,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0x22);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Only the PZXT header block.
         pzx.Blocks.Should().HaveCount(1);
@@ -314,9 +301,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write("Hello"u8);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         pzx.Blocks.Should().HaveCount(2);
         var browse = pzx.Blocks[1].Should().BeOfType<BrowsePointBlock>().Value;
@@ -343,9 +329,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write("Gremlin"u8);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         var header = pzx.Blocks[0].Should().BeOfType<PzxHeaderBlock>().Value;
         header.Info.Should().HaveCount(2);
@@ -370,9 +355,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write("Gremlin"u8);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         var header = pzx.Blocks[0].Should().BeOfType<PzxHeaderBlock>().Value;
         header.Info.Should().HaveCount(2);
@@ -395,9 +379,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x00, 0xFF]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + PULS (pilot) + DATA + PAUS.
         pzx.Blocks.Should().HaveCount(4);
@@ -417,8 +400,8 @@ public sealed class TzxToPzxConverterTests
         dataBlock.Header.SizeInBits.Should().Equal(16u);
         dataBlock.Header.NumberOfPulseInZeroBitSequence.Should().Equal(2);
         dataBlock.Header.NumberOfPulseInOneBitSequence.Should().Equal(2);
-        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
-        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
+        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(855, 855);
+        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(1710, 1710);
         dataBlock.Header.Tail.Should().Equal(945);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0x00, 0xFF);
 
@@ -440,9 +423,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0xFF);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         var pilotBlock = pzx.Blocks[1].Should().BeOfType<PzxPulseSequenceBlock>().Value;
         pilotBlock.Pulses[0].Count.Should().Equal(3223);
@@ -469,9 +451,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0xAA);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // PZXT header + PULS (pilot) + DATA + PAUS.
         pzx.Blocks.Should().HaveCount(4);
@@ -487,8 +468,8 @@ public sealed class TzxToPzxConverterTests
 
         var dataBlock = pzx.Blocks[2].Should().BeOfType<PzxDataBlock>().Value;
         dataBlock.Header.SizeInBits.Should().Equal(8u);
-        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
-        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
+        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(855, 855);
+        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(1710, 1710);
         dataBlock.Header.Tail.Should().Equal(0);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA);
     }
@@ -512,9 +493,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0x25);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // PZXT header + 3 × BRWS blocks.
         pzx.Blocks.Should().HaveCount(4);
@@ -579,9 +559,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x00, 0x00, 0x00, 0x00]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Verify all block types are present.
         // PZXT header, PULS (tone+sequence combined), DATA, BRWS(G), PULS(level-change), PAUS, BRWS(Hi), STOP.
@@ -625,9 +604,8 @@ public sealed class TzxToPzxConverterTests
         stream.Write([0x64, 0x00]);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // PZXT header + PULS (tone pulse + 1ms transition pulse) + PAUS.
         pzx.Blocks.Should().HaveCount(3);
@@ -660,9 +638,8 @@ public sealed class TzxToPzxConverterTests
         stream.WriteByte(0xAA);
 
         var tzx = ReadTzx(stream.ToArray());
-        var converter = new TzxToPzxConverter();
 
-        var pzx = converter.Convert(tzx);
+        var pzx = new TzxToPzxConverter().Convert(tzx);
 
         // Expect: PZXT header + DATA (no tail for PureData) + PAUS.
         pzx.Blocks.Should().HaveCount(3);

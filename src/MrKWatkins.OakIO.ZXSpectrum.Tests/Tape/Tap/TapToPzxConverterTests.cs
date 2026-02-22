@@ -11,7 +11,7 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         // PZXT + 3 blocks per TAP block (2 TAP blocks = 7 blocks total)
         pzx.Blocks.Should().HaveCount(7);
@@ -32,7 +32,7 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         var header = (PzxHeaderBlock)pzx.Blocks[0];
         header.Header.MajorVersionNumber.Should().Equal(1);
@@ -44,7 +44,7 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         var headerPuls = (PulseSequenceBlock)pzx.Blocks[1];
         // Header: 8063 x 2168 + sync1 667 + sync2 735 => 3 pulse entries
@@ -60,7 +60,7 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         var dataPuls = (PulseSequenceBlock)pzx.Blocks[4];
         // Data: 3223 x 2168 + sync1 667 + sync2 735 => 3 pulse entries
@@ -74,13 +74,13 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         var dataBlock = (PzxDataBlock)pzx.Blocks[2];
         dataBlock.Header.InitialPulseLevel.Should().BeTrue();
         dataBlock.Header.Tail.Should().Equal(945);
-        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 855, 855 });
-        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(new ushort[] { 1710, 1710 });
+        dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(855, 855);
+        dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(1710, 1710);
 
         // Flag 0x00 + 17 data bytes + checksum = 19 bytes, 152 bits
         dataBlock.Header.SizeInBits.Should().Equal(19u * 8u);
@@ -91,7 +91,7 @@ public sealed class TapToPzxConverterTests
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
 
-        var pzx = TapToPzxConverter.Instance.Convert(tap);
+        var pzx = new TapToPzxConverter().Convert(tap);
 
         var pause = (PauseBlock)pzx.Blocks[3];
         pause.Header.Duration.Should().Equal(3_500_000u);

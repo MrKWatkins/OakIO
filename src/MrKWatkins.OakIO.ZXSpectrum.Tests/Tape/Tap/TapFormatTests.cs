@@ -106,6 +106,19 @@ public sealed class TapFormatTests : TapTestFixture
         actual.Should().SequenceEqual(expected);
     }
 
+    [Test]
+    public void ConvertToWav()
+    {
+        using var z80Test = OpenZ80Test();
+
+        var tap = TapFormat.Instance.Read(z80Test);
+
+        var wav = IOFileConversion.ConvertToWav(tap, 22050);
+
+        wav.SampleRate.Should().Equal(22050u);
+        wav.SampleData.Should().NotBeEmpty();
+    }
+
     [Explicit]
     [TestCaseSource(nameof(ReadTestCases))]
     public void CanRead([PathReference] string path)

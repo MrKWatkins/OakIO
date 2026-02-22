@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
-public sealed class TzxFile : TapeFile
+public sealed class TzxFile : ZXSpectrumTapeFile
 {
     internal TzxFile(TzxHeader header, IReadOnlyList<TzxBlock> blocks)
         : base(TzxFormat.Instance)

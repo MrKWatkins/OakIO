@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 
-public sealed class NexFile : SnapshotFile
+public sealed class NexFile : ZXSpectrumSnapshotFile
 {
     private readonly NexRegisterSnapshot registers;
 

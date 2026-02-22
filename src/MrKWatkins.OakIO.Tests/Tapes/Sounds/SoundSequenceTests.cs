@@ -7,7 +7,7 @@ public sealed class SoundSequenceTests
     [Test]
     public void Constructor_EmptySoundsThrows()
     {
-        AssertThat.Invoking(() => new SoundSequence([])).Should().Throw<ArgumentException>();
+        AssertThat.Invoking(() => new SoundSequence()).Should().Throw<ArgumentException>();
     }
 
     [Test]

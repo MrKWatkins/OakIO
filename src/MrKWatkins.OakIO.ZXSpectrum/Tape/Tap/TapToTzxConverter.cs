@@ -3,16 +3,15 @@ using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-public sealed class TapToTzxConverter : IFormatConverter<TapFile, TzxFile>
+public sealed class TapToTzxConverter : IOFileConverter<TapFile, TzxFile>
 {
-    public static readonly TapToTzxConverter Instance = new();
-
-    private TapToTzxConverter()
+    internal TapToTzxConverter()
+        : base(TapFormat.Instance, TzxFormat.Instance)
     {
     }
 
     [Pure]
-    public TzxFile Convert(TapFile source)
+    public override TzxFile Convert(TapFile source)
     {
         var header = new TzxHeader(1, 20);
         var blocks = source.Blocks.Select(ConvertBlock).ToList();

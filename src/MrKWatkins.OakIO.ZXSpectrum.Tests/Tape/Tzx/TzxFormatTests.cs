@@ -148,7 +148,7 @@ public sealed class TzxFormatTests
         pulseSequence.Header.Type.Should().Equal(TzxBlockType.PulseSequence);
         pulseSequence.Header.NumberOfPulses.Should().Equal(2);
         pulseSequence.Header.BlockLength.Should().Equal(4);
-        pulseSequence.Pulses.ToArray().Should().SequenceEqual(new ushort[] { 667, 735 });
+        pulseSequence.Pulses.ToArray().Should().SequenceEqual(667, 735);
         pulseSequence.ToString().Should().Contain("PulseSequence");
 
         // Pure Data.
@@ -298,6 +298,31 @@ public sealed class TzxFormatTests
 
         using var output = new MemoryStream();
         AssertThat.Invoking(() => TzxFormat.Instance.Write(tapFile, output)).Should().Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void ConvertToWav()
+    {
+        using var stream = new MemoryStream();
+
+        // TZX Header.
+        stream.Write("ZXTape!\x1A"u8);
+        stream.WriteByte(0x01);
+        stream.WriteByte(0x14);
+
+        // Standard Speed Data (0x10): pause=1000ms, data length=3, data=[0xAA, 0xBB, 0xCC].
+        stream.WriteByte(0x10);
+        stream.Write([0xE8, 0x03]); // Pause 1000ms LE.
+        stream.Write([0x03, 0x00]); // Data length 3 LE.
+        stream.Write([0xAA, 0xBB, 0xCC]);
+
+        stream.Position = 0;
+        var tzx = TzxFormat.Instance.Read(stream);
+
+        var wav = IOFileConversion.ConvertToWav(tzx, 22050);
+
+        wav.SampleRate.Should().Equal(22050u);
+        wav.SampleData.Should().NotBeEmpty();
     }
 
     [Explicit]

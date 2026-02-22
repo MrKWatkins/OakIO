@@ -1,6 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
-public abstract class Z80File : SnapshotFile
+public abstract class Z80File : ZXSpectrumSnapshotFile
 {
     private protected Z80File(Z80V1Header header)
         : base(Z80Format.Instance)
