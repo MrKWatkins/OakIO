@@ -15,7 +15,7 @@ describe('App', () => {
 
   it('renders the file picker label', () => {
     render(<App />);
-    expect(screen.getByText(/Select a ZX Spectrum file/)).toBeInTheDocument();
+    expect(screen.getByText('File:')).toBeInTheDocument();
   });
 
   it('has a file input accepting ZX Spectrum formats', () => {

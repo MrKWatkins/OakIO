@@ -361,12 +361,12 @@ public sealed class InfoCommand
         props.Add(new InfoProperty("Joystick", file.Header.Joystick.ToString()));
         props.Add(new InfoProperty("Data Compressed", file.Header.DataIsCompressed.ToString().ToLowerInvariant(), "boolean"));
 
-        return new InfoSection("Hardware", "file", Properties: props);
+        return new InfoSection("Hardware", "content", Properties: props);
     }
 
     [Pure]
     private static InfoSection BuildSnaHardwareSection(SnaFile file) =>
-        new("Hardware", "file", Properties:
+        new("Hardware", "content", Properties:
         [
             new InfoProperty("Border Colour", file.Header.BorderColour.ToString(), "colour"),
             new InfoProperty("Interrupt Mode", file.Header.InterruptMode.ToString(NumberFormatInfo.InvariantInfo), "decimal"),

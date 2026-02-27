@@ -1,11 +1,12 @@
 import { createRoot } from 'react-dom/client';
-import { Converter } from './converter';
+import App from '../../web/src/App';
+import './converter.css';
 
 const init = () => {
   const container = document.getElementById('oakio-converter');
   if (container) {
     const root = createRoot(container);
-    root.render(<Converter />);
+    root.render(<App showTitle={false} />);
   }
 };
 

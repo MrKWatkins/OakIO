@@ -21,3 +21,15 @@ jobs:
         with:
           name: MrKWatkins.OakIO
           directory: src
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build and Test Web
+        run: |
+          cd web
+          npm ci
+          npm test
+          npm run build

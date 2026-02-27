@@ -17,12 +17,14 @@ interface OakIOExports {
 let exportsPromise: Promise<OakIOExports> | null = null;
 
 async function initRuntime(): Promise<OakIOExports> {
-  const dotnetUrl = '/dotnet/dotnet.js';
+  // Resolve dotnet.js relative to this module so the URL works at any base path
+  // (e.g. GitHub Pages subdirectory as well as the standalone app at root).
+  const dotnetUrl = /* @vite-ignore */ new URL('../../dotnet/dotnet.js', import.meta.url).href;
   const { dotnet } = await import(/* @vite-ignore */ dotnetUrl) as typeof DotnetModule;
   const { getAssemblyExports, getConfig } = await dotnet
     .withDiagnosticTracing(false)
     .withApplicationArgumentsFromQuery()
-    .withConfig({ globalizationMode: 'invariant' })
+    .withConfig({ globalizationMode: 'invariant' as DotnetModule.GlobalizationMode })
     .create();
 
   const config = getConfig();

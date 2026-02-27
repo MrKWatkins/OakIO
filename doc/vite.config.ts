@@ -4,6 +4,16 @@ import { resolve } from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    resolve: {
+        // Force all React imports (including those from web/src/ files outside this
+        // root) to resolve to a single copy, preventing "duplicate React" errors.
+        alias: {
+            'react': resolve(__dirname, 'node_modules/react'),
+            'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+            'react/jsx-runtime': resolve(__dirname, 'node_modules/react/jsx-runtime'),
+            'react-dom/client': resolve(__dirname, 'node_modules/react-dom/client'),
+        },
+    },
     build: {
         outDir: resolve(__dirname, 'docs/assets/javascripts'),
         emptyOutDir: true,

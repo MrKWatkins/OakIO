@@ -27,8 +27,15 @@
       // Skip cache-only requests that would fail a real fetch.
       if (e.request.cache === 'only-if-cached' && e.request.mode !== 'same-origin') return;
 
+      // On localhost, bypass HTTP cache for sub-resources so dev rebuilds are
+      // always visible. Navigate requests can't be reconstructed this way.
+      const isLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+      const fetchRequest = (isLocal && e.request.mode !== 'navigate')
+        ? new Request(e.request, { cache: 'no-cache' })
+        : e.request;
+
       e.respondWith(
-        fetch(e.request)
+        fetch(fetchRequest)
           .then(response => {
             const headers = new Headers(response.headers);
             // credentialless allows cross-origin subresources that lack CORP headers
