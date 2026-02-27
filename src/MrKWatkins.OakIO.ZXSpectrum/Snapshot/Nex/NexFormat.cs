@@ -1,7 +1,13 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 
+/// <summary>
+/// The NEX snapshot file format for the ZX Spectrum Next.
+/// </summary>
 public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
 {
+    /// <summary>
+    /// The singleton instance of the NEX format.
+    /// </summary>
     public static readonly NexFormat Instance = new();
 
     private NexFormat()
@@ -9,6 +15,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
     {
     }
 
+    /// <inheritdoc />
     protected override NexFile ReadSnapshot(Stream stream)
     {
         var headerBytes = new byte[NexHeader.Size];
@@ -140,6 +147,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
         return banks;
     }
 
+    /// <inheritdoc />
     protected override void Write(NexFile file, Stream stream)
     {
         stream.Write(file.Header.AsReadOnlySpan());

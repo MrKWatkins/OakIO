@@ -6,8 +6,12 @@ using TapePauseBlock = MrKWatkins.OakIO.Tape.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
+/// <summary>
+/// Converts TAP files to the generic tape format.
+/// </summary>
 public sealed class TapToTapeConverter() : IOFileConverter<TapFile, OakTapeFile>(TapFormat.Instance, TapeFormat.Instance)
 {
+    /// <inheritdoc />
     public override OakTapeFile Convert(TapFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();

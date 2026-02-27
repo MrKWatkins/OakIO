@@ -3,6 +3,9 @@ using MrKWatkins.BinaryPrimitives;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
+/// <summary>
+/// A version 1 Z80 snapshot file.
+/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class Z80V1File : Z80File<Z80V1Header>
 {
@@ -13,6 +16,12 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
         this.compressedData = compressedData;
     }
 
+    /// <summary>
+    /// Creates a new V1 Z80 snapshot file for a 48K Spectrum from the given memory.
+    /// </summary>
+    /// <param name="memory">The 64K memory contents.</param>
+    /// <param name="compress"><c>true</c> to compress the data; <c>false</c> otherwise.</param>
+    /// <returns>A new <see cref="Z80V1File" />.</returns>
     [Pure]
     public static Z80V1File Create48k(Span<byte> memory, bool compress = true)
     {
@@ -37,8 +46,14 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
         return compressedStream.ToArray();
     }
 
+    /// <summary>
+    /// Gets the compressed snapshot data.
+    /// </summary>
     public ReadOnlySpan<byte> CompressedData => compressedData;
 
+    /// <summary>
+    /// Gets the uncompressed snapshot data.
+    /// </summary>
     public ReadOnlySpan<byte> UncompressedData
     {
         get
@@ -54,11 +69,13 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
         }
     }
 
+    /// <inheritdoc />
     public override bool TryLoadInto(Span<byte> memory)
     {
         UncompressedData.CopyTo(memory[16384..]);
         return true;
     }
 
+    /// <inheritdoc />
     public override RegisterSnapshot Registers => Header.Registers;
 }

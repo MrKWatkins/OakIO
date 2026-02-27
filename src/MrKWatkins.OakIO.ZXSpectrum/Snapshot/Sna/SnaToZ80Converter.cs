@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 
+/// <summary>
+/// Converts SNA snapshot files to Z80 format.
+/// </summary>
 public sealed class SnaToZ80Converter : IOFileConverter<SnaFile, Z80.Z80File>
 {
     internal SnaToZ80Converter()
@@ -7,6 +10,7 @@ public sealed class SnaToZ80Converter : IOFileConverter<SnaFile, Z80.Z80File>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     public override Z80.Z80File Convert(SnaFile source)
     {

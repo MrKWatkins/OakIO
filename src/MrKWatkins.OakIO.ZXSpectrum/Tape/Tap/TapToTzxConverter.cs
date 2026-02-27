@@ -3,6 +3,9 @@ using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
+/// <summary>
+/// Converts TAP files to TZX format.
+/// </summary>
 public sealed class TapToTzxConverter : IOFileConverter<TapFile, TzxFile>
 {
     internal TapToTzxConverter()
@@ -10,6 +13,7 @@ public sealed class TapToTzxConverter : IOFileConverter<TapFile, TzxFile>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     public override TzxFile Convert(TapFile source)
     {

@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// Header for a TZX group start block.
+/// </summary>
 public sealed class GroupStartHeader : TzxBlockHeader
 {
     private const int Size = 1;
@@ -14,5 +17,6 @@ public sealed class GroupStartHeader : TzxBlockHeader
     {
     }
 
+    /// <inheritdoc />
     public override int BlockLength => GetByte(0);
 }

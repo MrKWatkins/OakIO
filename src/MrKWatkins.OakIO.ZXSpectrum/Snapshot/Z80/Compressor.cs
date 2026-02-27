@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
+/// <summary>
+/// Compresses data using the Z80 snapshot compression format.
+/// </summary>
 public sealed class Compressor
 {
     private readonly bool endMarker;

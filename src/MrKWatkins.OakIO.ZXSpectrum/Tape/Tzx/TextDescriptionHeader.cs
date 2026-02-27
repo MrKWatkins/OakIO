@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// Header for a TZX text description block.
+/// </summary>
 public sealed class TextDescriptionHeader : TzxBlockHeader
 {
     private const int Size = 1;
@@ -19,5 +22,6 @@ public sealed class TextDescriptionHeader : TzxBlockHeader
     {
     }
 
+    /// <inheritdoc />
     public override int BlockLength => GetByte(0);
 }

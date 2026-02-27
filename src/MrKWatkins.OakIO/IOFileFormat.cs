@@ -2,10 +2,19 @@ using System.IO.Compression;
 
 namespace MrKWatkins.OakIO;
 
+/// <summary>
+/// Base class for file formats, providing information about the format and methods for reading and writing files.
+/// </summary>
 public abstract class IOFileFormat
 {
     private int convertersRegistered;
 
+    /// <summary>
+    /// Initialises a new instance of the <see cref="IOFileFormat" /> class.
+    /// </summary>
+    /// <param name="name">The display name of the format.</param>
+    /// <param name="fileExtension">The file extension for the format, without a leading dot.</param>
+    /// <param name="fileType">The type of <see cref="IOFile" /> for this format.</param>
     protected IOFileFormat(string name, string fileExtension, Type fileType)
     {
         if (!fileType.IsAssignableTo(typeof(IOFile)))
@@ -18,14 +27,29 @@ public abstract class IOFileFormat
         FileType = fileType;
     }
 
+    /// <summary>
+    /// Gets the display name of this format.
+    /// </summary>
     public string Name { get; }
 
+    /// <summary>
+    /// Gets the file extension for this format, without a leading dot.
+    /// </summary>
     public string FileExtension { get; }
 
+    /// <summary>
+    /// Gets the type of <see cref="IOFile" /> for this format.
+    /// </summary>
     public Type FileType { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this format supports reading.
+    /// </summary>
     public virtual bool CanRead => true;
 
+    /// <summary>
+    /// Gets a value indicating whether this format supports writing.
+    /// </summary>
     public virtual bool CanWrite => true;
 
     /// <summary>
@@ -41,12 +65,26 @@ public abstract class IOFileFormat
         }
     }
 
+    /// <summary>
+    /// Creates the converters for this format.
+    /// </summary>
+    /// <returns>The converters for this format.</returns>
     [Pure]
     protected virtual IEnumerable<IOFileConverter> CreateConverters() => [];
 
+    /// <summary>
+    /// Gets the filename for a file of this format with the specified name.
+    /// </summary>
+    /// <param name="name">The name of the file without extension.</param>
+    /// <returns>The filename with extension.</returns>
     [Pure]
     public string GetFilename(string name) => $"{name}.{FileExtension}";
 
+    /// <summary>
+    /// Reads a file from a byte array.
+    /// </summary>
+    /// <param name="bytes">The byte array to read from.</param>
+    /// <returns>The file that was read.</returns>
     [Pure]
     public IOFile Read(byte[] bytes)
     {
@@ -54,11 +92,29 @@ public abstract class IOFileFormat
         return Read(stream);
     }
 
+    /// <summary>
+    /// Reads a file from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <returns>The file that was read.</returns>
     [MustUseReturnValue]
     public abstract IOFile Read(Stream stream);
 
+    /// <summary>
+    /// Writes a file to a directory with the specified name.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="directory">The directory to write the file to.</param>
+    /// <param name="name">The name of the file without extension.</param>
+    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
     public void Write(IOFile file, [PathReference] string directory, string name, bool zipped = false) => Write(file, Path.Combine(directory, GetFilename(name)), zipped);
 
+    /// <summary>
+    /// Writes a file to disk.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="filePath">The path to write the file to.</param>
+    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
     public void Write(IOFile file, [PathReference] string filePath, bool zipped = false)
     {
         var fileInfo = new FileInfo(filePath);
@@ -82,6 +138,11 @@ public abstract class IOFileFormat
         }
     }
 
+    /// <summary>
+    /// Writes a file to a byte array.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <returns>A byte array containing the file data.</returns>
     [Pure]
     public byte[] Write(IOFile file)
     {
@@ -90,12 +151,22 @@ public abstract class IOFileFormat
         return memoryStream.ToArray();
     }
 
+    /// <summary>
+    /// Writes a file to a stream.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="stream">The stream to write to.</param>
     public abstract void Write(IOFile file, Stream stream);
 }
 
+/// <summary>
+/// Base class for file formats with a strongly-typed file type.
+/// </summary>
+/// <typeparam name="TFile">The type of file for this format.</typeparam>
 public abstract class IOFileFormat<TFile>(string name, string fileExtension) : IOFileFormat(name, fileExtension, typeof(TFile))
     where TFile : IOFile
 {
+    /// <inheritdoc />
     public sealed override void Write(IOFile file, Stream stream)
     {
         if (file is not TFile typedFile)
@@ -106,5 +177,10 @@ public abstract class IOFileFormat<TFile>(string name, string fileExtension) : I
         Write(typedFile, stream);
     }
 
+    /// <summary>
+    /// Writes a strongly-typed file to a stream.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="stream">The stream to write to.</param>
     protected abstract void Write(TFile file, Stream stream);
 }

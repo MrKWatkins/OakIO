@@ -2,8 +2,15 @@ using System.Text;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// A TZX archive info block containing metadata about the tape.
+/// </summary>
 public sealed class ArchiveInfoBlock : TzxBlock<ArchiveInfoHeader>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArchiveInfoBlock"/> class by reading from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
     public ArchiveInfoBlock(Stream stream)
         : base(new ArchiveInfoHeader(stream), stream)
     {
@@ -16,6 +23,9 @@ public sealed class ArchiveInfoBlock : TzxBlock<ArchiveInfoHeader>
         Entries = GetEntries(Header.NumberOfTextStrings, AsSpan());
     }
 
+    /// <summary>
+    /// Gets the archive info entries in this block.
+    /// </summary>
     public IReadOnlyList<ArchiveInfoEntry> Entries { get; }
 
     [Pure]

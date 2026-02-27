@@ -5,8 +5,14 @@ using PzxPauseBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
+/// <summary>
+/// Converts TAP files to PZX format.
+/// </summary>
 public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
 {
+    /// <summary>
+    /// A default instance of the converter.
+    /// </summary>
     public static readonly TapToPzxConverter Default = new();
 
     private const ushort PilotPulseLength = 2168;
@@ -24,6 +30,7 @@ public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     public override PzxFile Convert(TapFile source)
     {

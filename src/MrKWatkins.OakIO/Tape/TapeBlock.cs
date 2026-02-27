@@ -1,5 +1,9 @@
 namespace MrKWatkins.OakIO.Tape;
 
+/// <summary>
+/// Base class for a block on a tape.
+/// </summary>
+/// <param name="initialSignal">The initial signal level, or <c>null</c> to continue from the previous block.</param>
 public abstract class TapeBlock(bool? initialSignal = null)
 {
     internal bool? InitialSignal { get; } = initialSignal;

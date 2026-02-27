@@ -43,6 +43,15 @@ The test project uses the NUnit runner with Microsoft Testing Platform (`EnableN
 
 ## Binary I/O
 
+## Documentation
+
+- Documentation is generated using MKDocs and is found in the `doc` folder.
+- Documentation in `doc/docs/API` is generated from the assemblies using the sesharp tool from the root of the repository:
+  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
+  - `sesharp src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
+- Documentation in the root of `doc/docs` is handwritten.
+- Handwritten documentation should link to the generated API documentation and Microsoft's API docs (https://learn.microsoft.com/en-us/dotnet/api/) for types, members, etc.
+
 ## Code Conventions
 
 - Use `MrKWatkins.BinaryPrimitives` extension methods for binary I/O (`stream.WriteWord()`, `stream.WriteUInt24()`, `stream.WriteUInt32()`, `array.SetWord()`, `array.SetUInt32()`, etc.). Do not create custom binary write helpers.

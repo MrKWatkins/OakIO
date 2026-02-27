@@ -2,6 +2,9 @@ using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO;
 
+/// <summary>
+/// Provides static methods to convert between file formats using registered converters.
+/// </summary>
 public static class IOFileConversion
 {
     private static readonly Lock Lock = new();
@@ -31,6 +34,12 @@ public static class IOFileConversion
         }
     }
 
+    /// <summary>
+    /// Converts a file to the specified target file type.
+    /// </summary>
+    /// <typeparam name="TTarget">The target file type.</typeparam>
+    /// <param name="source">The source file to convert.</param>
+    /// <returns>The converted file.</returns>
     [Pure]
     public static TTarget Convert<TTarget>(IOFile source)
         where TTarget : IOFile
@@ -45,6 +54,12 @@ public static class IOFileConversion
         return (TTarget)converter.Convert(source);
     }
 
+    /// <summary>
+    /// Converts a file to the specified target format.
+    /// </summary>
+    /// <param name="source">The source file to convert.</param>
+    /// <param name="targetFormat">The target format to convert to.</param>
+    /// <returns>The converted file.</returns>
     [Pure]
     public static IOFile Convert(IOFile source, IOFileFormat targetFormat)
     {
@@ -58,6 +73,12 @@ public static class IOFileConversion
         return converter.Convert(source);
     }
 
+    /// <summary>
+    /// Converts a file to the specified target type.
+    /// </summary>
+    /// <param name="source">The source file to convert.</param>
+    /// <param name="targetType">The target <see cref="IOFile" /> type to convert to.</param>
+    /// <returns>The converted file.</returns>
     [Pure]
     public static IOFile Convert(IOFile source, Type targetType)
     {
@@ -76,6 +97,12 @@ public static class IOFileConversion
         return converter.Convert(source);
     }
 
+    /// <summary>
+    /// Converts a file to WAV format with an optional custom sample rate.
+    /// </summary>
+    /// <param name="source">The source file to convert.</param>
+    /// <param name="sampleRateHz">The sample rate in Hz.</param>
+    /// <returns>The converted WAV file.</returns>
     [Pure]
     public static WavFile ConvertToWav(IOFile source, uint sampleRateHz = IWavFileConverter.DefaultSampleRateHz)
     {
@@ -91,6 +118,11 @@ public static class IOFileConversion
             : throw new InvalidOperationException($"Converter for {source.Format.Name} to {nameof(WavFile)} does not support custom sample rates.");
     }
 
+    /// <summary>
+    /// Gets the formats that the specified source format can be converted to.
+    /// </summary>
+    /// <param name="sourceFormat">The source format.</param>
+    /// <returns>The list of supported target formats.</returns>
     [Pure]
     public static IReadOnlyList<IOFileFormat> GetSupportedConversionFormats(IOFileFormat sourceFormat)
     {

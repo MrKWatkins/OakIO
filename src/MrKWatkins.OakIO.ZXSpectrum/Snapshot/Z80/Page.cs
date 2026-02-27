@@ -3,6 +3,9 @@ using MrKWatkins.BinaryPrimitives;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
+/// <summary>
+/// A memory page block in a V2 or V3 Z80 snapshot file.
+/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class Page : Block<PageHeader>
 {
@@ -16,6 +19,9 @@ public sealed class Page : Block<PageHeader>
     {
     }
 
+    /// <summary>
+    /// Gets the uncompressed data for this page.
+    /// </summary>
     public IReadOnlyList<byte> UncompressedData
     {
         get
@@ -31,12 +37,19 @@ public sealed class Page : Block<PageHeader>
         }
     }
 
+    /// <inheritdoc />
     public override bool TryLoadInto(Span<byte> memory)
     {
         UncompressedData.CopyTo(memory[Header.Location..]);
         return true;
     }
 
+    /// <summary>
+    /// Creates the three memory pages for a 48K Spectrum from the given memory.
+    /// </summary>
+    /// <param name="memory">The 64K memory contents.</param>
+    /// <param name="compress"><c>true</c> to compress the page data; <c>false</c> otherwise.</param>
+    /// <returns>A list of three pages covering the 48K memory.</returns>
     [Pure]
     public static IReadOnlyList<Page> Create48k(Span<byte> memory, bool compress = true) =>
     [

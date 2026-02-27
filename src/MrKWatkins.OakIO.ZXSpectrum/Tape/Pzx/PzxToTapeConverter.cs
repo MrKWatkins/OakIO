@@ -6,8 +6,12 @@ using TapePauseBlock = MrKWatkins.OakIO.Tape.PauseBlock;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
+/// <summary>
+/// Converts a <see cref="PzxFile" /> to a <see cref="OakTapeFile" />.
+/// </summary>
 public sealed class PzxToTapeConverter() : IOFileConverter<PzxFile, OakTapeFile>(PzxFormat.Instance, TapeFormat.Instance)
 {
+    /// <inheritdoc />
     public override OakTapeFile Convert(PzxFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\MrKWatkins.OakIO.Commands\MrKWatkins.OakIO.Commands.csproj" />

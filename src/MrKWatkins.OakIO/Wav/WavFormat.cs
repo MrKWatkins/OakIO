@@ -2,10 +2,16 @@ using System.Text;
 
 namespace MrKWatkins.OakIO.Wav;
 
+/// <summary>
+/// File format for WAV audio files.
+/// </summary>
 public sealed class WavFormat : IOFileFormat<WavFile>
 {
     private const int HeaderSize = 44;
 
+    /// <summary>
+    /// The singleton instance of the WAV file format.
+    /// </summary>
     public static readonly WavFormat Instance = new();
 
     private WavFormat()
@@ -13,6 +19,7 @@ public sealed class WavFormat : IOFileFormat<WavFile>
     {
     }
 
+    /// <inheritdoc />
     public override WavFile Read(Stream stream)
     {
         using var reader = new BinaryReader(stream, Encoding.ASCII, true);
@@ -79,6 +86,7 @@ public sealed class WavFormat : IOFileFormat<WavFile>
         return new WavFile(sampleRate, sampleData);
     }
 
+    /// <inheritdoc />
     protected override void Write(WavFile file, Stream stream)
     {
         if (stream.CanSeek)

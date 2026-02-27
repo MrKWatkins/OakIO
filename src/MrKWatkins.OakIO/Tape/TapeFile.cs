@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.Tape;
 
+/// <summary>
+/// A generic tape file composed of a sequence of blocks.
+/// </summary>
 public sealed class TapeFile : IOFile
 {
     private readonly IReadOnlyList<TapeBlock> allBlocks;
@@ -14,6 +17,9 @@ public sealed class TapeFile : IOFile
         allBlocks = withFinished;
     }
 
+    /// <summary>
+    /// Gets the blocks in the tape file.
+    /// </summary>
     public IReadOnlyList<TapeBlock> Blocks { get; }
 
     internal int Position { get; private set; }

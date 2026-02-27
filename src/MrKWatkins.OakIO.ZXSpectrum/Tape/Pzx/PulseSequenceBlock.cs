@@ -2,8 +2,15 @@ using System.Runtime.InteropServices;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
+/// <summary>
+/// A PZX block containing a raw pulse sequence.
+/// </summary>
 public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
 {
+    /// <summary>
+    /// Initialises a new instance of the <see cref="PulseSequenceBlock" /> class from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
     public PulseSequenceBlock(Stream stream) : base(new PulseSequenceHeader(stream), stream)
     {
         Pulses = ReadPulses();
@@ -14,8 +21,12 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
         Pulses = ReadPulses();
     }
 
+    /// <summary>
+    /// Gets the pulses in this block.
+    /// </summary>
     public IReadOnlyList<Pulse> Pulses { get; }
 
+    /// <inheritdoc />
     public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses)}";
 
     private List<Pulse> ReadPulses()

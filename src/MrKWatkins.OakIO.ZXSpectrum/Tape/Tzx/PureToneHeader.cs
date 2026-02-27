@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// Header for a TZX pure tone block.
+/// </summary>
 public sealed class PureToneHeader : TzxBlockHeader
 {
     private const int Size = 4;
@@ -19,9 +22,16 @@ public sealed class PureToneHeader : TzxBlockHeader
     {
     }
 
+    /// <summary>
+    /// Gets the length of each pulse in T-states.
+    /// </summary>
     public ushort LengthOfPulse => GetWord(0);
 
+    /// <summary>
+    /// Gets the number of pulses in the tone.
+    /// </summary>
     public ushort NumberOfPulses => GetWord(2);
 
+    /// <inheritdoc />
     public override string ToString() => $"{Type}: {NumberOfPulses} x {LengthOfPulse} T-States";
 }

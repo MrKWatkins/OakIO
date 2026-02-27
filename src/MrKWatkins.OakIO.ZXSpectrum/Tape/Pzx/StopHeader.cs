@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
+/// <summary>
+/// The header for a <see cref="StopBlock" />.
+/// </summary>
 public sealed class StopHeader : PzxBlockHeader
 {
     internal StopHeader()
@@ -17,6 +20,9 @@ public sealed class StopHeader : PzxBlockHeader
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the stop applies only to 48K mode.
+    /// </summary>
     // ReSharper disable once InconsistentNaming
     public bool Only48k => GetWord(StartIndex) == 1;
 }

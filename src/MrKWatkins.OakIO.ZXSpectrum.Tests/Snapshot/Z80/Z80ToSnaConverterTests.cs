@@ -36,26 +36,26 @@ public sealed class Z80ToSnaConverterTests
         sna.Should().BeOfType<Sna48kFile>();
 
         sna.Header.BorderColour.Should().Equal(ZXColour.Blue);
-        sna.Header.InterruptMode.Should().Equal((byte)1);
+        sna.Header.InterruptMode.Should().Equal(1);
         sna.Header.IFF2.Should().BeTrue();
 
-        sna.Registers.AF.Should().Equal((ushort)0x1234);
-        sna.Registers.BC.Should().Equal((ushort)0x5678);
-        sna.Registers.DE.Should().Equal((ushort)0x9ABC);
-        sna.Registers.HL.Should().Equal((ushort)0xDEF0);
-        sna.Registers.IX.Should().Equal((ushort)0x1111);
-        sna.Registers.IY.Should().Equal((ushort)0x2222);
-        sna.Registers.PC.Should().Equal((ushort)0x8000);
-        sna.Registers.SP.Should().Equal((ushort)0xFF00);
-        sna.Registers.IR.Should().Equal((ushort)0x3F00);
-        sna.Registers.Shadow.AF.Should().Equal((ushort)0xAAAA);
-        sna.Registers.Shadow.BC.Should().Equal((ushort)0xBBBB);
-        sna.Registers.Shadow.DE.Should().Equal((ushort)0xCCCC);
-        sna.Registers.Shadow.HL.Should().Equal((ushort)0xDDDD);
+        sna.Registers.AF.Should().Equal(0x1234);
+        sna.Registers.BC.Should().Equal(0x5678);
+        sna.Registers.DE.Should().Equal(0x9ABC);
+        sna.Registers.HL.Should().Equal(0xDEF0);
+        sna.Registers.IX.Should().Equal(0x1111);
+        sna.Registers.IY.Should().Equal(0x2222);
+        sna.Registers.PC.Should().Equal(0x8000);
+        sna.Registers.SP.Should().Equal(0xFF00);
+        sna.Registers.IR.Should().Equal(0x3F00);
+        sna.Registers.Shadow.AF.Should().Equal(0xAAAA);
+        sna.Registers.Shadow.BC.Should().Equal(0xBBBB);
+        sna.Registers.Shadow.DE.Should().Equal(0xCCCC);
+        sna.Registers.Shadow.HL.Should().Equal(0xDDDD);
 
         var snaMemory = new byte[65536];
         sna.TryLoadInto(snaMemory).Should().BeTrue();
-        snaMemory[0x8000].Should().Equal((byte)0xF3);
-        snaMemory[0x8001].Should().Equal((byte)0xAF);
+        snaMemory[0x8000].Should().Equal(0xF3);
+        snaMemory[0x8001].Should().Equal(0xAF);
     }
 }

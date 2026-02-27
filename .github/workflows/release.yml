@@ -20,9 +20,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Publish to NuGet
-        uses: MrKWatkins/nuget-publish@main
+      - name: Install WASM Workload
+        run: dotnet workload install wasm-tools
+
+      #- name: Publish to NuGet
+      #  uses: MrKWatkins/nuget-publish@main
+      #  with:
+      #    directory: src
+      #    nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+      #    version: ${{ inputs.version }}
+
+      - name: Build
+        uses: MrKWatkins/dotnet-build@main
         with:
+          name: MrKWatkins.OakIO
           directory: src
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          version: ${{ inputs.version }}
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Install Sesharp
+        run: dotnet tool install MrKWatkins.Sesharp.Tool
+
+      - name: Generate API Docs - MrKWatkins.OakIO
+        run: dotnet sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: doc/mkdocs.yml
+          REQUIREMENTS: doc/requirements.txt

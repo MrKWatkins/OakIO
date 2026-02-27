@@ -21,7 +21,7 @@
         <Using Include="JetBrains.Annotations"/>
     </ItemGroup>
 
-    <ItemGroup Condition="!$(MSBuildProjectName.EndsWith('Tests'))">
+    <ItemGroup Condition="!$(MSBuildProjectName.EndsWith('Tests')) And !$(MSBuildProjectName.EndsWith('Testing'))">
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>$(AssemblyName).Tests</_Parameter1>
         </AssemblyAttribute>
@@ -50,8 +50,7 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
-    <PropertyGroup Condition="!$(MSBuildProjectName.EndsWith('Tests')) And !$(MSBuildProjectName.EndsWith('Testing'))">
-        <IsPackable>true</IsPackable>
+    <PropertyGroup Condition="'$(IsPackable)' == 'true'">
         <Title>$(MSBuildProjectName)</Title>
         <Authors>Kevin Watkins</Authors>
         <Copyright>Kevin Watkins 2026</Copyright>
@@ -64,7 +63,7 @@
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
-    <ItemGroup Condition="!$(MSBuildProjectName.EndsWith('Tests')) And !$(MSBuildProjectName.EndsWith('Testing'))">
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
         <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
         <Content Include="..\Icon.png" Pack="true" PackagePath="\">
             <Link>Icon.png</Link>

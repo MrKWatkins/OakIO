@@ -2,17 +2,33 @@ using System.IO.Compression;
 
 namespace MrKWatkins.OakIO;
 
+/// <summary>
+/// Base class for a file of a given format.
+/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public abstract class IOFile
 {
+    /// <summary>
+    /// Initialises a new instance of the <see cref="IOFile" /> class.
+    /// </summary>
+    /// <param name="format">The format of the file.</param>
     protected IOFile(IOFileFormat format)
     {
         format.EnsureConvertersAreRegistered();
         Format = format;
     }
 
+    /// <summary>
+    /// Gets the format of this file.
+    /// </summary>
     public IOFileFormat Format { get; }
 
+    /// <summary>
+    /// Reads a file from disk.
+    /// </summary>
+    /// <param name="filename">The path to the file to read.</param>
+    /// <param name="possibleFormats">The possible formats the file could be in.</param>
+    /// <returns>The file that was read.</returns>
     [Pure]
     public static IOFile Read([PathReference] string filename, params IReadOnlyList<IOFileFormat> possibleFormats)
     {
@@ -20,6 +36,13 @@ public abstract class IOFile
         return Read(filename, file, possibleFormats);
     }
 
+    /// <summary>
+    /// Reads a file from a stream.
+    /// </summary>
+    /// <param name="filename">The filename, used to determine the format from the extension.</param>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="possibleFormats">The possible formats the file could be in.</param>
+    /// <returns>The file that was read.</returns>
     [MustUseReturnValue]
     public static IOFile Read([PathReference] string filename, Stream stream, params IReadOnlyList<IOFileFormat> possibleFormats)
     {
@@ -46,12 +69,31 @@ public abstract class IOFile
         throw new NotSupportedException("No file found in ZIP archive of a supported format.");
     }
 
+    /// <summary>
+    /// Writes this file to disk.
+    /// </summary>
+    /// <param name="filePath">The path to write the file to.</param>
+    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
     public void Write([PathReference] string filePath, bool zipped = false) => Format.Write(this, filePath, zipped);
 
+    /// <summary>
+    /// Writes this file to a directory with the specified name.
+    /// </summary>
+    /// <param name="directory">The directory to write the file to.</param>
+    /// <param name="name">The name of the file without extension.</param>
+    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
     public void Write([PathReference] string directory, string name, bool zipped = false) => Format.Write(this, directory, name, zipped);
 
+    /// <summary>
+    /// Writes this file to a stream.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
     public void Write(Stream stream) => Format.Write(this, stream);
 
+    /// <summary>
+    /// Writes this file to a byte array.
+    /// </summary>
+    /// <returns>A byte array containing the file data.</returns>
     [Pure]
     public byte[] Write() => Format.Write(this);
 
@@ -73,9 +115,18 @@ public abstract class IOFile
         return string.IsNullOrWhiteSpace(extension) ? throw new ArgumentException("Value has no extension.", nameof(filename)) : extension;
     }
 
+    /// <summary>
+    /// Attempts to load the file data into the specified memory span.
+    /// </summary>
+    /// <param name="memory">The memory span to load the data into.</param>
+    /// <returns><c>true</c> if the data was loaded successfully; <c>false</c> otherwise.</returns>
     [MustUseReturnValue]
     public virtual bool TryLoadInto(Span<byte> memory) => false;
 
+    /// <summary>
+    /// Loads the file data into the specified memory span.
+    /// </summary>
+    /// <param name="memory">The memory span to load the data into.</param>
     public virtual void LoadInto(Span<byte> memory)
     {
         if (!TryLoadInto(memory))

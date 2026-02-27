@@ -2,6 +2,10 @@ using System.Text;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// Base class for TZX blocks that contain ASCII text data.
+/// </summary>
+/// <typeparam name="THeader">The type of the block header.</typeparam>
 public abstract class TzxTextBlock<THeader> : TzxBlock<THeader>
     where THeader : TzxBlockHeader
 {
@@ -13,7 +17,11 @@ public abstract class TzxTextBlock<THeader> : TzxBlock<THeader>
     {
     }
 
+    /// <summary>
+    /// Gets the ASCII text content of this block.
+    /// </summary>
     public string Text => Encoding.ASCII.GetString(AsSpan());
 
+    /// <inheritdoc />
     public override string ToString() => $"{Header}: {Text}";
 }

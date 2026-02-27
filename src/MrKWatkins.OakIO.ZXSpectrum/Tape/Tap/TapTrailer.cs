@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
+/// <summary>
+/// Trailer for a block in a TAP file containing the checksum byte.
+/// </summary>
 public sealed class TapTrailer : Trailer
 {
     internal TapTrailer(byte checksum)
@@ -7,6 +10,9 @@ public sealed class TapTrailer : Trailer
     {
     }
 
+    /// <summary>
+    /// Gets or sets the XOR checksum byte.
+    /// </summary>
     public byte Checksum
     {
         get => Data[0];

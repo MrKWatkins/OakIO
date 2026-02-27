@@ -3,9 +3,15 @@ using MrKWatkins.BinaryPrimitives;
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 
 // https://worldofspectrum.net/zx-modules/fileformats/snaformat.html
+/// <summary>
+/// The SNA snapshot file format.
+/// </summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
 {
+    /// <summary>
+    /// The singleton instance of the SNA format.
+    /// </summary>
     public static readonly SnaFormat Instance = new();
 
     private SnaFormat()
@@ -13,12 +19,14 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         yield return new SnaToZ80Converter();
     }
 
+    /// <inheritdoc />
     protected override SnaFile ReadSnapshot(Stream stream)
     {
         var headerBytes = new byte[27];
@@ -81,6 +89,7 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
         return new Sna128kFile(header, banks, footerData);
     }
 
+    /// <inheritdoc />
     protected override void Write(SnaFile file, Stream stream)
     {
         switch (file)

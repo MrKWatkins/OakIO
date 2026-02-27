@@ -6,8 +6,14 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 // https://worldofspectrum.net/TZXformat.html
 // https://worldofspectrum.net/zx-modules/fileformats/tzxformat.html
+/// <summary>
+/// The TZX tape file format for the ZX Spectrum.
+/// </summary>
 public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
 {
+    /// <summary>
+    /// Gets the singleton instance of the TZX format.
+    /// </summary>
     public static readonly TzxFormat Instance = new();
 
     private TzxFormat()
@@ -15,6 +21,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     {
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var tzxToTape = new TzxToTapeConverter();
@@ -23,6 +30,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
         yield return new WavFileViaTapeConverter<TzxFile>(Instance, tzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
+    /// <inheritdoc />
     protected override TzxFile ReadTape(Stream stream)
     {
         var header = ReadHeader(stream);
@@ -70,6 +78,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
         return header.IsValid ? header : throw new IOException("Not a valid TZX file.");
     }
 
+    /// <inheritdoc />
     protected override void Write(TzxFile file, Stream stream)
     {
         file.Header.Write(stream);

@@ -39,6 +39,7 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     public override PzxFile Convert(TzxFile source)
     {

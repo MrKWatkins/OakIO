@@ -5,9 +5,15 @@ using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
+/// <summary>
+/// The PZX tape image file format.
+/// </summary>
 // https://github.com/raxoft/pzxtools/blob/master/docs/pzx_format.txt
 public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
 {
+    /// <summary>
+    /// The singleton instance of the PZX format.
+    /// </summary>
     public static readonly PzxFormat Instance = new();
 
     private PzxFormat()
@@ -15,6 +21,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     {
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var pzxToTape = new PzxToTapeConverter();
@@ -23,6 +30,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
         yield return new WavFileViaTapeConverter<PzxFile>(Instance, pzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
+    /// <inheritdoc />
     protected override PzxFile ReadTape(Stream stream)
     {
         var blocks = new List<PzxBlock>();
@@ -59,6 +67,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
         }
     }
 
+    /// <inheritdoc />
     protected override void Write(PzxFile file, Stream stream)
     {
         Span<byte> tagBytes = stackalloc byte[4];

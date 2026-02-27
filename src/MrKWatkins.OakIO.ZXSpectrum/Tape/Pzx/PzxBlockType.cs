@@ -1,10 +1,16 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
+/// <summary>
+/// The types of blocks in a PZX file.
+/// </summary>
 #pragma warning disable CA1028
 // https://github.com/raxoft/pzxtools/blob/master/docs/pzx_format.txt.
 [SuppressMessage("ReSharper", "ArrangeTrailingCommaInMultilineLists")]
 public enum PzxBlockType : uint
 {
+    /// <summary>
+    /// Unknown block type.
+    /// </summary>
     Unknown = 0,
 
     /// <summary>

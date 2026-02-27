@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
+/// <summary>
+/// Header for a TZX stop the tape if 48K block.
+/// </summary>
 public sealed class StopTheTapeIf48KHeader : TzxBlockHeader
 {
     private const int Size = 4;

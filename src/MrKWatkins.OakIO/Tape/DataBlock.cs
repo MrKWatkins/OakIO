@@ -3,6 +3,9 @@ using MrKWatkins.OakIO.Tape.Sounds;
 
 namespace MrKWatkins.OakIO.Tape;
 
+/// <summary>
+/// A tape block containing data encoded as a sequence of bit sounds.
+/// </summary>
 public sealed class DataBlock : TapeBlock
 {
     private readonly Sound zeroBitSound;
@@ -36,8 +39,14 @@ public sealed class DataBlock : TapeBlock
     internal static DataBlock Create(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null) =>
         new(data, zeroBitSound, oneBitSound, lengthOfTailPulse, usedBitsInLastByte, initialSignal);
 
+    /// <summary>
+    /// Gets the data bytes in the block.
+    /// </summary>
     public IReadOnlyList<byte> Data { get; }
 
+    /// <summary>
+    /// Gets the length of the data in bytes.
+    /// </summary>
     public int DataLength => Data.Count;
 
     internal override bool Signal => currentSound.Signal;

@@ -1,7 +1,5 @@
 using MrKWatkins.OakIO.Testing;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
-using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
-using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.Commands.Tests;
 

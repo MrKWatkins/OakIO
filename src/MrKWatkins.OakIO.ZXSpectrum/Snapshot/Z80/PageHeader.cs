@@ -1,5 +1,8 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
+/// <summary>
+/// Header for a memory page in a V2 or V3 Z80 snapshot file.
+/// </summary>
 public sealed class PageHeader : Header
 {
     internal PageHeader(HardwareMode hardwareMode, byte[] header) : base(header)
@@ -14,12 +17,24 @@ public sealed class PageHeader : Header
         SetByte(2, pageNumber);
     }
 
+    /// <summary>
+    /// Gets the hardware mode associated with this page.
+    /// </summary>
     public HardwareMode HardwareMode { get; }
 
+    /// <summary>
+    /// Gets the compressed length of the page data, or 0xFFFF if uncompressed.
+    /// </summary>
     public ushort CompressedLength => GetWord(0);
 
+    /// <summary>
+    /// Gets the page number.
+    /// </summary>
     public byte PageNumber => GetByte(2);
 
+    /// <summary>
+    /// Gets the memory location this page maps to.
+    /// </summary>
     public ushort Location => GetLocation(HardwareMode, PageNumber);
 
     [Pure]

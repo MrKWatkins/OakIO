@@ -2,9 +2,15 @@ using MrKWatkins.BinaryPrimitives;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
+/// <summary>
+/// File format for Z80 snapshot files.
+/// </summary>
 // https://worldofspectrum.org/faq/reference/z80format.htm
 public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
 {
+    /// <summary>
+    /// The singleton instance of the Z80 format.
+    /// </summary>
     public static readonly Z80Format Instance = new();
 
     private Z80Format()
@@ -12,12 +18,14 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         yield return new Z80ToSnaConverter();
     }
 
+    /// <inheritdoc />
     protected override Z80File ReadSnapshot(Stream stream)
     {
         var v1HeaderBytes = new byte[30];
@@ -85,6 +93,7 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
         return new Page(header, header.CompressedLength == 0xFFFF ? 16384 : header.CompressedLength, stream);
     }
 
+    /// <inheritdoc />
     protected override void Write(Z80File file, Stream stream)
     {
         if (file is Z80V1File && file.Registers.PC == 0)

@@ -4,8 +4,14 @@ using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
+/// <summary>
+/// The TAP tape file format for reading and writing TAP files.
+/// </summary>
 public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
 {
+    /// <summary>
+    /// The singleton instance of the TAP format.
+    /// </summary>
     public static readonly TapFormat Instance = new();
 
     private TapFormat()
@@ -13,6 +19,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     {
     }
 
+    /// <inheritdoc />
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var tapToTape = new TapToTapeConverter();
@@ -22,6 +29,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
         yield return new WavFileViaTapeConverter<TapFile>(Instance, tapToTape, new TapeToWavConverter(TStatesPerSecond));
     }
 
+    /// <inheritdoc />
     protected override TapFile ReadTape(Stream stream)
     {
         using var peekable = new PeekableStream(stream);
@@ -66,6 +74,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
         };
     }
 
+    /// <inheritdoc />
     protected override void Write(TapFile file, Stream stream)
     {
         foreach (var block in file.Blocks)
