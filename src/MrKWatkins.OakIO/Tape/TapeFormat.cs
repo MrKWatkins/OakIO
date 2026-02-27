@@ -9,6 +9,10 @@ public sealed class TapeFormat : IOFileFormat<TapeFile>
     {
     }
 
+    public override bool CanRead => false;
+
+    public override bool CanWrite => false;
+
     public override IOFile Read(Stream stream) => throw new NotSupportedException("Tape files cannot be read.");
 
     protected override void Write(TapeFile file, Stream stream) => throw new NotSupportedException("Tape files cannot be written.");

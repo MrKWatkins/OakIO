@@ -24,6 +24,10 @@ public abstract class IOFileFormat
 
     public Type FileType { get; }
 
+    public virtual bool CanRead => true;
+
+    public virtual bool CanWrite => true;
+
     /// <summary>
     /// Call from the IOFile to ensure that converters are registered for this format. The converters depend on the IOFileFormat static Instance field,
     /// which will not be assigned until the IOFileFormat is fully constructed. Therefore, we cannot register the converters in the constructor and do

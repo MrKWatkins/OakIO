@@ -34,6 +34,7 @@ const config = {
     resources: {
         jsModuleNative: [{ name: 'dotnet.native.js' }],
         jsModuleRuntime: [{ name: 'dotnet.runtime.js' }],
+        jsModuleWorker: [{ name: 'dotnet.native.worker.mjs' }],
         wasmNative: [{ name: 'dotnet.native.wasm' }],
         assembly: assemblies,
         icu: icuFiles,

@@ -9,7 +9,7 @@ public sealed class WavFormat : IOFileFormat<WavFile>
     public static readonly WavFormat Instance = new();
 
     private WavFormat()
-        : base("WAV", "wav")
+        : base("WAV Audio", "wav")
     {
     }
 

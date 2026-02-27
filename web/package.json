@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dotnet:publish": "dotnet publish ../src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm && rm -rf dotnet && cp -r /tmp/oakio-wasm dotnet && node scripts/generate-dotnet-boot.mjs",
-    "dev": "npm run dotnet:publish && vite",
+    "serve": "npm run dotnet:publish && vite",
     "build": "npm run dotnet:publish && tsc -b && vite build && node scripts/copy-dotnet-to-dist.mjs",
     "lint": "eslint .",
     "test": "vitest run",

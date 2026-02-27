@@ -8,7 +8,11 @@ public abstract class WasmTestFixture
 {
     [Pure]
     protected static string GetInfo(string inputFilename, byte[] inputData) =>
-        InfoCommand.Execute(inputFilename, inputData);
+        InfoCommand.GetFileInfoJson(inputFilename, inputData);
+
+    [Pure]
+    protected static FileInfoResult GetFileInfo(string inputFilename, byte[] inputData) =>
+        InfoCommand.GetFileInfo(inputFilename, inputData);
 
     [Pure]
     protected static byte[] Convert(string inputFilename, byte[] inputData, string outputFilename) =>

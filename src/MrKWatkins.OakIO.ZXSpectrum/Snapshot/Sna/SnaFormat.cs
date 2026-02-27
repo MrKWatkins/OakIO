@@ -13,6 +13,12 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     {
     }
 
+    [Pure]
+    protected override IEnumerable<IOFileConverter> CreateConverters()
+    {
+        yield return new SnaToZ80Converter();
+    }
+
     protected override SnaFile ReadSnapshot(Stream stream)
     {
         var headerBytes = new byte[27];

@@ -9,10 +9,10 @@ namespace MrKWatkins.OakIO.Wasm;
 public static partial class OakIOInterop
 {
     [JSExport]
-    public static string GetInfo(string inputFilename, byte[] inputData) =>
-        InfoCommand.Execute(inputFilename, inputData);
+    public static async Task<string> GetInfo(string inputFilename, byte[] inputData) =>
+        await Task.Run(() => InfoCommand.GetFileInfoJson(inputFilename, inputData)).ConfigureAwait(false);
 
     [JSExport]
-    public static byte[] Convert(string inputFilename, byte[] inputData, string outputFilename) =>
-        ConvertCommand.Execute(inputFilename, inputData, outputFilename);
+    public static async Task<string> Convert(string inputFilename, byte[] inputData, string outputFilename) =>
+        await Task.Run(() => System.Convert.ToBase64String(ConvertCommand.Execute(inputFilename, inputData, outputFilename))).ConfigureAwait(false);
 }

@@ -12,6 +12,12 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     {
     }
 
+    [Pure]
+    protected override IEnumerable<IOFileConverter> CreateConverters()
+    {
+        yield return new Z80ToSnaConverter();
+    }
+
     protected override Z80File ReadSnapshot(Stream stream)
     {
         var v1HeaderBytes = new byte[30];

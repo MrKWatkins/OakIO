@@ -8,7 +8,7 @@ public sealed class WavFormatTests
     [Test]
     public void Instance()
     {
-        WavFormat.Instance.Name.Should().Equal("WAV");
+        WavFormat.Instance.Name.Should().Equal("WAV Audio");
         WavFormat.Instance.FileExtension.Should().Equal("wav");
     }
 
