@@ -1,0 +1,359 @@
+/* Scoped converter styles — all classes prefixed with oakio- */
+
+.oakio-converter {
+  margin: 1.5rem 0;
+}
+
+/* File picker */
+
+.oakio-file-picker {
+  margin-bottom: 1.5rem;
+}
+
+.oakio-file-picker label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #aaa;
+}
+
+/* Tabs */
+
+.oakio-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.5rem;
+}
+
+.oakio-tabs button {
+  flex: 1;
+  padding: 0.5em 1em;
+  border: 1px solid #444;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.oakio-tabs button:hover {
+  background: #2a2a2a;
+  color: #ddd;
+}
+
+.oakio-tabs button.active {
+  border-color: var(--md-primary-fg-color);
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+
+.oakio-tab-content {
+  text-align: left;
+}
+
+.oakio-tab-panel {
+  height: 500px;
+  overflow-y: auto;
+  text-align: left;
+  border: 1px solid #333;
+  border-radius: 0 0 6px 6px;
+  padding: 1rem;
+}
+
+.oakio-error {
+  background: #3a1a1a;
+  border: 1px solid #a33;
+  color: #faa;
+  border-radius: 8px;
+  padding: 0.75em 1em;
+  margin-bottom: 1rem;
+}
+
+.oakio-loading {
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+/* File info */
+
+.oakio-file-meta {
+  margin-bottom: 0.5rem;
+}
+
+/* Sections */
+
+.oakio-section {
+  margin-top: 1.25rem;
+}
+
+.oakio-section-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1em;
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.25rem;
+}
+
+/* Properties table */
+
+.oakio-properties-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.oakio-properties-table td {
+  padding: 0.2em 0.5em;
+  vertical-align: top;
+}
+
+.oakio-prop-name {
+  white-space: nowrap;
+  color: #aaa;
+  width: 1%;
+}
+
+.oakio-prop-value code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.95em;
+}
+
+.oakio-bool-true {
+  color: #6c6;
+}
+
+.oakio-bool-false {
+  color: #c66;
+}
+
+.oakio-colour-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.oakio-colour-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid #555;
+  vertical-align: middle;
+}
+
+/* Items */
+
+.oakio-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.oakio-item {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0.5em 0.75em;
+}
+
+.oakio-item-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-weight: 500;
+}
+
+.oakio-item-index {
+  color: #666;
+  min-width: 1.5em;
+  text-align: right;
+}
+
+.oakio-item-title {
+  font-weight: 600;
+}
+
+.oakio-item .oakio-properties-table {
+  margin-top: 0.25em;
+  margin-left: 1.9em;
+}
+
+.oakio-empty-note {
+  color: #666;
+  font-style: italic;
+  margin: 0.25em 0;
+}
+
+/* Nested items */
+
+.oakio-item-nested {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 0.5em 0.75em;
+}
+
+.oakio-item-nested > summary {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-weight: 500;
+  list-style: none;
+}
+
+.oakio-item-nested > summary::before {
+  content: '▸';
+  display: inline-block;
+  transition: transform 0.15s;
+  color: #888;
+}
+
+.oakio-item-nested[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.oakio-item-nested > summary::-webkit-details-marker {
+  display: none;
+}
+
+.oakio-item-inline-props {
+  color: #888;
+  font-weight: 400;
+  font-size: 0.9em;
+  margin-left: 0.5em;
+}
+
+.oakio-item-nested-content {
+  margin-top: 0.5em;
+  margin-left: 1.5em;
+}
+
+/* Details expander */
+
+.oakio-details-expander {
+  margin-top: 0.25em;
+  margin-left: 1.9em;
+}
+
+.oakio-details-expander > summary {
+  cursor: pointer;
+  color: #888;
+  font-size: 0.85em;
+  list-style: none;
+}
+
+.oakio-details-expander > summary::before {
+  content: '▸ ';
+}
+
+.oakio-details-expander[open] > summary::before {
+  content: '▾ ';
+}
+
+.oakio-details-expander > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Convert buttons */
+
+.oakio-convert-hint {
+  color: #aaa;
+  margin: 0 0 0.75rem;
+}
+
+.oakio-convert-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.oakio-convert-button {
+  padding: 0.4em 1em;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.oakio-convert-button:hover:not(:disabled) {
+  background: #3a3a3a;
+  border-color: var(--md-primary-fg-color);
+}
+
+.oakio-convert-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.oakio-converting-message {
+  color: #888;
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .oakio-file-picker label {
+    color: #666;
+  }
+
+  .oakio-tabs {
+    border-bottom-color: #ddd;
+  }
+
+  .oakio-tab-panel {
+    border-color: #ddd;
+  }
+
+  .oakio-tabs button {
+    border-color: #ccc;
+    color: #666;
+  }
+
+  .oakio-tabs button:hover {
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .oakio-section-title {
+    border-bottom-color: #ddd;
+  }
+
+  .oakio-item,
+  .oakio-item-nested {
+    background: #f5f5f5;
+    border-color: #ddd;
+  }
+
+  .oakio-prop-name {
+    color: #666;
+  }
+
+  .oakio-colour-swatch {
+    border-color: #ccc;
+  }
+
+  .oakio-convert-hint {
+    color: #666;
+  }
+
+  .oakio-convert-button {
+    background: #f0f0f0;
+    border-color: #ccc;
+  }
+
+  .oakio-convert-button:hover:not(:disabled) {
+    background: #e0e0e0;
+    border-color: var(--md-primary-fg-color);
+  }
+
+  .oakio-error {
+    background: #fee;
+    border-color: #c33;
+    color: #a00;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "oakio-docs",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dotnet:publish": "dotnet publish ../src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm && node scripts/copy-dotnet-to-docs.mjs && node scripts/generate-dotnet-boot.mjs",
+    "build:vite": "vite build",
+    "build:mkdocs": "uv run mkdocs build",
+    "build": "npm run dotnet:publish && npm run build:vite && npm run build:mkdocs",
+    "serve:mkdocs": "uv run mkdocs serve",
+    "serve:vite": "vite build --watch",
+    "serve": "npm run dotnet:publish && concurrently --kill-others-on-fail --kill-others \"npm:serve:mkdocs\" \"npm:serve:vite\""
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

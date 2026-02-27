@@ -35,5 +35,6 @@ plugins:
         on_nav: "hooks:on_nav"
 extra_css:
   - stylesheets/overrides.css
+  - assets/javascripts/converter.css
 markdown_extensions:
   - attr_list

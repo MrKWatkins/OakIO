@@ -11,3 +11,10 @@ venv/
 
 # mkdocs documentation
 /site
+
+# Node
+node_modules/
+
+# Build artifacts (generated in CI / by npm run build:vite and dotnet:publish)
+docs/assets/javascripts/
+docs/dotnet/

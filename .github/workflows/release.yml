@@ -45,6 +45,22 @@ jobs:
       - name: Generate API Docs - MrKWatkins.OakIO
         run: dotnet sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO
 
+      - name: Publish WASM
+        run: dotnet publish src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build doc TypeScript
+        run: |
+          cd doc
+          npm ci
+          node scripts/copy-dotnet-to-docs.mjs
+          node scripts/generate-dotnet-boot.mjs
+          npm run build:vite
+
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
