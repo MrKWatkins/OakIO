@@ -34,18 +34,7 @@ internal static class PzxInfoExtensions
     [Pure]
     private static InfoItem ToInfoItem(this Pzx.PzxBlock block) => block switch
     {
-        Pzx.DataBlock data => new InfoItem(Info.Items.Data)
-        {
-            Properties = [new InfoProperty(Info.Properties.Size, data.Header.SizeInBytes.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)],
-            Details = new Dictionary<string, string>
-            {
-                [Info.Properties.InitialPulseLevel] = data.Header.InitialPulseLevel ? "1" : "0",
-                [Info.Properties.ExtraBits] = data.Header.ExtraBits.ToString(NumberFormatInfo.InvariantInfo),
-                [Info.Properties.Tail] = data.Header.Tail.ToString(NumberFormatInfo.InvariantInfo),
-                [Info.Properties.ZeroBitPulses] = data.Header.NumberOfPulseInZeroBitSequence.ToString(NumberFormatInfo.InvariantInfo),
-                [Info.Properties.OneBitPulses] = data.Header.NumberOfPulseInOneBitSequence.ToString(NumberFormatInfo.InvariantInfo)
-            }
-        },
+        Pzx.DataBlock data => CreateDataInfoItem(data),
         Pzx.PulseSequenceBlock pulseSeq => new InfoItem(Info.Items.PulseSequence)
         {
             Properties = [new InfoProperty(Info.Properties.PulseCount, pulseSeq.Pulses.Count.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)]
@@ -68,4 +57,33 @@ internal static class PzxInfoExtensions
         },
         _ => new InfoItem(block.Header.Type.ToString())
     };
+
+    [Pure]
+    private static InfoItem CreateDataInfoItem(Pzx.DataBlock data)
+    {
+        var properties = new List<InfoProperty>
+        {
+            new(Info.Properties.Size, data.Header.SizeInBytes.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)
+        };
+
+        if (data.TryGetStandardFileHeader(out var fileHeader))
+        {
+            properties.Add(new InfoProperty(Info.Properties.HeaderType, fileHeader.Type.ToString()));
+            properties.Add(new InfoProperty(Info.Properties.Filename, fileHeader.Filename));
+            properties.Add(new InfoProperty(Info.Properties.DataLength, fileHeader.DataBlockLength.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal));
+        }
+
+        return new InfoItem(Info.Items.Data)
+        {
+            Properties = properties,
+            Details = new Dictionary<string, string>
+            {
+                [Info.Properties.InitialPulseLevel] = data.Header.InitialPulseLevel ? "1" : "0",
+                [Info.Properties.ExtraBits] = data.Header.ExtraBits.ToString(NumberFormatInfo.InvariantInfo),
+                [Info.Properties.Tail] = data.Header.Tail.ToString(NumberFormatInfo.InvariantInfo),
+                [Info.Properties.ZeroBitPulses] = data.Header.NumberOfPulseInZeroBitSequence.ToString(NumberFormatInfo.InvariantInfo),
+                [Info.Properties.OneBitPulses] = data.Header.NumberOfPulseInOneBitSequence.ToString(NumberFormatInfo.InvariantInfo)
+            }
+        };
+    }
 }

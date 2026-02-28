@@ -1,4 +1,5 @@
 using System.Globalization;
+using MrKWatkins.OakIO.ZXSpectrum.Tape;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.Commands.FileInfo;
@@ -75,13 +76,19 @@ internal static class TzxInfoExtensions
         switch (block.Header)
         {
             case StandardSpeedDataHeader h:
+                var standardSpeedProperties = new List<InfoProperty>
+                {
+                    new(Info.Properties.Length, h.BlockLength.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal),
+                    new(Info.Properties.PauseAfter, $"{h.PauseAfterBlockMs} ms")
+                };
+                if (block is StandardSpeedDataBlock ssdb && ssdb.TryGetStandardFileHeader(out var fileHeader))
+                {
+                    AddStandardFileHeaderProperties(standardSpeedProperties, fileHeader);
+                }
+
                 return new InfoItem(Info.Items.StandardSpeedData)
                 {
-                    Properties =
-                    [
-                        new InfoProperty(Info.Properties.Length, h.BlockLength.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal),
-                        new InfoProperty(Info.Properties.PauseAfter, $"{h.PauseAfterBlockMs} ms")
-                    ]
+                    Properties = standardSpeedProperties
                 };
 
             case TurboSpeedDataHeader h:
@@ -154,5 +161,12 @@ internal static class TzxInfoExtensions
             default:
                 return new InfoItem(block.Header.Type.ToString());
         }
+    }
+
+    private static void AddStandardFileHeaderProperties(List<InfoProperty> properties, StandardFileHeader header)
+    {
+        properties.Add(new InfoProperty(Info.Properties.HeaderType, header.Type.ToString()));
+        properties.Add(new InfoProperty(Info.Properties.Filename, header.Filename));
+        properties.Add(new InfoProperty(Info.Properties.DataLength, header.DataBlockLength.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal));
     }
 }

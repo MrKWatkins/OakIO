@@ -115,6 +115,7 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
     /// <summary>
     /// Gets the memory location to load the data to.
     /// </summary>
+    [Pure]
     public ushort Location =>
         HeaderType switch
         {
@@ -123,7 +124,19 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
             _ => throw new NotSupportedException($"The {nameof(TapHeaderType)} {HeaderType} is not supported.")
         };
 
+    /// <summary>
+    /// Extracts the data from this block as a <see cref="StandardFileHeader" />.
+    /// </summary>
+    /// <param name="header">The extracted header. Always set for <see cref="HeaderBlock" />.</param>
+    /// <returns>Always <c>true</c>.</returns>
+    public bool TryGetStandardFileHeader([NotNullWhen(true)] out StandardFileHeader? header)
+    {
+        header = new StandardFileHeader(HeaderType, Filename, DataBlockLength, Parameter1, Parameter2);
+        return true;
+    }
+
     /// <inheritdoc />
+    [Pure]
     public override string ToString() =>
         HeaderType switch
         {

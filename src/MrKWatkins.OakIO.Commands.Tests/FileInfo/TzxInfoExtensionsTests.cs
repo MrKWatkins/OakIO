@@ -17,7 +17,7 @@ public sealed class TzxInfoExtensionsTests
     public void ToInfoSections_ArchiveInfo_CreatesArchiveInfoSection()
     {
         // 0x32 = ArchiveInfo; header: length=7 (LE), count=1; entry: type=0 (Full Title), len=4, "test"
-        var tzx = ReadTzx([0x32, 0x07, 0x00, 0x01, 0x00, 0x04, .."test"u8]);
+        var tzx = ReadTzx([0x32, 0x07, 0x00, 0x01, 0x00, 0x04, .. "test"u8]);
         var sections = tzx.ToInfoSections();
         var archiveInfo = sections.Single(s => s.Title == "Archive Info");
         archiveInfo.Properties.Should().HaveCount(1);
@@ -34,6 +34,39 @@ public sealed class TzxInfoExtensionsTests
         items[0].Title.Should().Equal("Standard Speed Data");
         items[0].Properties.Single(p => p.Name == "Length").Value.Should().Equal("4");
         items[0].Properties.Single(p => p.Name == "Pause After").Value.Should().Equal("1000 ms");
+    }
+
+    [Test]
+    public void ToInfoSections_StandardSpeedData_WithStandardFileHeader()
+    {
+        // Build a 19-byte standard ZX Spectrum file header inside a TZX StandardSpeedData block.
+        var tapeHeader = new byte[19];
+        tapeHeader[0] = 0x00; // Flag: header.
+        tapeHeader[1] = 0x03; // Type: Code.
+        "MyCode    "u8.CopyTo(tapeHeader.AsSpan(2)); // Filename.
+        tapeHeader[12] = 0x00; // DataBlockLength low.
+        tapeHeader[13] = 0x10; // DataBlockLength high = 4096.
+        tapeHeader[14] = 0x00; // Parameter1 low.
+        tapeHeader[15] = 0x80; // Parameter1 high = 32768.
+        tapeHeader[16] = 0x00; // Parameter2 low.
+        tapeHeader[17] = 0x80; // Parameter2 high = 32768.
+        byte checksum = 0;
+        for (var i = 0; i < 18; i++)
+        {
+            checksum ^= tapeHeader[i];
+        }
+
+        tapeHeader[18] = checksum;
+
+        // TZX block: 0x10, pause (2 bytes LE), length (2 bytes LE), then data.
+        byte[] block = [0x10, 0xE8, 0x03, 0x13, 0x00, .. tapeHeader];
+
+        var tzx = ReadTzx(block);
+        var items = tzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;
+        items[0].Properties.Single(p => p.Name == "Length").Value.Should().Equal("19");
+        items[0].Properties.Single(p => p.Name == "Header Type").Value.Should().Equal("Code");
+        items[0].Properties.Single(p => p.Name == "Filename").Value.Should().Equal("MyCode");
+        items[0].Properties.Single(p => p.Name == "Data Length").Value.Should().Equal("4096");
     }
 
     [Test]
@@ -71,7 +104,7 @@ public sealed class TzxInfoExtensionsTests
     public void ToInfoSections_TextDescription()
     {
         // 0x30 = TextDescription; length=4, "test"
-        var tzx = ReadTzx([0x30, 0x04, .."test"u8]);
+        var tzx = ReadTzx([0x30, 0x04, .. "test"u8]);
         var items = tzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;
         items[0].Title.Should().Equal("Text Description");
         items[0].Properties.Single(p => p.Name == "Text").Value.Should().Equal("test");
@@ -108,7 +141,7 @@ public sealed class TzxInfoExtensionsTests
     {
         // GroupStart (0x21, name "grp") + Pause + GroupEnd (0x22)
         var tzx = ReadTzx(
-            [0x21, 0x03, .."grp"u8],
+            [0x21, 0x03, .. "grp"u8],
             [0x20, 0xF4, 0x01],
             [0x22]);
         var items = tzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;

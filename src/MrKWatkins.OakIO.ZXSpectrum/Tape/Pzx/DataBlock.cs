@@ -23,35 +23,52 @@ public sealed class DataBlock : PzxBlock<DataHeader>
 
     private const int IndexOfZeroBitPulseSequence = 0;
 
+    [Pure]
     private int LengthOfZeroBitPulseSequence => Header.NumberOfPulseInZeroBitSequence * 2;
 
+    [Pure]
     private int IndexOfOneBitPulseSequence => IndexOfZeroBitPulseSequence + LengthOfZeroBitPulseSequence;
 
+    [Pure]
     private int LengthOfOneBitPulseSequence => Header.NumberOfPulseInOneBitSequence * 2;
 
+    [Pure]
     private int DataIndex => IndexOfOneBitPulseSequence + LengthOfOneBitPulseSequence;
 
     /// <summary>
     /// Gets the pulse sequence for a zero bit.
     /// </summary>
+    [Pure]
     public ReadOnlySpan<ushort> ZeroBitPulseSequence => MemoryMarshal.Cast<byte, ushort>(AsSpan().Slice(IndexOfZeroBitPulseSequence, LengthOfZeroBitPulseSequence));
 
     /// <summary>
     /// Gets the pulse sequence for a one bit.
     /// </summary>
+    [Pure]
     public ReadOnlySpan<ushort> OneBitPulseSequence => MemoryMarshal.Cast<byte, ushort>(AsSpan().Slice(IndexOfOneBitPulseSequence, LengthOfOneBitPulseSequence));
 
     /// <summary>
     /// Gets the size of the data stream in bytes.
     /// </summary>
+    [Pure]
     public int DataStreamSize => Header.BlockLength - DataIndex;
 
     /// <summary>
     /// Gets the raw data stream.
     /// </summary>
+    [Pure]
     public ReadOnlySpan<byte> DataStream => AsSpan()[DataIndex..];
 
+    /// <summary>
+    /// Attempts to interpret this block's data stream as a standard ZX Spectrum ROM file header.
+    /// </summary>
+    /// <param name="header">The extracted header, or <c>null</c> if the data is not a valid standard file header.</param>
+    /// <returns><c>true</c> if the data was a valid standard file header; <c>false</c> otherwise.</returns>
+    public bool TryGetStandardFileHeader([NotNullWhen(true)] out StandardFileHeader? header) =>
+        StandardFileHeader.TryCreate(DataStream, out header);
+
     /// <inheritdoc />
+    [Pure]
     public override string ToString() =>
         $"{Header.Type}: Initial Level = {(Header.InitialPulseLevel ? 1 : 0)}, " +
         $"Size = {Header.SizeInBytes}{(Header.ExtraBits != 0 ? $".{Header.ExtraBits}" : "")}, Tail = {Header.Tail}, " +

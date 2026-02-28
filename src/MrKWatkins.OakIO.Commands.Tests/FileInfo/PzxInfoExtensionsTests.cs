@@ -138,6 +138,51 @@ public sealed class PzxInfoExtensionsTests
         items[0].Properties.Single(p => p.Name == "Size").Value.Should().Equal("1");
     }
 
+    [Test]
+    public void ToInfoSections_DataBlock_WithStandardFileHeader()
+    {
+        // Build a 19-byte standard ZX Spectrum file header.
+        var tapeHeader = new byte[19];
+        tapeHeader[0] = 0x00; // Flag: header.
+        tapeHeader[1] = 0x00; // Type: Program.
+        "Loader    "u8.CopyTo(tapeHeader.AsSpan(2)); // Filename.
+        tapeHeader[12] = 0x64; // DataBlockLength low.
+        tapeHeader[13] = 0x00; // DataBlockLength high = 100.
+        tapeHeader[14] = 0x0A; // Parameter1 low = 10 (autostart line).
+        tapeHeader[15] = 0x00; // Parameter1 high.
+        tapeHeader[16] = 0x64; // Parameter2 low = 100 (variable area).
+        tapeHeader[17] = 0x00; // Parameter2 high.
+        byte checksum = 0;
+        for (var i = 0; i < 18; i++)
+        {
+            checksum ^= tapeHeader[i];
+        }
+
+        tapeHeader[18] = checksum;
+
+        // DATA block with 19-byte body (0 pulse sequences).
+        // size = 8 (header extras) + 19 (body) = 27.
+        // size_in_bits = 19 * 8 = 152 = 0x98.
+        var data = CreatePzxData(
+            CreatePzxtBlock(info: []),
+            [.."DATA"u8,
+             0x1B, 0x00, 0x00, 0x00, // size=27
+             0x98, 0x00, 0x00, 0x00, // size_in_bits=152, initial_pulse_level=0
+             0x00, 0x00,             // tail=0
+             0x00,                   // zeroBitPulses=0
+             0x00,                   // oneBitPulses=0
+             ..tapeHeader
+            ]);
+        using var stream = new MemoryStream(data);
+        var pzx = Pzx.PzxFormat.Instance.Read(stream);
+        var items = pzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;
+        items[0].Title.Should().Equal("Data");
+        items[0].Properties.Single(p => p.Name == "Size").Value.Should().Equal("19");
+        items[0].Properties.Single(p => p.Name == "Header Type").Value.Should().Equal("Program");
+        items[0].Properties.Single(p => p.Name == "Filename").Value.Should().Equal("Loader");
+        items[0].Properties.Single(p => p.Name == "Data Length").Value.Should().Equal("100");
+    }
+
     [Pure]
     private static byte[] CreatePzxData(params byte[][] blocks)
     {
