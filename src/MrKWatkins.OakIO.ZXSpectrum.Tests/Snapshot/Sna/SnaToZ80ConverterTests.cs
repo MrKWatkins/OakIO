@@ -38,7 +38,7 @@ public sealed class SnaToZ80ConverterTests
         z80.Header.BorderColour.Should().Equal(ZXColour.Red);
         z80.Header.InterruptMode.Should().Equal(2);
         z80.Header.IFF2.Should().BeTrue();
-        z80.Header.InterruptFlipFlop.Should().BeTrue();
+        z80.Header.IFF1.Should().BeTrue();
 
         z80.Registers.AF.Should().Equal(0x1234);
         z80.Registers.BC.Should().Equal(0x5678);

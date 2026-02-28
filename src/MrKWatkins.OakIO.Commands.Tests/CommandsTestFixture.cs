@@ -1,4 +1,5 @@
 using MrKWatkins.OakIO.Testing;
+using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
@@ -57,5 +58,27 @@ public abstract class CommandsTestFixture
         snapshot.Write(stream);
         stream.Position = 0;
         return TemporaryFile.Create(stream, "test.z80");
+    }
+
+    [Pure]
+    [MustDisposeResource]
+    protected static TemporaryFile CreateSnaFile()
+    {
+        var sna = Sna48kFile.Create(new byte[64 * 1024]);
+        using var stream = new MemoryStream();
+        SnaFormat.Instance.Write(sna, stream);
+        stream.Position = 0;
+        return TemporaryFile.Create(stream, "test.sna");
+    }
+
+    [Pure]
+    [MustDisposeResource]
+    protected static TemporaryFile CreateNexFile()
+    {
+        var header = new byte[512];
+        "NextV1.2"u8.CopyTo(header);
+        using var stream = new MemoryStream(header);
+        stream.Position = 0;
+        return TemporaryFile.Create(stream, "test.nex");
     }
 }

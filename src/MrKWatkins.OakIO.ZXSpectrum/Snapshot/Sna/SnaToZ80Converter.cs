@@ -24,7 +24,7 @@ public sealed class SnaToZ80Converter : IOFileConverter<SnaFile, Z80.Z80File>
         CopyRegisters(source.Registers, z80.Registers);
         z80.Header.BorderColour = source.Header.BorderColour;
         z80.Header.InterruptMode = source.Header.InterruptMode;
-        z80.Header.InterruptFlipFlop = source.Header.IFF2;
+        z80.Header.IFF1 = source.Header.IFF2;
         z80.Header.IFF2 = source.Header.IFF2;
 
         return z80;

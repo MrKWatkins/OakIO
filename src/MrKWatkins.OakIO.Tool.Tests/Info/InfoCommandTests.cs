@@ -1,7 +1,7 @@
-using MrKWatkins.OakIO.Tool.Commands;
+using MrKWatkins.OakIO.Tool.Info;
 using Spectre.Console.Cli;
 
-namespace MrKWatkins.OakIO.Tool.Tests.Commands;
+namespace MrKWatkins.OakIO.Tool.Tests.Info;
 
 public sealed class InfoCommandTests : ToolTestFixture
 {

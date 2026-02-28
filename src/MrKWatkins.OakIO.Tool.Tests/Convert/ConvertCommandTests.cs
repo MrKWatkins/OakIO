@@ -1,8 +1,8 @@
 using MrKWatkins.OakIO.Testing;
-using MrKWatkins.OakIO.Tool.Commands;
+using MrKWatkins.OakIO.Tool.Convert;
 using Spectre.Console.Cli;
 
-namespace MrKWatkins.OakIO.Tool.Tests.Commands;
+namespace MrKWatkins.OakIO.Tool.Tests.Convert;
 
 public sealed class ConvertCommandTests : ToolTestFixture
 {

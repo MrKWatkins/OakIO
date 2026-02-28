@@ -44,16 +44,16 @@ public class Z80V1Header : Header
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the interrupt flip-flop is set.
+    /// Gets or sets a value indicating whether the interrupt flip-flop IFF1 is set.
     /// </summary>
-    public bool InterruptFlipFlop
+    public bool IFF1
     {
         get => GetBit(27, 0);
         set => SetBit(27, 0, value);
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether interrupt flip-flop 2 (IFF2) is set.
+    /// Gets or sets a value indicating whether interrupt flip-flop 2 IFF2 is set.
     /// </summary>
     public bool IFF2
     {

@@ -16,21 +16,21 @@ public sealed class GetInfoTests : WasmTestFixture
         var result = GetFileInfo("test.tap", CreateTapData());
         result.Format.Should().Equal("TAP Tape");
         result.Sections[0].Title.Should().Equal("Blocks");
-        result.Sections[0].Items!.Count.Should().Equal(2);
+        result.Sections[0].Items.Count.Should().Equal(2);
     }
 
     [Test]
     public void GetInfo_TapFile_ShowsHeaderBlock()
     {
         var result = GetFileInfo("test.tap", CreateTapData());
-        result.Sections[0].Items![0].Title.Should().Equal("Bytes: test");
+        result.Sections[0].Items[0].Title.Should().Equal("Bytes: test");
     }
 
     [Test]
     public void GetInfo_TapFile_ShowsDataBlock()
     {
         var result = GetFileInfo("test.tap", CreateTapData());
-        result.Sections[0].Items![1].Title.Should().Equal("Data: 2 bytes");
+        result.Sections[0].Items[1].Title.Should().Equal("Data: 2 bytes");
     }
 
     [Test]
@@ -39,7 +39,7 @@ public sealed class GetInfoTests : WasmTestFixture
         var result = GetFileInfo("test.tzx", CreateTzxData());
         result.Format.Should().Equal("TZX Tape");
         result.Sections[0].Title.Should().Equal("Blocks");
-        result.Sections[0].Items!.Count.Should().Equal(1);
+        result.Sections[0].Items.Count.Should().Equal(1);
     }
 
     [Test]
@@ -61,7 +61,7 @@ public sealed class GetInfoTests : WasmTestFixture
     {
         var result = GetFileInfo("test.z80", CreateZ80Data());
         var registers = result.Sections.Single(s => s.Title == "Registers");
-        registers.Properties!.Single(p => p.Name == "PC").Value.Should().Equal("0x1000");
+        registers.Properties.Single(p => p.Name == "PC").Value.Should().Equal("0x1000");
     }
 
     [Test]

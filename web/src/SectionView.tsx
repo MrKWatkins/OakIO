@@ -16,7 +16,7 @@ export function ItemView({ item, index }: { item: Item; index: number }) {
           <span className="item-nested-arrow">▸</span>
           <span className="item-index">{index}.</span>
           <span className="item-title">{item.title}</span>
-          {item.properties && (
+          {item.properties && item.properties.length > 0 && (
             <span className="item-inline-props">
               {item.properties.map(p => `${p.name}: ${p.value}`).join(', ')}
             </span>
@@ -39,7 +39,7 @@ export function ItemView({ item, index }: { item: Item; index: number }) {
         <span className="item-index">{index}.</span>
         <span className="item-title">{item.title}</span>
       </div>
-      {item.properties && <PropertiesTable properties={item.properties} />}
+      {item.properties && item.properties.length > 0 && <PropertiesTable properties={item.properties} />}
       {hasDetails && <DetailsTable details={item.details!} />}
     </div>
   );
@@ -49,7 +49,7 @@ export function SectionView({ section, hideTitle = false }: { section: Section; 
   return (
     <div className="section">
       {!hideTitle && <h3 className="section-title">{section.title}</h3>}
-      {section.properties && <PropertiesTable properties={section.properties} />}
+      {section.properties && section.properties.length > 0 && <PropertiesTable properties={section.properties} />}
       {section.items && (
         <div className="items-list">
           {section.items.map((item, i) => (

@@ -1,4 +1,5 @@
 using MrKWatkins.OakIO.Commands;
+using MrKWatkins.OakIO.Commands.FileInfo;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 

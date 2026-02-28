@@ -58,8 +58,8 @@ public sealed class Z80V1HeaderTests
         var bytes = new byte[34];
         var header = new Z80V1Header(bytes);
 
-        header.InterruptFlipFlop.Should().BeFalse();
-        header.InterruptFlipFlop = true;
+        header.IFF1.Should().BeFalse();
+        header.IFF1 = true;
 
         var expected = new byte[34];
         expected[27] = 1;

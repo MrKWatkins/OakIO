@@ -94,7 +94,7 @@ public sealed class Z80FormatTests : ZXSpectrumTestFixture
         file.Registers.Shadow.BC.Should().Equal(0x0345);
         file.Registers.Shadow.DE.Should().Equal(0x023E);
         file.Registers.Shadow.HL.Should().Equal(0x5976);
-        file.Header.InterruptFlipFlop.Should().BeFalse();
+        file.Header.IFF1.Should().BeFalse();
         file.Header.IFF2.Should().BeFalse();
         file.Header.InterruptMode.Should().Equal(1);
         file.Header.VideoSynchronisation.Should().Equal(VideoSynchronisation.Normal);

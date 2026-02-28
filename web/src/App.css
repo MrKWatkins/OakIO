@@ -134,6 +134,10 @@
   width: 1%;
 }
 
+.prop-value {
+  white-space: pre-wrap;
+}
+
 .prop-value code {
   font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
   font-size: 0.95em;
