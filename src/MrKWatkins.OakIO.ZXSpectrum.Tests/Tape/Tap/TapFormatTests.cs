@@ -119,32 +119,6 @@ public sealed class TapFormatTests : TapTestFixture
         wav.SampleData.Should().NotBeEmpty();
     }
 
-    [Explicit]
-    [TestCaseSource(nameof(ReadTestCases))]
-    public void CanRead([PathReference] string path)
-    {
-        using var file = File.OpenRead(path);
-
-        var tap = TapFormat.Instance.Read(file);
-
-        // Should be no bytes remaining.
-        file.ReadByte().Should().Equal(-1);
-
-        foreach (var block in tap.Blocks)
-        {
-            TestContext.Out.WriteLine(block);
-        }
-    }
-
-    [Pure]
-    public static IEnumerable<TestCaseData> ReadTestCases()
-    {
-        foreach (var file in new DirectoryInfo("/home/mrkwatkins/ZX/").EnumerateFiles("*.tap"))
-        {
-            yield return new TestCaseData(file.FullName).SetName(file.Name);
-        }
-    }
-
     [Pure]
     private static byte[] CreateRom() => [0xF3, 0xAF];
 }

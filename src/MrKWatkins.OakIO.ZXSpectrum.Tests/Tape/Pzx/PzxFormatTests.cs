@@ -335,23 +335,4 @@ public sealed class PzxFormatTests
         wav.SampleRate.Should().Equal(22050u);
         wav.SampleData.Should().NotBeEmpty();
     }
-
-    [Explicit]
-    [TestCaseSource(nameof(ReadTestCases))]
-    public void CanRead([PathReference] string path)
-    {
-        using var file = File.OpenRead(path);
-
-        // ReSharper disable once AccessToDisposedClosure
-        PzxFormat.Instance.Invoking(t => t.Read(file)).Should().NotThrow();
-    }
-
-    [Pure]
-    public static IEnumerable<TestCaseData> ReadTestCases()
-    {
-        foreach (var file in new DirectoryInfo("/home/mrkwatkins/ZX/").EnumerateFiles("*.pzx"))
-        {
-            yield return new TestCaseData(file.FullName).SetName(file.Name);
-        }
-    }
 }

@@ -325,27 +325,4 @@ public sealed class TzxFormatTests
         wav.SampleRate.Should().Equal(22050u);
         wav.SampleData.Should().NotBeEmpty();
     }
-
-    [Explicit]
-    [TestCaseSource(nameof(ReadTestCases))]
-    public void CanRead([PathReference] string path)
-    {
-        using var file = File.OpenRead(path);
-
-        var tzx = TzxFormat.Instance.Read(file);
-
-        foreach (var block in tzx.Blocks)
-        {
-            TestContext.Out.WriteLine(block);
-        }
-    }
-
-    [Pure]
-    public static IEnumerable<TestCaseData> ReadTestCases()
-    {
-        foreach (var file in new DirectoryInfo("/home/mrkwatkins/ZX/").EnumerateFiles("*.tzx"))
-        {
-            yield return new TestCaseData(file.FullName).SetName(file.Name);
-        }
-    }
 }
