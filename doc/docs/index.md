@@ -8,20 +8,21 @@
 
 OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files, inspecting their contents, and converting between formats.
 
-## Supported Formats
+## Documentation
+
+- [Reading, Writing and Converting](reading-writing-converting.md)
 
 ### ZX Spectrum Tape Formats
 
-- **TAP** — Simple tape format containing raw data blocks.
-- **TZX** — The standard for preserving ZX Spectrum tape recordings, supporting standard and turbo speed data, pauses, loops, groups, and archive metadata.
-- **PZX** — An alternative tape format with pulse-level encoding.
-- **WAV Audio** — Audio representation of tape data for playback.
+- [TAP](formats/tap.md) — Simple tape format containing raw data blocks.
+- [TZX](formats/tzx.md) — The standard for preserving ZX Spectrum tape recordings.
+- [PZX](formats/pzx.md) — An alternative tape format with pulse-level encoding.
 
 ### ZX Spectrum Snapshot Formats
 
-- **Z80** — Snapshot format supporting versions 1, 2, and 3, with optional compression. Supports 48K and 128K machines.
-- **SNA** — Simple snapshot format for 48K and 128K machines.
-- **NEX** — Snapshot format for the ZX Spectrum Next.
+- [Z80](formats/z80.md) — Snapshot format supporting versions 1, 2, and 3, with optional compression.
+- [SNA](formats/sna.md) — Simple snapshot format for 48K and 128K machines.
+- [NEX](formats/nex.md) — Snapshot format for the ZX Spectrum Next.
 
 ## Architecture
 
@@ -36,3 +37,4 @@ The library is organised around a set of base classes:
 ## Licencing
 
 Licensed under GPL v3.0.
+
