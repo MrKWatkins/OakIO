@@ -177,6 +177,67 @@ public sealed class InfoCommandTests : CommandsTestFixture
         json.Should().Contain("\"format\":\"TAP Tape\"");
     }
 
+    [Test]
+    public void Execute_ByteArray_TapFile()
+    {
+        using var inputFile = CreateTapFile();
+        var output = InfoCommand.Execute(inputFile.Path, inputFile.Bytes);
+        output.Should().Contain("Format: TAP Tape");
+        output.Should().Contain("Blocks: 2");
+    }
+
+    [Test]
+    public void Execute_ByteArray_CustomIndent()
+    {
+        using var inputFile = CreateTapFile();
+        var output = InfoCommand.Execute(inputFile.Path, inputFile.Bytes, "  ");
+        output.Should().Contain("  1:");
+        output.Should().NotContain("    1:");
+    }
+
+    [Test]
+    public void Execute_TzxFile_WithTurboSpeedData_OutputsDetails()
+    {
+        // TurboSpeedData block has Details which should be rendered in text output.
+        byte[] turboBlock =
+        [
+            0x11,
+            0x78, 0x08, 0x9B, 0x02, 0xDF, 0x02,
+            0x57, 0x03, 0xAE, 0x06, 0x97, 0x0C,
+            0x08, 0xE8, 0x03, 0x02, 0x00, 0x00,
+            0xFF, 0x00
+        ];
+        using var stream = new MemoryStream();
+        stream.Write("ZXTape!\x1A"u8);
+        stream.WriteByte(0x01);
+        stream.WriteByte(0x14);
+        stream.Write(turboBlock);
+        var data = stream.ToArray();
+
+        var output = InfoCommand.Execute("test.tzx", data);
+        output.Should().Contain("Pilot Pulse: 2168 T-States");
+        output.Should().Contain("Zero Bit Pulse: 855 T-States");
+    }
+
+    [Test]
+    public void Execute_TzxFile_WithLoop_OutputsNestedSections()
+    {
+        // Loop block produces nested Sections in text output.
+        using var stream = new MemoryStream();
+        stream.Write("ZXTape!\x1A"u8);
+        stream.WriteByte(0x01);
+        stream.WriteByte(0x14);
+        stream.Write([0x24, 0x02, 0x00]); // LoopStart, 2 reps
+        stream.Write([0x10, 0xE8, 0x03, 0x04, 0x00, 0xFF, 0x01, 0x02, 0x00]); // StandardSpeedData
+        stream.WriteByte(0x25); // LoopEnd
+        var data = stream.ToArray();
+
+        var output = InfoCommand.Execute("test.tzx", data);
+        output.Should().Contain("Loop");
+        output.Should().Contain("Blocks: 1");
+        output.Should().Contain("Standard Speed Data");
+    }
+
     [Pure]
     private static IReadOnlyList<string> RunInfoCommand(TemporaryFile inputFile)
     {

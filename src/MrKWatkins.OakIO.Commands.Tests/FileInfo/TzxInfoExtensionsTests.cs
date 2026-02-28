@@ -150,6 +150,69 @@ public sealed class TzxInfoExtensionsTests
         items[0].Sections.Single(s => s.Title == "Blocks").Items.Should().HaveCount(1);
     }
 
+    [Test]
+    public void ToInfoSections_TurboSpeedData()
+    {
+        // 0x11 = TurboSpeedData; 18-byte header + data.
+        // Header: pilot=2168(0x78,0x08), syncFirst=667(0x9B,0x02), syncSecond=735(0xDF,0x02),
+        // zero=855(0x57,0x03), one=1710(0xAE,0x06), pilotPulses=3223(0x97,0x0C),
+        // usedBits=8, pause=1000(0xE8,0x03), length=2(0x02,0x00,0x00)
+        byte[] block =
+        [
+            0x11,
+            0x78, 0x08, // Pilot pulse
+            0x9B, 0x02, // Sync first
+            0xDF, 0x02, // Sync second
+            0x57, 0x03, // Zero bit
+            0xAE, 0x06, // One bit
+            0x97, 0x0C, // Pilot pulses count
+            0x08,       // Used bits in last byte
+            0xE8, 0x03, // Pause after
+            0x02, 0x00, 0x00, // Data length
+            0xFF, 0x00  // Data
+        ];
+        var tzx = ReadTzx(block);
+        var items = tzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;
+        items.Should().HaveCount(1);
+        items[0].Title.Should().Equal("Turbo Speed Data");
+        items[0].Properties.Single(p => p.Name == "Length").Value.Should().Equal("2");
+        items[0].Properties.Single(p => p.Name == "Pause After").Value.Should().Equal("1000 ms");
+        items[0].Details["Pilot Pulse"].Should().Equal("2168 T-States");
+        items[0].Details["Pilot Tone Pulses"].Should().Equal("3223");
+        items[0].Details["Sync First Pulse"].Should().Equal("667 T-States");
+        items[0].Details["Sync Second Pulse"].Should().Equal("735 T-States");
+        items[0].Details["Zero Bit Pulse"].Should().Equal("855 T-States");
+        items[0].Details["One Bit Pulse"].Should().Equal("1710 T-States");
+        items[0].Details["Used Bits in Last Byte"].Should().Equal("8");
+    }
+
+    [Test]
+    public void ToInfoSections_PureData()
+    {
+        // 0x14 = PureData; 10-byte header + data.
+        // Header: zero=855(0x57,0x03), one=1710(0xAE,0x06), usedBits=8,
+        // pause=500(0xF4,0x01), length=3(0x03,0x00,0x00)
+        byte[] block =
+        [
+            0x14,
+            0x57, 0x03, // Zero bit
+            0xAE, 0x06, // One bit
+            0x08,       // Used bits in last byte
+            0xF4, 0x01, // Pause after
+            0x03, 0x00, 0x00, // Data length
+            0xFF, 0x00, 0xAA  // Data
+        ];
+        var tzx = ReadTzx(block);
+        var items = tzx.ToInfoSections().Single(s => s.Title == "Blocks").Items;
+        items.Should().HaveCount(1);
+        items[0].Title.Should().Equal("Pure Data");
+        items[0].Properties.Single(p => p.Name == "Length").Value.Should().Equal("3");
+        items[0].Properties.Single(p => p.Name == "Pause After").Value.Should().Equal("500 ms");
+        items[0].Details["Zero Bit Pulse"].Should().Equal("855 T-States");
+        items[0].Details["One Bit Pulse"].Should().Equal("1710 T-States");
+        items[0].Details["Used Bits in Last Byte"].Should().Equal("8");
+    }
+
     [Pure]
     private static TzxFile ReadTzx(params byte[][] blockByteSets)
     {

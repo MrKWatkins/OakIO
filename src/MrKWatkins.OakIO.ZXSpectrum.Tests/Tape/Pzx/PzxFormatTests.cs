@@ -7,6 +7,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Pzx;
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class PzxFormatTests
 {
+    [Pure]
     private static byte[] BuildPzxData()
     {
         using var stream = new MemoryStream();

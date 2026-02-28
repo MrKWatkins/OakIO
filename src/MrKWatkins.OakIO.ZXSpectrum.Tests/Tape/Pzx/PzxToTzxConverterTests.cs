@@ -7,12 +7,14 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Pzx;
 
 public sealed class PzxToTzxConverterTests
 {
+    [Pure]
     private static PzxFile ReadPzx(byte[] data)
     {
         using var stream = new MemoryStream(data);
         return PzxFormat.Instance.Read(stream);
     }
 
+    [Pure]
     private static byte[] BuildMinimalPzxHeader()
     {
         using var stream = new MemoryStream();

@@ -17,8 +17,13 @@ public static class ArchiveInfoTypeExtensions
     public static string ToDescription(this ArchiveInfoType type)
     {
         var name = type.ToString();
-        var member = typeof(ArchiveInfoType).GetMember(name)[0];
-        var attribute = member.GetCustomAttribute<DescriptionAttribute>();
+        var members = typeof(ArchiveInfoType).GetMember(name);
+        if (members.Length == 0)
+        {
+            return name;
+        }
+
+        var attribute = members[0].GetCustomAttribute<DescriptionAttribute>();
         return attribute?.Description ?? name;
     }
 }

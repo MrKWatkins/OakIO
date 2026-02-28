@@ -82,7 +82,7 @@ public sealed class DataBlock : TapeBlock
 
         // Have we finished the current byte?
         var isLastByte = currentByte == Data.Count - 1;
-        if (isLastByte && currentBit == lastBitOfLastByte || currentBit == 0)
+        if ((isLastByte && currentBit == lastBitOfLastByte) || currentBit == 0)
         {
             // Yes, advance the byte.
             currentByte++;

@@ -22,6 +22,32 @@ dotnet format src/OakIO.sln  # Format the source code.
 ```
 The test project uses the NUnit runner with Microsoft Testing Platform (`EnableNUnitRunner`), so test executables can also be run directly.
 
+### CI Build
+
+The full CI build (`.github/workflows/build.yml`) does the following. Run these locally to replicate the build server:
+
+```bash
+# 1. Install the WASM workload (needed for MrKWatkins.OakIO.Wasm).
+dotnet workload install wasm-tools
+
+# 2. Build and test all C# projects.
+dotnet build src/OakIO.sln
+dotnet test --solution src/OakIO.sln
+
+# 3. Build and test the web project.
+cd web
+npm ci
+npm test
+npm run build
+```
+
+The WASM workload is required to build the full solution. Without it, build individual projects:
+
+```bash
+dotnet build src/MrKWatkins.OakIO/MrKWatkins.OakIO.csproj
+dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
+```
+
 ## File Format Structure
 
 - ** MrKWatkins.OakIO.IOFileFormat **: Base class for file formats. Contains information about the format such as name and file extension, along with methods for reading and writing files.
@@ -74,4 +100,4 @@ The test project uses the NUnit runner with Microsoft Testing Platform (`EnableN
 ## Formatting Conventions
 
 - Always include `{` and `}` around control flow statements (e.g. `if`, `for`, `while`, etc.) even if they're single-line.
-- Ensure formatting is correct by running `dotnet format src/BinaryPrimitives.sln` after completing changes.
+- Ensure formatting is correct by running `dotnet format src/OakIO.sln` after completing changes.

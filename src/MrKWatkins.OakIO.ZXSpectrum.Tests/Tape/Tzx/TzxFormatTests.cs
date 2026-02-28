@@ -7,6 +7,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Tzx;
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class TzxFormatTests
 {
+    [Pure]
     private static byte[] BuildTzxData()
     {
         using var stream = new MemoryStream();

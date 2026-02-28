@@ -59,6 +59,7 @@ public sealed class TemporaryFile : IDisposable
 
     public string Path { get; }
 
+    [Pure]
     public string Name => new FileInfo(Path).Name;
 
     [Pure]

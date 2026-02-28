@@ -92,4 +92,15 @@ public sealed class ConvertCommandTests : CommandsTestFixture
         AssertThat.Invoking(() => ConvertCommand.Execute(inputFile.Path, inputStream, outputFile.Path, outputStream))
             .Should().Throw<NotSupportedException>();
     }
+
+    [Test]
+    public void Execute_ByteArray_TapToWav()
+    {
+        using var inputFile = CreateTapFile();
+        var result = ConvertCommand.Execute(inputFile.Path, inputFile.Bytes, "output.wav");
+        result.Should().NotBeEmpty();
+
+        var wav = (WavFile)WavFormat.Instance.Read(result);
+        wav.SampleData.Should().NotBeEmpty();
+    }
 }

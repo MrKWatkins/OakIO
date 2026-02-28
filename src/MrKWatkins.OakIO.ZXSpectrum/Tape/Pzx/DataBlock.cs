@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 
-// TODO: Variable length header, move pulses into header.
 /// <summary>
 /// A PZX block containing tape data.
 /// </summary>

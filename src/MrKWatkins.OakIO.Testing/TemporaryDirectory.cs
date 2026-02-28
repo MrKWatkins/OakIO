@@ -2,15 +2,15 @@ namespace MrKWatkins.OakIO.Testing;
 
 public sealed class TemporaryDirectory : IDisposable
 {
+    private readonly string directory;
+
     private TemporaryDirectory(string directory)
     {
-        Directory = directory;
+        this.directory = directory;
     }
 
-    public string Directory { get; }
-
     [Pure]
-    public string GetFilePath(string filename) => Path.Combine(Directory, filename);
+    public string GetFilePath(string filename) => Path.Combine(directory, filename);
 
     [MustUseReturnValue]
     [MustDisposeResource]
@@ -18,7 +18,7 @@ public sealed class TemporaryDirectory : IDisposable
     {
         var path = Path.GetTempFileName();
         File.Delete(path);
-        System.IO.Directory.CreateDirectory(path);
+        Directory.CreateDirectory(path);
         return new TemporaryDirectory(path);
     }
 
@@ -26,11 +26,11 @@ public sealed class TemporaryDirectory : IDisposable
     {
         try
         {
-            System.IO.Directory.Delete(Directory, true);
+            Directory.Delete(directory, true);
         }
         catch (Exception exception)
         {
-            Console.WriteLine($"Exception deleting temporary directory {Directory}: {exception}");
+            Console.WriteLine($"Exception deleting temporary directory {directory}: {exception}");
         }
     }
 }

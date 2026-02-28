@@ -207,6 +207,7 @@ public sealed class NexFormatTests
         file.Screens[0].Type.Should().Equal(NexScreenType.Layer2);
     }
 
+    [Pure]
     private static byte[] CreateMinimalNexData(
         string version,
         byte loadScreens,

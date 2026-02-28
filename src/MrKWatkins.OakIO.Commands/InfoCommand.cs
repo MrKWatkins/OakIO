@@ -54,7 +54,7 @@ public sealed class InfoCommand
         {
             ZXSpectrumTapeFile => "tape",
             ZXSpectrumSnapshotFile => "snapshot",
-            _ => "unknown"
+            _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 
         var convertibleTo = IOFileConversion.GetSupportedConversionFormats(file.Format)
@@ -68,7 +68,7 @@ public sealed class InfoCommand
             TzxTape.TzxFile tzx => tzx.ToInfoSections(),
             Pzx.PzxFile pzx => pzx.ToInfoSections(),
             ZXSpectrumSnapshotFile snapshot => snapshot.ToInfoSections(),
-            _ => new List<InfoSection>()
+            _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 
         return new FileInfoResult(file.Format.Name, file.Format.FileExtension, type, convertibleTo, sections);

@@ -50,10 +50,8 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
                 yield break;
             }
 
-#pragma warning disable CS0219
-            // TODO: Using MrKWatkins.BinaryPrimitives.
             var typeBytes = peekable.ReadExactly(4);
-            var type = (PzxBlockType)System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(typeBytes);
+            var type = (PzxBlockType)typeBytes.GetUInt32(0, Endian.Big);
             yield return type switch
             {
                 PzxBlockType.Header => new PzxHeaderBlock(peekable),
@@ -64,7 +62,6 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
                 PzxBlockType.Stop => new StopBlock(peekable),
                 _ => throw new NotSupportedException($"The block type {Encoding.ASCII.GetString(typeBytes)} is not supported.")
             };
-#pragma warning restore CS0219
         }
     }
 

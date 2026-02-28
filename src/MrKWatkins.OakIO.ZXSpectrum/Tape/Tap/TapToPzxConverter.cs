@@ -10,11 +10,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 /// </summary>
 public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
 {
-    /// <summary>
-    /// A default instance of the converter.
-    /// </summary>
-    public static readonly TapToPzxConverter Default = new();
-
     private const ushort PilotPulseLength = 2168;
     private const ushort HeaderPilotCount = 8063;
     private const ushort DataPilotCount = 3223;

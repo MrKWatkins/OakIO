@@ -55,7 +55,7 @@ internal static class PzxInfoExtensions
         {
             Properties = [new InfoProperty(Info.Properties.Only48K, stop.Header.Only48k.ToString().ToLowerInvariant(), Info.Formats.Boolean)]
         },
-        _ => new InfoItem(block.Header.Type.ToString())
+        _ => throw new NotSupportedException($"The PZX block type {block.GetType().Name} is not supported.")
     };
 
     [Pure]

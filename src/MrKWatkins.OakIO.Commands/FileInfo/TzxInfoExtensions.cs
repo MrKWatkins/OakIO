@@ -159,7 +159,7 @@ internal static class TzxInfoExtensions
                 return new InfoItem(Info.Items.StopTape48K);
 
             default:
-                return new InfoItem(block.Header.Type.ToString());
+                throw new NotSupportedException($"The TZX block header type {block.Header.Type} is not supported.");
         }
     }
 

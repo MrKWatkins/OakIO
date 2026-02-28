@@ -36,6 +36,6 @@ internal static class TapInfoExtensions
                 new InfoProperty(Info.Properties.Length, data.Header.BlockLength.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)
             ]
         },
-        _ => new InfoItem(block.ToString() ?? block.GetType().Name)
+        _ => throw new NotSupportedException($"The TAP block type {block.GetType().Name} is not supported.")
     };
 }

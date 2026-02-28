@@ -27,7 +27,7 @@ public abstract class Trailer : IOFileComponent
     /// </summary>
     /// <param name="length">The expected length of the trailer in bytes.</param>
     /// <param name="data">The bytes for this trailer.</param>
-    protected Trailer(int length, IEnumerable<byte> data) : base(length, data)
+    protected Trailer(int length, [InstantHandle] IEnumerable<byte> data) : base(length, data)
     {
     }
 

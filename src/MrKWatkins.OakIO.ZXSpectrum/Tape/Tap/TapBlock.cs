@@ -38,6 +38,7 @@ public abstract class TapBlock : Block<TapHeader, TapTrailer>
     /// <summary>
     /// Gets the XOR checksum of the block data.
     /// </summary>
+    [Pure]
     public byte Checksum => Data.Aggregate((byte)Header.Type, (current, b) => (byte)(current ^ b));
 }
 

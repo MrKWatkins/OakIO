@@ -82,6 +82,7 @@ public sealed class TapFormatErrorTests
             .Should().ThrowArgumentException("Value is not of type TapFile.", "file");
     }
 
+    [Pure]
     private static byte[] BuildMinimalPzxData()
     {
         using var stream = new MemoryStream();

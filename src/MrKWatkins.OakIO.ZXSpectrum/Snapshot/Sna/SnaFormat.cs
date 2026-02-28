@@ -100,6 +100,8 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
             case Sna128kFile file128K:
                 Write128k(file128K, stream);
                 break;
+            default:
+                throw new NotSupportedException($"The SNA file type {file.GetType().Name} is not supported.");
         }
     }
 

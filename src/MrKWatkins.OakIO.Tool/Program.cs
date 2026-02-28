@@ -1,13 +1,6 @@
-using MrKWatkins.OakIO.Tool.Convert;
-using MrKWatkins.OakIO.Tool.Info;
+using MrKWatkins.OakIO.Tool;
 using Spectre.Console.Cli;
 
 var app = new CommandApp();
-app.Configure(config =>
-{
-    config.SetApplicationName("oakio");
-    config.AddCommand<InfoCommand>("info").WithDescription("Display information about a file.");
-    config.AddCommand<ConvertCommand>("convert").WithDescription("Convert a file from one format to another.");
-});
-
+app.Configure(OakIOTool.Configure);
 return app.Run(args);

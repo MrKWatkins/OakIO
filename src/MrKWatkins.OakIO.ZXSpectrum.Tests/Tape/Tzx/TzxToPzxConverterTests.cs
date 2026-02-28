@@ -8,12 +8,14 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Tzx;
 
 public sealed class TzxToPzxConverterTests
 {
+    [Pure]
     private static TzxFile ReadTzx(byte[] data)
     {
         using var stream = new MemoryStream(data);
         return TzxFormat.Instance.Read(stream);
     }
 
+    [Pure]
     private static byte[] BuildMinimalTzxHeader()
     {
         using var stream = new MemoryStream();

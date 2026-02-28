@@ -174,6 +174,7 @@ public sealed class TapFileTests : TapTestFixture
             .Exception.Message.Should().Equal("Missing data block after header when loading TAP file.");
     }
 
+    [Pure]
     private static TapFile CreateTapFileFromBlocks(TapBlock[] blocks)
     {
         // Write blocks to a stream and read back via TapFormat to create a valid TapFile.
