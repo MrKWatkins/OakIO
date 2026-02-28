@@ -16,6 +16,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
   const [fileName, setFileName] = useState('');
   const [fileSize, setFileSize] = useState(0);
   const [converting, setConverting] = useState<string | null>(null);
+  const [convertError, setConvertError] = useState<string | null>(null);
   const fileDataRef = useRef<Uint8Array | null>(null);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +29,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
     setError(null);
     setInfoResult(null);
     setConverting(null);
+    setConvertError(null);
     setTab('file');
 
     try {
@@ -53,6 +55,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
     const outputFilename = fileName.replace(/\.[^.]+$/, `.${outputExtension}`);
 
     setConverting(outputExtension);
+    setConvertError(null);
     setError(null);
 
     try {
@@ -66,7 +69,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setConvertError(err instanceof Error ? err.message : String(err));
     } finally {
       setConverting(null);
     }
@@ -108,7 +111,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
         )}
         {infoResult && tab === 'file' && <FileTab info={infoResult} fileName={fileName} fileSize={fileSize} />}
         {infoResult && tab === 'contents' && <ContentsTab info={infoResult} />}
-        {infoResult && tab === 'convert' && <ConvertTab formats={infoResult.convertibleTo} onConvert={handleConvert} converting={converting} />}
+        {infoResult && tab === 'convert' && <ConvertTab formats={infoResult.convertibleTo} onConvert={handleConvert} converting={converting} error={convertError} />}
       </div>
     </div>
   );

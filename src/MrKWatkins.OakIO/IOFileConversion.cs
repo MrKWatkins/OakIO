@@ -119,6 +119,30 @@ public static class IOFileConversion
     }
 
     /// <summary>
+    /// Attempts to convert a file to the specified target format, returning <c>false</c> if the conversion fails.
+    /// </summary>
+    /// <param name="source">The source file to convert.</param>
+    /// <param name="targetFormat">The target format to convert to.</param>
+    /// <param name="result">The converted file, or <c>null</c> if conversion failed.</param>
+    /// <param name="error">The error message if conversion failed, or <c>null</c> if successful.</param>
+    /// <returns><c>true</c> if the conversion succeeded; <c>false</c> otherwise.</returns>
+    public static bool TryConvert(IOFile source, IOFileFormat targetFormat, [NotNullWhen(true)] out IOFile? result, [NotNullWhen(false)] out string? error)
+    {
+        try
+        {
+            result = Convert(source, targetFormat);
+            error = null;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            result = null;
+            error = ex.Message;
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Gets the formats that the specified source format can be converted to.
     /// </summary>
     /// <param name="sourceFormat">The source format.</param>

@@ -4,9 +4,29 @@
 [![NuGet Version](https://img.shields.io/nuget/v/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
 
-> IO formats for emulators.
+> A C# library for reading, writing and converting between various emulator data formats.
+
+## Overview
+
+OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files, inspecting their contents, and converting between formats.
+
+## Installation
+
+```
+dotnet add package MrKWatkins.OakIO
+```
+
+## Documentation
+
+Full documentation can be found at https://mrkwatkins.github.io/OakIO/.
+
+## Online Converter
+
+An online converter using this library is available at https://mrkwatkins.github.io/OakIO/converter/.
 
 ## Licencing
+
+The project is licensed under GPL v3.0.
 
 The ZX Spectrum file format tests use some files found in the wild:
 

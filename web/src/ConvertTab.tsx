@@ -1,9 +1,10 @@
 import type { ConvertibleFormat } from './types';
 
-export function ConvertTab({ formats, onConvert, converting }: {
+export function ConvertTab({ formats, onConvert, converting, error }: {
   formats: ConvertibleFormat[];
   onConvert: (ext: string) => void;
   converting: string | null;
+  error: string | null;
 }) {
   if (formats.length === 0) {
     return <div className="tab-content"><p className="empty-note">No conversion options available for this format.</p></div>;
@@ -25,6 +26,7 @@ export function ConvertTab({ formats, onConvert, converting }: {
         ))}
       </div>
       {converting && <p className="converting-message">Converting…</p>}
+      {error && <p className="convert-error">{error}</p>}
     </div>
   );
 }

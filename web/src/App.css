@@ -309,6 +309,11 @@
   margin-top: 0.75rem;
 }
 
+.convert-error {
+  color: #e74c3c;
+  margin-top: 0.75rem;
+}
+
 @media (prefers-color-scheme: light) {
   .file-picker label {
     color: #666;

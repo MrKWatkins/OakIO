@@ -1,4 +1,4 @@
-# PZX Format
+# PZX Tape
 
 PZX is an alternative tape format for the ZX Spectrum with pulse-level encoding. It uses a tagged block structure with four-byte ASCII block identifiers. PZX is designed to be simpler and more compact than [TZX](tzx.md) while still preserving the full timing information needed for non-standard loaders.
 
@@ -61,4 +61,8 @@ foreach (PzxBlock block in pzx.Blocks.Skip(1))
 
 ## Conversions
 
-PZX files can be converted to TZX and WAV. See [Reading, Writing and Converting](../reading-writing-converting.md).
+PZX files can be converted to TAP, TZX, and WAV.
+
+When converting to TAP, only `DataBlock` blocks are converted. All other block types (header, pulse sequences, pauses, browse points, and stop blocks) are skipped.
+
+See [Reading, Writing and Converting](../reading-writing-converting.md).

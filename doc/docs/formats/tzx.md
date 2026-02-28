@@ -1,4 +1,4 @@
-# TZX Format
+# TZX Tape
 
 TZX is the standard format for preserving ZX Spectrum tape recordings. Unlike [TAP](tap.md), TZX encodes the timing of pulses on the tape, making it suitable for non-standard loaders, copy-protected software, and archive metadata. TZX files contain a sequence of typed blocks, each with its own structure.
 
@@ -60,4 +60,8 @@ foreach (TzxBlock block in tzx.Blocks)
 
 ## Conversions
 
-TZX files can be converted to PZX and WAV. See [Reading, Writing and Converting](../reading-writing-converting.md).
+TZX files can be converted to TAP, PZX, and WAV.
+
+When converting to TAP, only `StandardSpeedDataBlock` blocks are converted. Metadata and structural blocks (text descriptions, archive info, groups, pauses, and stop signals) are skipped. If the TZX file contains block types that cannot be represented in TAP (turbo speed data, pure data, pure tone, pulse sequences, or loops), the conversion will fail with an error message.
+
+See [Reading, Writing and Converting](../reading-writing-converting.md).

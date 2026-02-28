@@ -1,4 +1,4 @@
-# SNA Snapshot Format
+# SNA Snapshot
 
 SNA is a simple snapshot format for the ZX Spectrum. Two variants exist: a 48K variant (49179 bytes) and a 128K variant (131103 bytes). The format stores CPU registers and RAM contents directly, with no compression.
 

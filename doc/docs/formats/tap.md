@@ -1,4 +1,4 @@
-# TAP Format
+# TAP Tape
 
 TAP is a simple tape format for the ZX Spectrum. A TAP file is a flat sequence of blocks, each consisting of a flag byte, raw data bytes, and a checksum byte. There is no metadata about the recording itself — it is purely the data that would have been read from or written to tape.
 

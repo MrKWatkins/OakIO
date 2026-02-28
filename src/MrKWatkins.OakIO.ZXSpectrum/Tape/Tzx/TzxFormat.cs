@@ -26,6 +26,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     {
         var tzxToTape = new TzxToTapeConverter();
         yield return new TzxToPzxConverter();
+        yield return new TzxToTapConverter();
         yield return tzxToTape;
         yield return new WavFileViaTapeConverter<TzxFile>(Instance, tzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }

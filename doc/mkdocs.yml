@@ -2,6 +2,7 @@ site_name: MrKWatkins.OakIO
 theme:
   name: material
   repo_url: https://github.com/MrKWatkins/OakIO
+  favicon: favicon.ico
   features:
     - navigation.sections
   palette:

@@ -26,6 +26,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     {
         var pzxToTape = new PzxToTapeConverter();
         yield return new PzxToTzxConverter();
+        yield return new PzxToTapConverter();
         yield return pzxToTape;
         yield return new WavFileViaTapeConverter<PzxFile>(Instance, pzxToTape, new TapeToWavConverter(TStatesPerSecond));
     }

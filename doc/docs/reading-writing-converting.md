@@ -50,6 +50,24 @@ TzxFile tzx = IOFileConversion.Convert<TzxFile>(tap);
 
 // Convert TAP → PZX:
 PzxFile pzx = IOFileConversion.Convert<PzxFile>(tap);
+
+// Convert TZX → TAP:
+TapFile tapFromTzx = IOFileConversion.Convert<TapFile>(tzx);
+```
+
+### Converting with Error Handling
+
+Use [`TryConvert`](API/MrKWatkins.OakIO/IOFileConversion/TryConvert.md) when the conversion might fail. This is useful for conversions like TZX → TAP or PZX → TAP where not all block types can be represented:
+
+```c#
+if (IOFileConversion.TryConvert(tzx, TapFormat.Instance, out var result, out var error))
+{
+    TapFormat.Instance.Write(result, "output.tap");
+}
+else
+{
+    Console.WriteLine($"Conversion failed: {error}");
+}
 ```
 
 ### Converting to WAV

@@ -80,9 +80,9 @@ public sealed class StandardFileHeader
 
         // Verify checksum: XOR of all bytes should be 0.
         byte checksum = 0;
-        for (var i = 0; i < tapeData.Length; i++)
+        foreach (var t in tapeData)
         {
-            checksum ^= tapeData[i];
+            checksum ^= t;
         }
 
         if (checksum != 0)

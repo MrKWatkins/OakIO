@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Generate API" type="ShConfigurationType">
-    <option name="SCRIPT_TEXT" value="sesharp ../src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll docs/API" />
+    <option name="SCRIPT_TEXT" value="sesharp ../src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll ../src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output docs/API --repository https://github.com/MrKWatkins/OakIO" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="" />
     <option name="SCRIPT_OPTIONS" value="" />

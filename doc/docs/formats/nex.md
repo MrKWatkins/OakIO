@@ -1,4 +1,4 @@
-# NEX Snapshot Format
+# NEX Snapshot
 
 NEX is a snapshot format for the ZX Spectrum Next. In addition to the standard CPU registers and RAM banks, it supports Next-specific features including multiple screen types (Layer 2, ULA, LoRes, HiRes, HiColour), copper code, and a palette. NEX does not store shadow register data.
 

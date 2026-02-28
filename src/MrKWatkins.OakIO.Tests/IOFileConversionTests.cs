@@ -70,6 +70,39 @@ public sealed class IOFileConversionTests
             .Should().Throw<InvalidOperationException>();
     }
 
+    [Test]
+    public void TryConvert_Success()
+    {
+        var source = new ConversionSourceFile();
+
+        IOFileConversion.TryConvert(source, ConversionTargetFileFormat.Instance, out var result, out var error).Should().BeTrue();
+
+        result.Should().BeOfType<ConversionTargetFile>();
+        error.Should().BeNull();
+    }
+
+    [Test]
+    public void TryConvert_NoConverterRegistered()
+    {
+        var source = new ConversionSourceFile();
+
+        IOFileConversion.TryConvert(source, UnregisteredFileFormat.Instance, out var result, out var error).Should().BeFalse();
+
+        result.Should().BeNull();
+        error.Should().NotBeNull();
+    }
+
+    [Test]
+    public void TryConvert_ConverterThrows()
+    {
+        var source = new ThrowingSourceFile();
+
+        IOFileConversion.TryConvert(source, ThrowingTargetFileFormat.Instance, out var result, out var error).Should().BeFalse();
+
+        result.Should().BeNull();
+        error.Should().Equal("Conversion failed.");
+    }
+
     private sealed class ConversionSourceFile() : IOFile(ConversionSourceFileFormat.Instance);
 
     private sealed class ConversionSourceFileFormat() : IOFileFormat<ConversionSourceFile>("Source", "src")
@@ -130,5 +163,35 @@ public sealed class IOFileConversionTests
         public override IOFile Read(Stream stream) => new UnregisteredFile();
 
         protected override void Write(UnregisteredFile file, Stream stream) { }
+    }
+
+    private sealed class ThrowingSourceFile() : IOFile(ThrowingSourceFileFormat.Instance);
+
+    private sealed class ThrowingSourceFileFormat() : IOFileFormat<ThrowingSourceFile>("ThrowingSource", "ths")
+    {
+        public static readonly ThrowingSourceFileFormat Instance = new();
+
+        protected override IEnumerable<IOFileConverter> CreateConverters() =>
+            [new ThrowingConverter()];
+
+        public override IOFile Read(Stream stream) => new ThrowingSourceFile();
+
+        protected override void Write(ThrowingSourceFile file, Stream stream) { }
+    }
+
+    private sealed class ThrowingTargetFile() : IOFile(ThrowingTargetFileFormat.Instance);
+
+    private sealed class ThrowingTargetFileFormat() : IOFileFormat<ThrowingTargetFile>("ThrowingTarget", "tht")
+    {
+        public static readonly ThrowingTargetFileFormat Instance = new();
+
+        public override IOFile Read(Stream stream) => new ThrowingTargetFile();
+
+        protected override void Write(ThrowingTargetFile file, Stream stream) { }
+    }
+
+    private sealed class ThrowingConverter() : IOFileConverter<ThrowingSourceFile, ThrowingTargetFile>(ThrowingSourceFileFormat.Instance, ThrowingTargetFileFormat.Instance)
+    {
+        public override ThrowingTargetFile Convert(ThrowingSourceFile source) => throw new NotSupportedException("Conversion failed.");
     }
 }
