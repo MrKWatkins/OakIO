@@ -28,32 +28,32 @@ public sealed class TurboSpeedDataHeader : TzxBlockHeader
     /// <summary>
     /// Gets the number of T-states per pilot pulse.
     /// </summary>
-    public ushort TStatesInPilotPulse => GetWord(0);
+    public ushort TStatesInPilotPulse => GetUInt16(0);
 
     /// <summary>
     /// Gets the number of T-states in the first sync pulse.
     /// </summary>
-    public ushort TStatesInSyncFirstPulse => GetWord(2);
+    public ushort TStatesInSyncFirstPulse => GetUInt16(2);
 
     /// <summary>
     /// Gets the number of T-states in the second sync pulse.
     /// </summary>
-    public ushort TStatesInSyncSecondPulse => GetWord(4);
+    public ushort TStatesInSyncSecondPulse => GetUInt16(4);
 
     /// <summary>
     /// Gets the number of T-states per pulse for a zero bit.
     /// </summary>
-    public ushort TStatesInZeroBitPulse => GetWord(6);
+    public ushort TStatesInZeroBitPulse => GetUInt16(6);
 
     /// <summary>
     /// Gets the number of T-states per pulse for a one bit.
     /// </summary>
-    public ushort TStatesInOneBitPulse => GetWord(8);
+    public ushort TStatesInOneBitPulse => GetUInt16(8);
 
     /// <summary>
     /// Gets the number of pulses in the pilot tone.
     /// </summary>
-    public ushort PulsesInPilotTone => GetWord(10);
+    public ushort PulsesInPilotTone => GetUInt16(10);
 
     /// <summary>
     /// Gets the number of used bits in the last byte of data.
@@ -63,7 +63,7 @@ public sealed class TurboSpeedDataHeader : TzxBlockHeader
     /// <summary>
     /// Gets the pause duration after this block in milliseconds.
     /// </summary>
-    public ushort PauseAfterBlockMs => GetWord(13);
+    public ushort PauseAfterBlockMs => GetUInt16(13);
 
     /// <summary>
     /// Gets the pause duration after this block as a <see cref="TimeSpan"/>.

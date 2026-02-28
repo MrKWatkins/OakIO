@@ -43,7 +43,7 @@ public sealed class DataHeader : PzxBlockHeader
     /// <summary>
     /// Gets the duration of the tail pulse in T-states.
     /// </summary>
-    public ushort Tail => GetWord(StartIndex + 4);
+    public ushort Tail => GetUInt16(StartIndex + 4);
 
     /// <summary>
     /// Gets the number of pulses in the zero bit pulse sequence.

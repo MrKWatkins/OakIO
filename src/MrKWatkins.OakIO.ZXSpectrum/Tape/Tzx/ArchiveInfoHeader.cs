@@ -25,7 +25,7 @@ public sealed class ArchiveInfoHeader : TzxBlockHeader
     /// <summary>
     /// Gets the length of the whole archive info block in bytes.
     /// </summary>
-    public ushort LengthOfWholeBlock => GetWord(0);
+    public ushort LengthOfWholeBlock => GetUInt16(0);
 
     /// <summary>
     /// Gets the number of text strings in this archive info block.

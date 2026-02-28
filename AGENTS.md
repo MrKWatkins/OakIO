@@ -80,8 +80,8 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 ## Code Conventions
 
-- Use `MrKWatkins.BinaryPrimitives` extension methods for binary I/O (`stream.WriteWord()`, `stream.WriteUInt24()`, `stream.WriteUInt32()`, `array.SetWord()`, `array.SetUInt32()`, etc.). Do not create custom binary write helpers.
-- Prefer building binary data as byte arrays using `array.SetWord(...)`, `array.SetUInt32(...)`, etc., over writing to a `MemoryStream`. Where block classes accept byte-array constructors, pass the byte arrays directly — do not wrap them in a `MemoryStream`.
+- Use `MrKWatkins.BinaryPrimitives` extension methods for binary I/O (`stream.WriteUInt16()`, `stream.WriteUInt24()`, `stream.WriteUInt32()`, `array.SetUInt16()`, `array.SetUInt32()`, etc.). Do not create custom binary write helpers.
+- Prefer building binary data as byte arrays using `array.SetUInt16(...)`, `array.SetUInt32(...)`, etc., over writing to a `MemoryStream`. Where block classes accept byte-array constructors, pass the byte arrays directly — do not wrap them in a `MemoryStream`.
 - Global usings configured in Directory.Build.props: `System.Diagnostics.CodeAnalysis`, `System.Diagnostics.Contracts`, `PureAttribute`, `JetBrains.Annotations`.
 - Warnings are errors; CA1707 (underscores in names) is suppressed in test projects only.
 - Use `[Pure]` on methods where possible.

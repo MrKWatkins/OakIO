@@ -143,8 +143,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort SP
     {
-        get => GetWord(12);
-        set => SetWord(12, value);
+        get => GetUInt16(12);
+        set => SetUInt16(12, value);
     }
 
     /// <summary>
@@ -152,8 +152,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort PC
     {
-        get => GetWord(14);
-        set => SetWord(14, value);
+        get => GetUInt16(14);
+        set => SetUInt16(14, value);
     }
 
     /// <summary>
@@ -161,8 +161,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort NumExtraFiles
     {
-        get => GetWord(16);
-        set => SetWord(16, value);
+        get => GetUInt16(16);
+        set => SetUInt16(16, value);
     }
 
     /// <summary>
@@ -284,8 +284,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort FileHandleAddress
     {
-        get => GetWord(140);
-        set => SetWord(140, value);
+        get => GetUInt16(140);
+        set => SetUInt16(140, value);
     }
 
     /// <summary>
@@ -320,8 +320,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort CliBufferAddress
     {
-        get => GetWord(148);
-        set => SetWord(148, value);
+        get => GetUInt16(148);
+        set => SetUInt16(148, value);
     }
 
     /// <summary>
@@ -329,8 +329,8 @@ public sealed class NexHeader : Header
     /// </summary>
     public ushort CliBufferSize
     {
-        get => GetWord(150);
-        set => SetWord(150, value);
+        get => GetUInt16(150);
+        set => SetUInt16(150, value);
     }
 
     /// <summary>

@@ -219,11 +219,11 @@ public abstract class IOFileComponent(byte[] data)
     /// <param name="endian">The byte order.</param>
     /// <returns>The word value.</returns>
     [Pure]
-    protected ushort GetWord(int index, Endian endian = Endian.Little)
+    protected ushort GetUInt16(int index, Endian endian = Endian.Little)
     {
         ValidateWordIndexArguments(index);
 
-        return data.GetWord(index, endian);
+        return data.GetUInt16(index, endian);
     }
 
     /// <summary>
@@ -232,11 +232,11 @@ public abstract class IOFileComponent(byte[] data)
     /// <param name="index">The index of the word.</param>
     /// <param name="value">The value to set.</param>
     /// <param name="endian">The byte order.</param>
-    protected void SetWord(int index, ushort value, Endian endian = Endian.Little)
+    protected void SetUInt16(int index, ushort value, Endian endian = Endian.Little)
     {
         ValidateWordIndexArguments(index);
 
-        data.SetWord(index, value, endian);
+        data.SetUInt16(index, value, endian);
     }
 
     /// <summary>
@@ -246,7 +246,7 @@ public abstract class IOFileComponent(byte[] data)
     /// <param name="endian">The byte order.</param>
     /// <returns>The 24-bit unsigned integer value.</returns>
     [Pure]
-    protected int GetUInt24(int index, Endian endian = Endian.Little)
+    protected UInt24 GetUInt24(int index, Endian endian = Endian.Little)
     {
         ValidateUInt24IndexArguments(index);
 
@@ -259,7 +259,7 @@ public abstract class IOFileComponent(byte[] data)
     /// <param name="index">The index of the value.</param>
     /// <param name="value">The value to set.</param>
     /// <param name="endian">The byte order.</param>
-    protected void SetUInt24(int index, int value, Endian endian = Endian.Little)
+    protected void SetUInt24(int index, UInt24 value, Endian endian = Endian.Little)
     {
         ValidateUInt24IndexArguments(index);
 

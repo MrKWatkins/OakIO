@@ -25,7 +25,7 @@ public sealed class StandardSpeedDataHeader : TzxBlockHeader
     /// <summary>
     /// Gets the pause duration after this block in milliseconds.
     /// </summary>
-    public ushort PauseAfterBlockMs => GetWord(0);
+    public ushort PauseAfterBlockMs => GetUInt16(0);
 
     /// <summary>
     /// Gets the pause duration after this block as a <see cref="TimeSpan"/>.
@@ -33,7 +33,7 @@ public sealed class StandardSpeedDataHeader : TzxBlockHeader
     public TimeSpan PauseAfter => TimeSpan.FromMilliseconds(PauseAfterBlockMs);
 
     /// <inheritdoc />
-    public override int BlockLength => GetWord(2);
+    public override int BlockLength => GetUInt16(2);
 
     /// <inheritdoc />
     public override string ToString() =>

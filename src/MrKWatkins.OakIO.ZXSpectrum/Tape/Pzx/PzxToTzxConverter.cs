@@ -62,7 +62,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
 
         var entriesSize = entries.Sum(e => 2 + e.Bytes.Length);
         var header = new byte[3];
-        header.SetWord(0, (ushort)(entriesSize + 1));
+        header.SetUInt16(0, (ushort)(entriesSize + 1));
         header[2] = (byte)entries.Count;
 
         var body = new byte[entriesSize];
@@ -128,8 +128,8 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
                 }
 
                 var header = new byte[4];
-                header.SetWord(0, (ushort)pulse.Duration);
-                header.SetWord(2, pulse.Count);
+                header.SetUInt16(0, (ushort)pulse.Duration);
+                header.SetUInt16(2, pulse.Count);
                 yield return new PureToneBlock(header);
             }
             else
@@ -171,7 +171,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
             var offset = 0;
             foreach (var pulse in chunk)
             {
-                body.SetWord(offset, pulse);
+                body.SetUInt16(offset, pulse);
                 offset += 2;
             }
 
@@ -200,11 +200,11 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
         var dataStream = block.DataStream;
 
         var header = new byte[10];
-        header.SetWord(0, zeroBitTStates);
-        header.SetWord(2, oneBitTStates);
+        header.SetUInt16(0, zeroBitTStates);
+        header.SetUInt16(2, oneBitTStates);
         header[4] = usedBitsInLastByte;
-        header.SetWord(5, 0);
-        header.SetUInt24(7, dataStream.Length);
+        header.SetUInt16(5, 0);
+        header.SetUInt24(7, (UInt24)dataStream.Length);
 
         yield return new PureDataBlock(header, dataStream.ToArray());
     }
@@ -215,7 +215,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
         var durationMs = (ushort)Math.Min(block.Header.Duration / MillisecondCycles, ushort.MaxValue);
 
         var header = new byte[2];
-        header.SetWord(0, durationMs);
+        header.SetUInt16(0, durationMs);
         yield return new TzxPauseBlock(header);
     }
 

@@ -263,44 +263,44 @@ public sealed class IOFileComponentTests
 
     [TestCase(-1)]
     [TestCase(2)]
-    public void GetWord_IndexOutOfRange(int index)
+    public void GetUInt16_IndexOutOfRange(int index)
     {
         var header = new TestIOFileComponent(3);
-        AssertThat.Invoking(() => header.GetWord(index))
+        AssertThat.Invoking(() => header.GetUInt16(index))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 1. (2)", "index", index);
     }
 
     [TestCase(-1)]
     [TestCase(2)]
-    public void SetWord_IndexOutOfRange(int index)
+    public void SetUInt16_IndexOutOfRange(int index)
     {
         var header = new TestIOFileComponent(3);
-        AssertThat.Invoking(() => header.SetWord(index, 5))
+        AssertThat.Invoking(() => header.SetUInt16(index, 5))
             .Should().ThrowArgumentOutOfRangeException("Value must be greater than or equal to 0 and less than Length - 1. (2)", "index", index);
     }
 
     [Test]
-    public void GetWordAndSetWord()
+    public void GetUInt16AndSetUInt16()
     {
         var header = new TestIOFileComponent(3);
-        header.GetWord(0).Should().Equal(0);
-        header.GetWord(0, Endian.Big).Should().Equal(0);
-        header.GetWord(1).Should().Equal(0);
-        header.GetWord(1, Endian.Big).Should().Equal(0);
+        header.GetUInt16(0).Should().Equal(0);
+        header.GetUInt16(0, Endian.Big).Should().Equal(0);
+        header.GetUInt16(1).Should().Equal(0);
+        header.GetUInt16(1, Endian.Big).Should().Equal(0);
 
-        header.SetWord(1, 0x1234);
+        header.SetUInt16(1, 0x1234);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(0x00, 0x34, 0x12);
-        header.GetWord(0).Should().Equal(0x3400);
-        header.GetWord(0, Endian.Big).Should().Equal(0x0034);
-        header.GetWord(1).Should().Equal(0x1234);
-        header.GetWord(1, Endian.Big).Should().Equal(0x3412);
+        header.GetUInt16(0).Should().Equal(0x3400);
+        header.GetUInt16(0, Endian.Big).Should().Equal(0x0034);
+        header.GetUInt16(1).Should().Equal(0x1234);
+        header.GetUInt16(1, Endian.Big).Should().Equal(0x3412);
 
-        header.SetWord(0, 0x5678, Endian.Big);
+        header.SetUInt16(0, 0x5678, Endian.Big);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(0x56, 0x78, 0x12);
-        header.GetWord(0).Should().Equal(0x7856);
-        header.GetWord(0, Endian.Big).Should().Equal(0x5678);
-        header.GetWord(1).Should().Equal(0x1278);
-        header.GetWord(1, Endian.Big).Should().Equal(0x7812);
+        header.GetUInt16(0).Should().Equal(0x7856);
+        header.GetUInt16(0, Endian.Big).Should().Equal(0x5678);
+        header.GetUInt16(1).Should().Equal(0x1278);
+        header.GetUInt16(1, Endian.Big).Should().Equal(0x7812);
     }
 
     [TestCase(-1)]
@@ -330,19 +330,19 @@ public sealed class IOFileComponentTests
         header.GetUInt24(1).Should().Equal(0);
         header.GetUInt24(1, Endian.Big).Should().Equal(0);
 
-        header.SetUInt24(1, 0x123456);
+        header.SetUInt24(1, (UInt24)0x123456);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(0x00, 0x56, 0x34, 0x12);
-        header.GetUInt24(0).Should().Equal(0x345600);
+        header.GetUInt24(0).Should().Equal((UInt24)0x345600);
         header.GetUInt24(0, Endian.Big).Should().Equal(0x005634);
-        header.GetUInt24(1).Should().Equal(0x123456);
-        header.GetUInt24(1, Endian.Big).Should().Equal(0x563412);
+        header.GetUInt24(1).Should().Equal((UInt24)0x123456);
+        header.GetUInt24(1, Endian.Big).Should().Equal((UInt24)0x563412);
 
-        header.SetUInt24(0, 0x56789A, Endian.Big);
+        header.SetUInt24(0, (UInt24)0x56789A, Endian.Big);
         header.AsReadOnlySpan().ToArray().Should().SequenceEqual(0x56, 0x78, 0x9A, 0x12);
-        header.GetUInt24(0).Should().Equal(0x9A7856);
-        header.GetUInt24(0, Endian.Big).Should().Equal(0x56789A);
-        header.GetUInt24(1).Should().Equal(0x129A78);
-        header.GetUInt24(1, Endian.Big).Should().Equal(0x789A12);
+        header.GetUInt24(0).Should().Equal((UInt24)0x9A7856);
+        header.GetUInt24(0, Endian.Big).Should().Equal((UInt24)0x56789A);
+        header.GetUInt24(1).Should().Equal((UInt24)0x129A78);
+        header.GetUInt24(1, Endian.Big).Should().Equal((UInt24)0x789A12);
     }
 
     [TestCase(-1)]
@@ -776,14 +776,14 @@ public sealed class IOFileComponentTests
             base.SetByte(index, value);
 
         [Pure]
-        public new ushort GetWord(int index, Endian endian = Endian.Little) => base.GetWord(index, endian);
+        public new ushort GetUInt16(int index, Endian endian = Endian.Little) => base.GetUInt16(index, endian);
 
-        public new void SetWord(int index, ushort value, Endian endian = Endian.Little) => base.SetWord(index, value, endian);
+        public new void SetUInt16(int index, ushort value, Endian endian = Endian.Little) => base.SetUInt16(index, value, endian);
 
         [Pure]
-        public new int GetUInt24(int index, Endian endian = Endian.Little) => base.GetUInt24(index, endian);
+        public new UInt24 GetUInt24(int index, Endian endian = Endian.Little) => base.GetUInt24(index, endian);
 
-        public new void SetUInt24(int index, int value, Endian endian = Endian.Little) => base.SetUInt24(index, value, endian);
+        public new void SetUInt24(int index, UInt24 value, Endian endian = Endian.Little) => base.SetUInt24(index, value, endian);
 
         [Pure]
         public new int GetInt32(int index, Endian endian = Endian.Little) => base.GetInt32(index, endian);

@@ -26,12 +26,12 @@ public sealed class PureDataHeader : TzxBlockHeader
     /// <summary>
     /// Gets the number of T-states per pulse for a zero bit.
     /// </summary>
-    public ushort TStatesInZeroBitPulse => GetWord(0);
+    public ushort TStatesInZeroBitPulse => GetUInt16(0);
 
     /// <summary>
     /// Gets the number of T-states per pulse for a one bit.
     /// </summary>
-    public ushort TStatesInOneBitPulse => GetWord(2);
+    public ushort TStatesInOneBitPulse => GetUInt16(2);
 
     /// <summary>
     /// Gets the number of used bits in the last byte of data.
@@ -41,7 +41,7 @@ public sealed class PureDataHeader : TzxBlockHeader
     /// <summary>
     /// Gets the pause duration after this block in milliseconds.
     /// </summary>
-    public ushort PauseAfterBlockMs => GetWord(5);
+    public ushort PauseAfterBlockMs => GetUInt16(5);
 
     /// <summary>
     /// Gets the pause duration after this block as a <see cref="TimeSpan"/>.

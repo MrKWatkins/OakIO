@@ -21,7 +21,7 @@ public abstract class TapHeader : Header
     /// <summary>
     /// Gets the length of the block including the flag and checksum bytes.
     /// </summary>
-    public ushort BlockFlagAndChecksumLength => Data.GetWord(0);
+    public ushort BlockFlagAndChecksumLength => Data.GetUInt16(0);
 
     /// <summary>
     /// Gets the length of the block data excluding the flag and checksum bytes.

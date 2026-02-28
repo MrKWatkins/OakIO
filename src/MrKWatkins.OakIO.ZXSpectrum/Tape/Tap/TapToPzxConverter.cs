@@ -74,10 +74,10 @@ public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
         var headerData = new byte[4];
         headerData.SetUInt32(0, 8);
         var bodyData = new byte[8];
-        bodyData.SetWord(0, (ushort)(0x8000 | pilotCount));
-        bodyData.SetWord(2, PilotPulseLength);
-        bodyData.SetWord(4, Sync1Length);
-        bodyData.SetWord(6, Sync2Length);
+        bodyData.SetUInt16(0, (ushort)(0x8000 | pilotCount));
+        bodyData.SetUInt16(2, PilotPulseLength);
+        bodyData.SetUInt16(4, Sync1Length);
+        bodyData.SetUInt16(6, Sync2Length);
         return new PulseSequenceBlock(headerData, bodyData);
     }
 
@@ -88,14 +88,14 @@ public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
         var headerData = new byte[12];
         headerData.SetUInt32(0, (uint)(8 + 8 + blockData.Length));
         headerData.SetUInt32(4, sizeInBitsWithLevel);
-        headerData.SetWord(8, TailPulseLength);
+        headerData.SetUInt16(8, TailPulseLength);
         headerData[10] = 2;
         headerData[11] = 2;
         var bodyData = new byte[8 + blockData.Length];
-        bodyData.SetWord(0, ZeroBitPulseLength);
-        bodyData.SetWord(2, ZeroBitPulseLength);
-        bodyData.SetWord(4, OneBitPulseLength);
-        bodyData.SetWord(6, OneBitPulseLength);
+        bodyData.SetUInt16(0, ZeroBitPulseLength);
+        bodyData.SetUInt16(2, ZeroBitPulseLength);
+        bodyData.SetUInt16(4, OneBitPulseLength);
+        bodyData.SetUInt16(6, OneBitPulseLength);
         blockData.CopyTo(bodyData, 8);
         return new PzxDataBlock(headerData, bodyData);
     }

@@ -25,7 +25,7 @@ public sealed class PauseHeader : TzxBlockHeader
     /// <summary>
     /// Gets the pause duration in milliseconds.
     /// </summary>
-    public ushort PauseMs => GetWord(0);
+    public ushort PauseMs => GetUInt16(0);
 
     /// <summary>
     /// Gets the pause duration as a <see cref="TimeSpan"/>.

@@ -90,8 +90,8 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
     /// </summary>
     public ushort DataBlockLength
     {
-        get => GetWord(11);
-        private init => SetWord(11, value);
+        get => GetUInt16(11);
+        private init => SetUInt16(11, value);
     }
 
     /// <summary>
@@ -99,8 +99,8 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
     /// </summary>
     public ushort Parameter1
     {
-        get => GetWord(13);
-        private init => SetWord(13, value);
+        get => GetUInt16(13);
+        private init => SetUInt16(13, value);
     }
 
     /// <summary>
@@ -108,8 +108,8 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
     /// </summary>
     public ushort Parameter2
     {
-        get => GetWord(15);
-        private init => SetWord(15, value);
+        get => GetUInt16(15);
+        private init => SetUInt16(15, value);
     }
 
     /// <summary>

@@ -367,17 +367,17 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
         {
             if (count > 1 || duration > 0xFFFF)
             {
-                pulseBuffer.WriteWord((ushort)(0x8000 | count));
+                pulseBuffer.WriteUInt16((ushort)(0x8000 | count));
             }
 
             if (duration < 0x8000)
             {
-                pulseBuffer.WriteWord((ushort)duration);
+                pulseBuffer.WriteUInt16((ushort)duration);
             }
             else
             {
-                pulseBuffer.WriteWord((ushort)(0x8000 | (duration >> 16)));
-                pulseBuffer.WriteWord((ushort)(duration & 0xFFFF));
+                pulseBuffer.WriteUInt16((ushort)(0x8000 | (duration >> 16)));
+                pulseBuffer.WriteUInt16((ushort)(duration & 0xFFFF));
             }
         }
 
@@ -425,7 +425,7 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
             var header = new byte[12];
             header.SetUInt32(0, (uint)(8 + numZero * 2 + numOne * 2 + dataByteCount));
             header.SetUInt32(4, (initialLevel ? 0x80000000u : 0) | bitCount);
-            header.SetWord(8, tailCycles);
+            header.SetUInt16(8, tailCycles);
             header[10] = numZero;
             header[11] = numOne;
 
@@ -434,12 +434,12 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
             var offset = 0;
             foreach (var p in zeroPulseSeq)
             {
-                body.SetWord(offset, p);
+                body.SetUInt16(offset, p);
                 offset += 2;
             }
             foreach (var p in onePulseSeq)
             {
-                body.SetWord(offset, p);
+                body.SetUInt16(offset, p);
                 offset += 2;
             }
             Array.Copy(data, 0, body, offset, dataByteCount);
@@ -464,7 +464,7 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
 
             var header = new byte[6];
             header.SetUInt32(0, 2);
-            header.SetWord(4, flags);
+            header.SetUInt16(4, flags);
 
             OutputBlocks.Add(new StopBlock(header));
         }

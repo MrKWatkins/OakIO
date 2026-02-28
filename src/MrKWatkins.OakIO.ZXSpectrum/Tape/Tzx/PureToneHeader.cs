@@ -25,12 +25,12 @@ public sealed class PureToneHeader : TzxBlockHeader
     /// <summary>
     /// Gets the length of each pulse in T-states.
     /// </summary>
-    public ushort LengthOfPulse => GetWord(0);
+    public ushort LengthOfPulse => GetUInt16(0);
 
     /// <summary>
     /// Gets the number of pulses in the tone.
     /// </summary>
-    public ushort NumberOfPulses => GetWord(2);
+    public ushort NumberOfPulses => GetUInt16(2);
 
     /// <inheritdoc />
     public override string ToString() => $"{Type}: {NumberOfPulses} x {LengthOfPulse} T-States";

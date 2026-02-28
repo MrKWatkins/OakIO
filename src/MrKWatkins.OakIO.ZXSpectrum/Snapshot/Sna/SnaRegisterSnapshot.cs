@@ -15,55 +15,55 @@ internal sealed class SnaRegisterSnapshot : RegisterSnapshot
 
     public override ushort AF
     {
-        get => GetWord(21);
-        set => SetWord(21, value);
+        get => GetUInt16(21);
+        set => SetUInt16(21, value);
     }
 
     public override ushort BC
     {
-        get => GetWord(13);
-        set => SetWord(13, value);
+        get => GetUInt16(13);
+        set => SetUInt16(13, value);
     }
 
     public override ushort DE
     {
-        get => GetWord(11);
-        set => SetWord(11, value);
+        get => GetUInt16(11);
+        set => SetUInt16(11, value);
     }
 
     public override ushort HL
     {
-        get => GetWord(9);
-        set => SetWord(9, value);
+        get => GetUInt16(9);
+        set => SetUInt16(9, value);
     }
 
     public override ushort IX
     {
-        get => GetWord(17);
-        set => SetWord(17, value);
+        get => GetUInt16(17);
+        set => SetUInt16(17, value);
     }
 
     public override ushort IY
     {
-        get => GetWord(15);
-        set => SetWord(15, value);
+        get => GetUInt16(15);
+        set => SetUInt16(15, value);
     }
 
     public override ushort PC
     {
-        get => footerData.GetWord(0);
-        set => footerData.SetWord(0, value);
+        get => footerData.GetUInt16(0);
+        set => footerData.SetUInt16(0, value);
     }
 
     public override ushort SP
     {
-        get => GetWord(23);
-        set => SetWord(23, value);
+        get => GetUInt16(23);
+        set => SetUInt16(23, value);
     }
 
     public override ushort IR
     {
-        get => Endian.Little.ToWord(GetByte(0), GetByte(20));
+        get => Endian.Little.ToUInt16(GetByte(0), GetByte(20));
         set
         {
             var (r, i) = value.ToBytes();

@@ -46,14 +46,14 @@ internal sealed class NexRegisterSnapshot : RegisterSnapshot
 
     public override ushort PC
     {
-        get => GetWord(14);
-        set => SetWord(14, value);
+        get => GetUInt16(14);
+        set => SetUInt16(14, value);
     }
 
     public override ushort SP
     {
-        get => GetWord(12);
-        set => SetWord(12, value);
+        get => GetUInt16(12);
+        set => SetUInt16(12, value);
     }
 
     public override ushort IR

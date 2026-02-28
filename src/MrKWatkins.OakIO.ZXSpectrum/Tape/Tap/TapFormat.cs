@@ -47,7 +47,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     [MustUseReturnValue]
     private static TapBlock ReadBlock(Stream stream)
     {
-        var blockFlagAndChecksumLength = stream.ReadWordOrThrow();
+        var blockFlagAndChecksumLength = stream.ReadUInt16OrThrow();
         var flag = stream.ReadByteOrThrow();
 
         var data = new byte[blockFlagAndChecksumLength - 2];

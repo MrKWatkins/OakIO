@@ -9,25 +9,25 @@ internal sealed class SnaShadowRegisterSnapshot : ShadowRegisterSnapshot
 
     public override ushort AF
     {
-        get => GetWord(7);
-        set => SetWord(7, value);
+        get => GetUInt16(7);
+        set => SetUInt16(7, value);
     }
 
     public override ushort BC
     {
-        get => GetWord(5);
-        set => SetWord(5, value);
+        get => GetUInt16(5);
+        set => SetUInt16(5, value);
     }
 
     public override ushort DE
     {
-        get => GetWord(3);
-        set => SetWord(3, value);
+        get => GetUInt16(3);
+        set => SetUInt16(3, value);
     }
 
     public override ushort HL
     {
-        get => GetWord(1);
-        set => SetWord(1, value);
+        get => GetUInt16(1);
+        set => SetUInt16(1, value);
     }
 }

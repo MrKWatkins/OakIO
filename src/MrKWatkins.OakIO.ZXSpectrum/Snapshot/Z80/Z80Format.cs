@@ -30,7 +30,7 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     {
         var v1HeaderBytes = new byte[30];
         stream.ReadExactly(v1HeaderBytes, 0, 30);
-        return v1HeaderBytes.GetWord(6) != 0
+        return v1HeaderBytes.GetUInt16(6) != 0
             ? ReadV1(stream, v1HeaderBytes)
             : ReadV2OrV3(stream, v1HeaderBytes);
     }
@@ -47,12 +47,12 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     [MustUseReturnValue]
     private static Z80File ReadV2OrV3(Stream stream, byte[] v1HeaderBytes)
     {
-        var extraLength = stream.ReadWordOrThrow();
+        var extraLength = stream.ReadUInt16OrThrow();
 
         // Extra length does not include the 2 bytes for the extraLength word.
         var headerBytes = new byte[30 + 2 + extraLength];
         v1HeaderBytes.CopyTo(headerBytes, 0);
-        headerBytes.SetWord(30, extraLength);
+        headerBytes.SetUInt16(30, extraLength);
         stream.ReadExactly(headerBytes, 32, extraLength);
 
         switch (extraLength)

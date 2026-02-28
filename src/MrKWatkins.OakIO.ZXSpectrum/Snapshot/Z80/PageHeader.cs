@@ -13,7 +13,7 @@ public sealed class PageHeader : Header
     internal PageHeader(HardwareMode hardwareMode, ushort compressedLength, byte pageNumber)
         : this(hardwareMode, new byte[3])
     {
-        SetWord(0, compressedLength);
+        SetUInt16(0, compressedLength);
         SetByte(2, pageNumber);
     }
 
@@ -25,7 +25,7 @@ public sealed class PageHeader : Header
     /// <summary>
     /// Gets the compressed length of the page data, or 0xFFFF if uncompressed.
     /// </summary>
-    public ushort CompressedLength => GetWord(0);
+    public ushort CompressedLength => GetUInt16(0);
 
     /// <summary>
     /// Gets the page number.

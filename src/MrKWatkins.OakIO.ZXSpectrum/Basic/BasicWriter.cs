@@ -17,8 +17,8 @@ internal sealed class BasicWriter
         var line = new List<byte>();
         Append(line, symbols);
 
-        stream.WriteWord((ushort)lineNumber, Endian.Big);
-        stream.WriteWord((ushort)(line.Count + 1));  // +1 for newline.
+        stream.WriteUInt16((ushort)lineNumber, Endian.Big);
+        stream.WriteUInt16((ushort)(line.Count + 1));  // +1 for newline.
 
         foreach (var symbol in line)
         {

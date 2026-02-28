@@ -45,13 +45,13 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
         stream.ReadExactly(ram);
 
         // In 48K SNA files, the PC is stored on the stack. Pop it from SP and increment SP.
-        var sp = headerBytes.GetWord(23);
-        var pc = ram.GetWord(sp - 16384);
+        var sp = headerBytes.GetUInt16(23);
+        var pc = ram.GetUInt16(sp - 16384);
         sp += 2;
-        headerBytes.SetWord(23, sp);
+        headerBytes.SetUInt16(23, sp);
 
         var footerData = new byte[2];
-        footerData.SetWord(0, pc);
+        footerData.SetUInt16(0, pc);
 
         var header = new SnaHeader(headerBytes, footerData);
         return new Sna48kFile(header, ram);
@@ -113,12 +113,12 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
 
         // Write the header with adjusted SP.
         var headerBytes = file.Header.AsReadOnlySpan().ToArray();
-        headerBytes.SetWord(23, sp);
+        headerBytes.SetUInt16(23, sp);
         stream.Write(headerBytes);
 
         // Write the RAM with PC at SP-2.
         var ram = file.Ram.ToArray();
-        ram.SetWord(sp - 16384, file.Header.Registers.PC);
+        ram.SetUInt16(sp - 16384, file.Header.Registers.PC);
         stream.Write(ram);
     }
 
@@ -130,7 +130,7 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
         stream.Write(file.GetBank(file.PagedBank));
 
         var footer = new byte[4];
-        footer.SetWord(0, file.Registers.PC);
+        footer.SetUInt16(0, file.Registers.PC);
         footer[2] = file.Port7FFD;
         footer[3] = file.TrDosRomPaged ? (byte)1 : (byte)0;
         stream.Write(footer);

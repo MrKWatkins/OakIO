@@ -27,8 +27,8 @@ public sealed class TapToTzxConverter : IOFileConverter<TapFile, TzxFile>
     {
         var data = BuildBlockData(block);
         var headerData = new byte[4];
-        headerData.SetWord(0, 1000);
-        headerData.SetWord(2, (ushort)data.Length);
+        headerData.SetUInt16(0, 1000);
+        headerData.SetUInt16(2, (ushort)data.Length);
         return new StandardSpeedDataBlock(headerData, data);
     }
 

@@ -24,5 +24,5 @@ public sealed class StopHeader : PzxBlockHeader
     /// Gets a value indicating whether the stop applies only to 48K mode.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public bool Only48k => GetWord(StartIndex) == 1;
+    public bool Only48k => GetUInt16(StartIndex) == 1;
 }
