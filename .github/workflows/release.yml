@@ -23,12 +23,12 @@ jobs:
       - name: Install WASM Workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish to NuGet
-        uses: MrKWatkins/nuget-publish@main
-        with:
-          directory: src
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          version: ${{ inputs.version }}
+      #- name: Publish to NuGet
+      #  uses: MrKWatkins/nuget-publish@main
+      #  with:
+      #    directory: src
+      #    nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+      #    version: ${{ inputs.version }}
 
       - name: Build
         uses: MrKWatkins/dotnet-build@main

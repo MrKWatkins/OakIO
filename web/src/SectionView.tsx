@@ -55,7 +55,7 @@ export function SectionView({ section, hideTitle = false }: { section: Section; 
           {section.items.map((item, i) => (
             <ItemView key={i} item={item} index={i + 1} />
           ))}
-          {section.items.length === 0 && <p className="empty-note">None</p>}
+          {section.items.length === 0 && (!section.properties || section.properties.length === 0) && <p className="empty-note">None</p>}
         </div>
       )}
     </div>

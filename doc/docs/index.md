@@ -10,6 +10,10 @@
 
 OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files, inspecting their contents, and converting between formats.
 
+## Source Code
+
+Source code is available on GitHub at https://github.com/MrKWatkins/OakIO.
+
 ## Installation
 
 ```
