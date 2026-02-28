@@ -1,0 +1,24 @@
+<Project>
+    <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+        <Title>$(MSBuildProjectName)</Title>
+        <Authors>Kevin Watkins</Authors>
+        <Copyright>Kevin Watkins 2026</Copyright>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/MrKWatkins/OakIO</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/MrKWatkins/OakIO</RepositoryUrl>
+        <PackageIcon>Icon.png</PackageIcon>
+        <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+        <Content Include="..\Icon.png" Pack="true" PackagePath="\">
+            <Link>Icon.png</Link>
+        </Content>
+        <Content Include="..\..\ReadMe.md" Pack="true" PackagePath="\">
+            <Link>ReadMe.md</Link>
+        </Content>
+    </ItemGroup>
+</Project>
