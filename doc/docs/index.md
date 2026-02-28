@@ -12,7 +12,7 @@ OakIO provides a structured object model for working with emulator file formats.
 
 ## Source Code
 
-Source code is available on GitHub at https://github.com/MrKWatkins/OakIO.
+Source code is available on GitHub at [https://github.com/MrKWatkins/OakIO](https://github.com/MrKWatkins/OakIO).
 
 ## Installation
 
@@ -22,7 +22,7 @@ dotnet add package MrKWatkins.OakIO
 
 ## Online Converter
 
-An online converter using this library is available at https://mrkwatkins.github.io/OakIO/converter/.
+An online converter using this library is available [here](converter.md).
 
 ## Documentation
 
