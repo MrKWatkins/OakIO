@@ -24,9 +24,13 @@ public sealed class PzxToTapeConverter() : IOFileConverter<PzxFile, OakTapeFile>
         switch (pzxBlock)
         {
             case PulseSequenceBlock pulseSequence:
+                // From https://github.com/raxoft/pzxtools/blob/master/docs/pzx_format.txt:
+                // "The pulse level is low at start of the block by default."
+                var firstPulse = true;
                 foreach (var pulse in pulseSequence.Pulses)
                 {
-                    yield return new SoundBlock(Sound.PureTone(pulse.Count, (int)pulse.Duration));
+                    yield return new SoundBlock(Sound.PureTone(pulse.Count, (int)pulse.Duration), firstPulse ? false : null);
+                    firstPulse = false;
                 }
                 break;
 

@@ -22,12 +22,15 @@ public sealed class TapToTapeConverter() : IOFileConverter<TapFile, OakTapeFile>
     private IEnumerable<TapeBlock> ConvertBlock(TapBlock block)
     {
         var isHeader = block.Header.Type == TapBlockType.Header;
-        yield return new SoundBlock(isHeader ? Sound.StandardHeaderPureToneAndSync() : Sound.StandardDataPureToneAndSync());
+        yield return new SoundBlock(isHeader ? Sound.StandardHeaderPureToneAndSync() : Sound.StandardDataPureToneAndSync(), initialSignal: false);
 
         var blockData = BuildBlockData(block);
         yield return TapeDataBlock.Create(blockData);
 
-        yield return new TapePauseBlock((int)ZXSpectrumTapeFormat.TStatesPerSecond);
+        if (!isHeader)
+        {
+            yield return new TapePauseBlock((int)ZXSpectrumTapeFormat.TStatesPerSecond);
+        }
     }
 
     [Pure]
