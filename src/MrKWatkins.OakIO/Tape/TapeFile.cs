@@ -26,14 +26,22 @@ public sealed class TapeFile : IOFile
 
     internal TapeBlock CurrentBlock => allBlocks[Position];
 
-    internal void Start()
+    /// <summary>
+    /// Starts playback from the beginning of the tape.
+    /// </summary>
+    public void Start()
     {
         Position = 0;
         CurrentBlock.Start(null);
     }
 
+    /// <summary>
+    /// Advances the tape by <paramref name="tStates" /> T-states, returning the current signal level.
+    /// </summary>
+    /// <param name="tStates">The number of T-states to advance.</param>
+    /// <returns>The current signal level after advancing.</returns>
     // Assumes we'll never have a tStates greater than a pulse.
-    internal bool Advance(int tStates)
+    public bool Advance(int tStates)
     {
         var block = CurrentBlock;
         var tStatesLeftOver = block.Advance(tStates);
@@ -50,5 +58,8 @@ public sealed class TapeFile : IOFile
         return Advance(tStatesLeftOver);
     }
 
-    internal bool IsFinished => CurrentBlock is FinishedBlock;
+    /// <summary>
+    /// Gets a value indicating whether the tape has reached the end.
+    /// </summary>
+    public bool IsFinished => CurrentBlock is FinishedBlock;
 }
