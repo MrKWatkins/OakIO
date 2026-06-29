@@ -1,4 +1,4 @@
-using System.IO.Compression;
+using MrKWatkins.OakIO.Compression;
 
 namespace MrKWatkins.OakIO;
 
@@ -81,6 +81,58 @@ public abstract class IOFileFormat
     public string GetFilename(string name) => $"{name}.{FileExtension}";
 
     /// <summary>
+    /// Loads a file from disk.
+    /// </summary>
+    /// <param name="path">The path to the file to load. </param>
+    /// <param name="supportedFormats">The supported formats for the file.</param>
+    /// <returns>The file that was read.</returns>
+    [Pure]
+    public static IOFile Load([PathReference] string path, params IReadOnlyList<IOFileFormat> supportedFormats)
+    {
+        using var fileStream = File.OpenRead(path);
+        return Codec.Load(path, fileStream, supportedFormats);
+    }
+
+    /// <summary>
+    /// Loads a file from a stream. Use as an alternative to <see cref="Load(string, IReadOnlyList{IOFileFormat})"/> when the file is not on disk, e.g. web upload.
+    /// </summary>
+    /// <param name="path">The path of the file in the stream. Used to determine the type of the file.</param>
+    /// <param name="stream">The file.</param>
+    /// <param name="supportedFormats">The supported formats for the file.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public static IOFile Load([PathReference] string path, Stream stream, params IReadOnlyList<IOFileFormat> supportedFormats) => Codec.Load(path, stream, supportedFormats);
+
+    /// <summary>
+    /// Loads a file from disk asynchronously.
+    /// </summary>
+    /// <param name="path">The path to the file to load. </param>
+    /// <param name="supportedFormats">The supported formats for the file.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the loading.</param>
+    /// <returns>The file that was read.</returns>
+    [Pure]
+    public static async Task<IOFile> LoadAsync([PathReference] string path, IReadOnlyList<IOFileFormat> supportedFormats, CancellationToken cancellationToken = default)
+    {
+        var fileStream = File.OpenRead(path);
+        await using (fileStream.ConfigureAwait(false))
+        {
+            return await Codec.LoadAsync(path, fileStream, supportedFormats, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Loads a file from a stream asynchronously. Use as an alternative to <see cref="LoadAsync(string, IReadOnlyList{IOFileFormat}, CancellationToken)"/> when the file is not on disk, e.g. web upload.
+    /// </summary>
+    /// <param name="path">The path of the file in the stream. Used to determine the type of the file.</param>
+    /// <param name="stream">The file.</param>
+    /// <param name="supportedFormats">The supported formats for the file.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the loading.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public static Task<IOFile> LoadAsync([PathReference] string path, Stream stream, IReadOnlyList<IOFileFormat> supportedFormats, CancellationToken cancellationToken = default) =>
+        Codec.LoadAsync(path, stream, supportedFormats, cancellationToken);
+
+    /// <summary>
     /// Reads a file from a byte array.
     /// </summary>
     /// <param name="bytes">The byte array to read from.</param>
@@ -101,73 +153,43 @@ public abstract class IOFileFormat
     public abstract IOFile Read(Stream stream);
 
     /// <summary>
-    /// Writes a file to a directory with the specified name.
+    /// Reads a file from a stream asynchronously.
     /// </summary>
-    /// <param name="file">The file to write.</param>
-    /// <param name="directory">The directory to write the file to.</param>
-    /// <param name="name">The name of the file without extension.</param>
-    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
-    public void Write(IOFile file, [PathReference] string directory, string name, bool zipped = false) => Write(file, Path.Combine(directory, GetFilename(name)), zipped);
-
-    /// <summary>
-    /// Writes a file to disk.
-    /// </summary>
-    /// <param name="file">The file to write.</param>
-    /// <param name="filePath">The path to write the file to.</param>
-    /// <param name="zipped">Whether to write the file inside a ZIP archive.</param>
-    public void Write(IOFile file, [PathReference] string filePath, bool zipped = false)
-    {
-        var fileInfo = new FileInfo(filePath);
-        if (fileInfo.Extension != $".{FileExtension}")
-        {
-            throw new ArgumentException($"Value has the extension {fileInfo.Extension} rather than the expected .{FileExtension}.", nameof(filePath));
-        }
-
-        var filename = fileInfo.Name;
-        using var stream = File.Create(Path.Combine(fileInfo.DirectoryName!, zipped ? $"{filename}.zip" : filename));
-        if (zipped)
-        {
-            using var zip = new ZipArchive(stream, ZipArchiveMode.Create);
-            var entry = zip.CreateEntry(filename);
-            using var entryStream = entry.Open();
-            Write(file, entryStream);
-        }
-        else
-        {
-            Write(file, stream);
-        }
-    }
-
-    /// <summary>
-    /// Writes a file to a byte array.
-    /// </summary>
-    /// <param name="file">The file to write.</param>
-    /// <returns>A byte array containing the file data.</returns>
-    [Pure]
-    public byte[] Write(IOFile file)
-    {
-        using var memoryStream = new MemoryStream();
-        Write(file, memoryStream);
-        return memoryStream.ToArray();
-    }
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public virtual Task<IOFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) => Task.FromResult(Read(stream));
 
     /// <summary>
     /// Writes a file to a stream.
     /// </summary>
     /// <param name="file">The file to write.</param>
     /// <param name="stream">The stream to write to.</param>
-    public abstract void Write(IOFile file, Stream stream);
+    protected internal abstract void Write(IOFile file, Stream stream);
+
+    /// <summary>
+    /// Writes a file to a stream asynchronously.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the writing.</param>
+    protected internal virtual Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default)
+    {
+        Write(file, stream);
+        return Task.CompletedTask;
+    }
 }
 
 /// <summary>
-/// Base class for file formats with a strongly-typed file type.
+/// Base class for file formats with a strongly typed file type.
 /// </summary>
 /// <typeparam name="TFile">The type of file for this format.</typeparam>
 public abstract class IOFileFormat<TFile>(string name, string fileExtension) : IOFileFormat(name, fileExtension, typeof(TFile))
     where TFile : IOFile
 {
     /// <inheritdoc />
-    public sealed override void Write(IOFile file, Stream stream)
+    protected internal sealed override void Write(IOFile file, Stream stream)
     {
         if (file is not TFile typedFile)
         {
@@ -178,9 +200,27 @@ public abstract class IOFileFormat<TFile>(string name, string fileExtension) : I
     }
 
     /// <summary>
-    /// Writes a strongly-typed file to a stream.
+    /// Writes a strongly typed file to a stream.
     /// </summary>
     /// <param name="file">The file to write.</param>
     /// <param name="stream">The stream to write to.</param>
     protected abstract void Write(TFile file, Stream stream);
+
+    /// <inheritdoc />
+    protected internal sealed override Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default) =>
+        file is TFile typedFile
+            ? WriteAsync(typedFile, stream, cancellationToken)
+            : throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
+
+    /// <summary>
+    /// Writes a strongly typed file to a stream.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="cancellationToken">An <see cref="CancellationToken"/> to cancel the writing.</param>
+    protected virtual Task WriteAsync(TFile file, Stream stream, CancellationToken cancellationToken)
+    {
+        Write(file, stream);
+        return Task.CompletedTask;
+    }
 }

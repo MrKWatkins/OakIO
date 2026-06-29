@@ -15,10 +15,10 @@ public static class ConvertCommand
 
     public static void Execute(string inputFilename, Stream inputStream, string outputFilename, Stream outputStream)
     {
-        var inputFile = ZXSpectrumFile.Read(inputFilename, inputStream);
+        var inputFile = ZXSpectrumFileFormat.Load(inputFilename, inputStream);
         var outputFormat = GetOutputFormat(inputFile.Format, outputFilename);
         var outputFile = IOFileConversion.Convert(inputFile, outputFormat);
-        outputFormat.Write(outputFile, outputStream);
+        outputFile.Write(outputStream);
     }
 
     [Pure]

@@ -24,7 +24,7 @@ public abstract class WasmTestFixture
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
         using var stream = new MemoryStream();
-        TapFormat.Instance.Write(tap, stream);
+        tap.Write(stream);
         return stream.ToArray();
     }
 

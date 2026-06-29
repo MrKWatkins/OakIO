@@ -3,7 +3,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 /// <summary>
 /// Base class for ZX Spectrum snapshot files.
 /// </summary>
-public abstract class ZXSpectrumSnapshotFile : IOFile
+public abstract class ZXSpectrumSnapshotFile : ZXSpectrumFile
 {
     private protected ZXSpectrumSnapshotFile(ZXSpectrumSnapshotFormat format)
         : base(format)

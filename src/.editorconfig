@@ -214,7 +214,7 @@ dotnet_diagnostic.CA1061.severity = error
 dotnet_diagnostic.CA1062.severity = none
 
 # CA1063: Implement IDisposable Correctly
-dotnet_diagnostic.CA1063.severity = error
+dotnet_diagnostic.CA1063.severity = none
 
 # CA1064: Exceptions should be public
 dotnet_diagnostic.CA1064.severity = error
@@ -376,7 +376,7 @@ dotnet_diagnostic.CA1814.severity = error
 dotnet_diagnostic.CA1815.severity = none
 
 # CA1816: Dispose methods should call SuppressFinalize
-dotnet_diagnostic.CA1816.severity = error
+dotnet_diagnostic.CA1816.severity = none
 
 # CA1819: Properties should not return arrays
 dotnet_diagnostic.CA1819.severity = none

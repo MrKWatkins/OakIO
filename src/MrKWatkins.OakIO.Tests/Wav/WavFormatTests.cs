@@ -18,7 +18,7 @@ public sealed class WavFormatTests
         byte[] sampleData = [0x80, 0xC0, 0x40, 0x60, 0xA0];
         var original = new WavFile(22050, sampleData);
 
-        var bytes = WavFormat.Instance.Write(original);
+        var bytes = original.ToByteArray();
 
         using var stream = new MemoryStream(bytes);
         var result = WavFormat.Instance.Read(stream);
@@ -177,6 +177,49 @@ public sealed class WavFormatTests
 
         AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
             .That.Message.Should().Equal("Not a valid WAV file: missing data subchunk.");
+    }
+
+    [Test]
+    public void Read_NegativeDataSize()
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        WriteHeaderThroughDataTag(writer);
+        writer.Write(-1); // data size
+        stream.Position = 0;
+
+        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
+            .That.Message.Should().Equal("Not a valid WAV file: negative data subchunk size of -1.");
+    }
+
+    [Test]
+    public void Read_TruncatedSampleData()
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        WriteHeaderThroughDataTag(writer);
+        writer.Write(10);                       // data size says 10 bytes...
+        writer.Write(new byte[] { 1, 2, 3 });   // ...but only 3 are present.
+        stream.Position = 0;
+
+        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
+            .That.Message.Should().Equal("Not a valid WAV file: expected 10 bytes of sample data but only got 3.");
+    }
+
+    private static void WriteHeaderThroughDataTag(BinaryWriter writer)
+    {
+        writer.Write("RIFF"u8);
+        writer.Write(0);
+        writer.Write("WAVE"u8);
+        writer.Write("fmt "u8);
+        writer.Write(16);
+        writer.Write((ushort)1); // PCM
+        writer.Write((ushort)1); // mono
+        writer.Write(44100u);    // sample rate
+        writer.Write(44100u);    // byte rate
+        writer.Write((ushort)1); // block align
+        writer.Write((ushort)8); // 8 bits
+        writer.Write("data"u8);
     }
 
     private sealed class NonSeekableStream(MemoryStream inner) : Stream

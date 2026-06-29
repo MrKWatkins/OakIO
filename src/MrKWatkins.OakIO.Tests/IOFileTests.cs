@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Compression;
 using MrKWatkins.OakIO.Testing;
 
 namespace MrKWatkins.OakIO.Tests;
@@ -5,93 +6,59 @@ namespace MrKWatkins.OakIO.Tests;
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class IOFileTests
 {
-    [Test]
-    public void Read_File([Values] bool zipped)
+    [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    public void Save_Load_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
     {
-        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.tst", zipped);
-
-        IOFile.Read(file.Path, TestIOFileFormat.Instance).Should().BeOfType<TestIOFile>()
-            .That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
-    }
-
-    [Test]
-    public void Read_File_ThrowsForUnsupportedType([Values] bool zipped)
-    {
-        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.txt", zipped);
-
-        AssertThat.Invoking(() => IOFile.Read(file.Path, TestIOFileFormat.Instance)).Should().Throw<NotSupportedException>();
-    }
-
-    [Test]
-    public void Read_Stream([Values] bool zipped)
-    {
-        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.tst", zipped);
-
-        using var stream = file.OpenRead();
-        IOFile.Read(file.Name, stream, TestIOFileFormat.Instance).Should().BeOfType<TestIOFile>()
-            .That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
-    }
-
-    [Test]
-    public void Read_Stream_ThrowsForUnsupportedType([Values] bool zipped)
-    {
-        using var file = TemporaryFile.Create(TestIOFileFormat.Contents, "File.txt", zipped);
-
-        using var stream = file.OpenRead();
-        AssertThat.Invoking(() => IOFile.Read(file.Path, stream, TestIOFileFormat.Instance)).Should().Throw<NotSupportedException>();
-    }
-
-    [Test]
-    public void Write_Path_InvalidExtension([Values] bool zipped)
-    {
+        using var temporaryDirectory = TemporaryDirectory.Create();
         var ioFile = new TestIOFile();
-        var directory = Path.GetTempPath();
-        var path = Path.Combine(directory, $"{Guid.NewGuid().ToString()}.invalid");
-        ioFile.Invoking(i => i.Write(path, zipped)).Should().ThrowArgumentException("Value has the extension .invalid rather than the expected .tst.", "filePath");
-    }
 
-    [Test]
-    public void Write_Path([Values] bool zipped)
-    {
-        var ioFile = new TestIOFile();
-        var directory = Path.GetTempPath();
-        var name = $"{Guid.NewGuid().ToString()}.tst";
-        var expectedPath = Path.Combine(directory, zipped ? $"{name}.zip" : name);
-
-        try
-        {
-            ioFile.Write(Path.Combine(directory, name), zipped);
-            var actual = File.ReadAllBytes(expectedPath);
-
-            using var expected = TemporaryFile.Create(TestIOFileFormat.Contents, name, zipped: zipped);
-            actual.Should().SequenceEqual(expected.Bytes);
-        }
-        finally
-        {
-            File.Delete(expectedPath);
-        }
-    }
-
-    [Test]
-    public void Write_Directory_Name([Values] bool zipped)
-    {
-        var ioFile = new TestIOFile();
-        var directory = Path.GetTempPath();
         var name = Guid.NewGuid().ToString();
-        var expectedPath = Path.Combine(directory, zipped ? $"{name}.tst.zip" : $"{name}.tst");
+        var actualPath = ioFile.Save(temporaryDirectory.Path, name, compressionFormat);
+        var expectedPath = Path.Combine(temporaryDirectory.Path, expectedFilenameFormat.Replace("{name}", name, StringComparison.OrdinalIgnoreCase));
+        actualPath.Should().Equal(expectedPath);
 
-        try
-        {
-            ioFile.Write(directory, name, zipped);
-            var actual = File.ReadAllBytes(expectedPath);
+        var roundTripped = IOFileFormat.Load(expectedPath, TestIOFileFormat.Instance);
 
-            using var expected = TemporaryFile.Create(TestIOFileFormat.Contents, $"{name}.tst", zipped: zipped);
-            actual.Should().SequenceEqual(expected.Bytes);
-        }
-        finally
-        {
-            File.Delete(expectedPath);
-        }
+        roundTripped.ToByteArray().Should().SequenceEqual(ioFile.ToByteArray());
+    }
+
+    [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    public async Task SaveAsync_LoadAsync_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
+    {
+        using var temporaryDirectory = TemporaryDirectory.Create();
+        var ioFile = new TestIOFile();
+
+        var name = Guid.NewGuid().ToString();
+        var actualPath = await ioFile.SaveAsync(temporaryDirectory.Path, name, compressionFormat);
+        var expectedPath = Path.Combine(temporaryDirectory.Path, expectedFilenameFormat.Replace("{name}", name, StringComparison.OrdinalIgnoreCase));
+        actualPath.Should().Equal(expectedPath);
+
+        var roundTripped = await IOFileFormat.LoadAsync(expectedPath, [TestIOFileFormat.Instance]);
+
+        roundTripped.ToByteArray().Should().SequenceEqual(ioFile.ToByteArray());
+    }
+
+    [Test]
+    public void Save_ThrowsIfDirectoryDoesNotExist()
+    {
+        var ioFile = new TestIOFile();
+        var missingDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+        ioFile.Invoking(f => f.Save(missingDirectory, "File")).Should().Throw<DirectoryNotFoundException>()
+            .That.Message.Should().Equal($"The output directory '{missingDirectory}' does not exist.");
+    }
+
+    [Test]
+    public void Save_ThrowsIfCompressionFormatNotSupported()
+    {
+        using var temporaryDirectory = TemporaryDirectory.Create();
+        var ioFile = new TestIOFile();
+        const CompressionFormat unsupported = (CompressionFormat)byte.MaxValue;
+
+        ioFile.Invoking(f => f.Save(temporaryDirectory.Path, "File", unsupported)).Should().Throw<NotSupportedException>()
+            .That.Message.Should().Equal($"Compression format {unsupported} is not supported.");
     }
 
     [Test]
@@ -109,10 +76,24 @@ public sealed class IOFileTests
     }
 
     [Test]
+    public async Task WriteAsync_Stream()
+    {
+        var ioFile = new TestIOFile();
+        using var actual = TemporaryFile.Create();
+        await using (var stream = actual.OpenWrite())
+        {
+            await ioFile.WriteAsync(stream);
+        }
+
+        using var expected = TemporaryFile.Create(TestIOFileFormat.Contents);
+        actual.Bytes.Should().SequenceEqual(expected.Bytes);
+    }
+
+    [Test]
     public void Write_ByteArray()
     {
         var ioFile = new TestIOFile();
-        var actual = ioFile.Write();
+        var actual = ioFile.ToByteArray();
         actual.Should().SequenceEqual(TestIOFileFormat.Contents);
     }
 

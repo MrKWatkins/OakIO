@@ -3,7 +3,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape;
 /// <summary>
 /// Base class for all ZX Spectrum tape files.
 /// </summary>
-public abstract class ZXSpectrumTapeFile : IOFile
+public abstract class ZXSpectrumTapeFile : ZXSpectrumFile
 {
     /// <summary>
     /// Initialises a new instance of the <see cref="ZXSpectrumTapeFile" /> class.

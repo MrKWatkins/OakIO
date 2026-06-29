@@ -21,7 +21,7 @@ public sealed class InfoCommand
     [Pure]
     public static FileInfoResult GetFileInfo(string inputFilename, Stream inputStream)
     {
-        var file = ZXSpectrumFile.Read(inputFilename, inputStream);
+        var file = ZXSpectrumFileFormat.Load(inputFilename, inputStream);
         return BuildFileInfo(file);
     }
 

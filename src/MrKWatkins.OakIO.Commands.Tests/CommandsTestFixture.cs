@@ -13,7 +13,7 @@ public abstract class CommandsTestFixture
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
         using var stream = new MemoryStream();
-        TapFormat.Instance.Write(tap, stream);
+        tap.Write(stream);
         stream.Position = 0;
         return TemporaryFile.Create(stream, "test.tap");
     }
@@ -66,7 +66,7 @@ public abstract class CommandsTestFixture
     {
         var sna = Sna48kFile.Create(new byte[64 * 1024]);
         using var stream = new MemoryStream();
-        SnaFormat.Instance.Write(sna, stream);
+        sna.Write(stream);
         stream.Position = 0;
         return TemporaryFile.Create(stream, "test.sna");
     }

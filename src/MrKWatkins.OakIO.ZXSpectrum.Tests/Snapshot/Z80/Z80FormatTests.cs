@@ -124,7 +124,7 @@ public sealed class Z80FormatTests : ZXSpectrumTestFixture
 
         var file = Z80Format.Instance.Read(monty);
 
-        var actual = Z80Format.Instance.Write(file);
+        var actual = file.ToByteArray();
 
         monty.Seek(0, SeekOrigin.Begin);
         var expected = monty.ReadAllBytes();

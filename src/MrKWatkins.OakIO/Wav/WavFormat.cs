@@ -81,28 +81,22 @@ public sealed class WavFormat : IOFileFormat<WavFile>
         }
 
         var dataSize = reader.ReadInt32();
+        if (dataSize < 0)
+        {
+            throw new InvalidDataException($"Not a valid WAV file: negative data subchunk size of {dataSize}.");
+        }
+
         var sampleData = reader.ReadBytes(dataSize);
+        if (sampleData.Length != dataSize)
+        {
+            throw new InvalidDataException($"Not a valid WAV file: expected {dataSize} bytes of sample data but only got {sampleData.Length}.");
+        }
 
         return new WavFile(sampleRate, sampleData);
     }
 
     /// <inheritdoc />
     protected override void Write(WavFile file, Stream stream)
-    {
-        if (stream.CanSeek)
-        {
-            WriteToSeekableStream(file, stream);
-            return;
-        }
-
-        using var seekableStream = new MemoryStream();
-        WriteToSeekableStream(file, seekableStream);
-
-        seekableStream.Position = 0;
-        seekableStream.CopyTo(stream);
-    }
-
-    private static void WriteToSeekableStream(WavFile file, Stream stream)
     {
         using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
 

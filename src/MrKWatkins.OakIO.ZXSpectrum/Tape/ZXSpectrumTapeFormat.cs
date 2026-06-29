@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape;
 /// <param name="name">The name of the format.</param>
 /// <param name="fileExtension">The file extension for the format.</param>
 /// <param name="fileType">The type of file this format reads and writes.</param>
-public abstract class ZXSpectrumTapeFormat(string name, string fileExtension, Type fileType) : IOFileFormat(name, fileExtension, fileType)
+public abstract class ZXSpectrumTapeFormat(string name, string fileExtension, Type fileType) : ZXSpectrumFileFormat(name, fileExtension, fileType)
 {
     /// <summary>
     /// The T-states per second used for tape loading/saving.
@@ -64,7 +64,7 @@ public abstract class ZXSpectrumTapeFormat<TFile>(string name, string fileExtens
     public new TFile Read(Stream stream) => (TFile)base.Read(stream);
 
     /// <inheritdoc />
-    public sealed override void Write(IOFile file, Stream stream)
+    protected internal sealed override void Write(IOFile file, Stream stream)
     {
         if (file is not TFile typedFile)
         {
@@ -80,4 +80,22 @@ public abstract class ZXSpectrumTapeFormat<TFile>(string name, string fileExtens
     /// <param name="file">The tape file to write.</param>
     /// <param name="stream">The stream to write to.</param>
     protected abstract void Write(TFile file, Stream stream);
+
+    /// <inheritdoc />
+    protected internal sealed override Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default) =>
+        file is TFile typedFile
+            ? WriteAsync(typedFile, stream, cancellationToken)
+            : throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
+
+    /// <summary>
+    /// Writes a strongly typed tape file to a stream.
+    /// </summary>
+    /// <param name="file">The file to write.</param>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="cancellationToken">An <see cref="CancellationToken"/> to cancel the writing.</param>
+    protected virtual Task WriteAsync(TFile file, Stream stream, CancellationToken cancellationToken)
+    {
+        Write(file, stream);
+        return Task.CompletedTask;
+    }
 }

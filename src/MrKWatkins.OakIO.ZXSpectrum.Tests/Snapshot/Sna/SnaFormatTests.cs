@@ -46,7 +46,7 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
         ms.Position = 0;
         var file = SnaFormat.Instance.Read(ms);
 
-        var actual = SnaFormat.Instance.Write(file);
+        var actual = file.ToByteArray();
 
         actual.Should().SequenceEqual(expected);
     }

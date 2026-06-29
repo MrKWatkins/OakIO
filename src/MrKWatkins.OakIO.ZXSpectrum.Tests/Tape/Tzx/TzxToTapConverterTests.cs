@@ -178,8 +178,7 @@ public sealed class TzxToTapConverterTests
         using var stream = new MemoryStream(stopData);
         var stopBlock = new StopTheTapeIf48KBlock(stream);
 
-        var blocks = new List<TzxBlock>(tzx.Blocks);
-        blocks.Add(stopBlock);
+        var blocks = new List<TzxBlock>(tzx.Blocks) { stopBlock };
         var tzxWithStop = new TzxFile(tzx.Header, blocks);
 
         var result = new TzxToTapConverter().Convert(tzxWithStop);

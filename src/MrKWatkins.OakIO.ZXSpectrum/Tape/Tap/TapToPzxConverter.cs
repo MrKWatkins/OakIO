@@ -29,8 +29,7 @@ public sealed class TapToPzxConverter : IOFileConverter<TapFile, PzxFile>
     [Pure]
     public override PzxFile Convert(TapFile source)
     {
-        var blocks = new List<PzxBlock>();
-        blocks.Add(BuildHeaderBlock());
+        var blocks = new List<PzxBlock> { BuildHeaderBlock() };
         foreach (var block in source.Blocks)
         {
             blocks.AddRange(ConvertBlock(block));

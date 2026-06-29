@@ -145,8 +145,8 @@ public sealed class NexFormatTests
         using var readStream = new MemoryStream(data);
         var file = NexFormat.Instance.Read(readStream);
 
-        var written = NexFormat.Instance.Write(file);
-        written.Should().SequenceEqual(data);
+        var actual = file.ToByteArray();
+        actual.Should().SequenceEqual(data);
     }
 
     [Test]
@@ -162,8 +162,8 @@ public sealed class NexFormatTests
         using var readStream = new MemoryStream(data);
         var file = NexFormat.Instance.Read(readStream);
 
-        var written = NexFormat.Instance.Write(file);
-        written.Should().SequenceEqual(data);
+        var actual = file.ToByteArray();
+        actual.Should().SequenceEqual(data);
     }
 
     [Test]
@@ -179,8 +179,8 @@ public sealed class NexFormatTests
         using var readStream = new MemoryStream(data);
         var file = NexFormat.Instance.Read(readStream);
 
-        var written = NexFormat.Instance.Write(file);
-        written.Should().SequenceEqual(data);
+        var actual = file.ToByteArray();
+        actual.Should().SequenceEqual(data);
     }
 
     [Test]

@@ -64,7 +64,7 @@ public sealed class TapFormatTests : TapTestFixture
 
         var tap = TapFormat.Instance.Read(z80Test);
 
-        var actual = TapFormat.Instance.Write(tap);
+        var actual = tap.ToByteArray();
 
         z80Test.Seek(0, SeekOrigin.Begin);
         var expected = z80Test.ReadAllBytes();

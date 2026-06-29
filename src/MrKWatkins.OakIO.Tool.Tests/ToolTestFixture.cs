@@ -12,7 +12,7 @@ public abstract class ToolTestFixture
     {
         var tap = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
         using var stream = new MemoryStream();
-        TapFormat.Instance.Write(tap, stream);
+        tap.Write(stream);
         stream.Position = 0;
         return TemporaryFile.Create(stream, "test.tap");
     }

@@ -64,7 +64,7 @@ public sealed class TapFormatErrorTests
     {
         // Write a simple valid TAP file as bytes.
         var file = TapFile.CreateCode("test", 0x8000, [0xF3, 0xAF]);
-        var bytes = TapFormat.Instance.Write(file);
+        var bytes = file.ToByteArray();
 
         var result = TapFormat.Instance.Read(bytes);
         result.Blocks.Should().HaveCount(2);

@@ -26,4 +26,7 @@ public sealed class TapeFormat : IOFileFormat<TapeFile>
 
     /// <inheritdoc />
     protected override void Write(TapeFile file, Stream stream) => throw new NotSupportedException("Tape files cannot be written.");
+
+    /// <inheritdoc />
+    protected override Task WriteAsync(TapeFile file, Stream stream, CancellationToken cancellationToken) => throw new NotSupportedException("Tape files cannot be written.");
 }
