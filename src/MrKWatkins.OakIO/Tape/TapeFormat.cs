@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.Tape;
 
 /// <summary>
@@ -25,8 +27,5 @@ public sealed class TapeFormat : IOFileFormat<TapeFile>
     public override IOFile Read(Stream stream) => throw new NotSupportedException("Tape files cannot be read.");
 
     /// <inheritdoc />
-    protected override void Write(TapeFile file, Stream stream) => throw new NotSupportedException("Tape files cannot be written.");
-
-    /// <inheritdoc />
-    protected override Task WriteAsync(TapeFile file, Stream stream, CancellationToken cancellationToken) => throw new NotSupportedException("Tape files cannot be written.");
+    protected override ValueTask WriteAsync(TapeFile file, IBinaryWriter writer) => throw new NotSupportedException("Tape files cannot be written.");
 }

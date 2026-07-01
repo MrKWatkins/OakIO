@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.Tests;
 
 public sealed class ChainedConverterTests
@@ -43,7 +45,7 @@ public sealed class ChainedConverterTests
 
         public override IOFile Read(Stream stream) => new StubSourceFile();
 
-        protected override void Write(StubSourceFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(StubSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class StubIntermediateFile() : IOFile(StubIntermediateFormat.Instance);
@@ -54,7 +56,7 @@ public sealed class ChainedConverterTests
 
         public override IOFile Read(Stream stream) => new StubIntermediateFile();
 
-        protected override void Write(StubIntermediateFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(StubIntermediateFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class StubTargetFile() : IOFile(StubTargetFormat.Instance);
@@ -65,16 +67,16 @@ public sealed class ChainedConverterTests
 
         public override IOFile Read(Stream stream) => new StubTargetFile();
 
-        protected override void Write(StubTargetFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(StubTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class TapToTapeStub() : IOFileConverter<StubSourceFile, StubIntermediateFile>(StubSourceFormat.Instance, StubIntermediateFormat.Instance)
     {
-        public override StubIntermediateFile Convert(StubSourceFile source) => new StubIntermediateFile();
+        public override StubIntermediateFile Convert(StubSourceFile source) => new();
     }
 
     private sealed class TapeToWavStub() : IOFileConverter<StubIntermediateFile, StubTargetFile>(StubIntermediateFormat.Instance, StubTargetFormat.Instance)
     {
-        public override StubTargetFile Convert(StubIntermediateFile source) => new StubTargetFile();
+        public override StubTargetFile Convert(StubIntermediateFile source) => new();
     }
 }

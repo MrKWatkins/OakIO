@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
@@ -13,6 +14,12 @@ public sealed class TapeFormatTests
     }
 
     [Test]
+    public void CanRead() => TapeFormat.Instance.CanRead.Should().BeFalse();
+
+    [Test]
+    public void CanWrite() => TapeFormat.Instance.CanWrite.Should().BeFalse();
+
+    [Test]
     public void Read_Throws()
     {
         using var stream = new MemoryStream();
@@ -24,6 +31,7 @@ public sealed class TapeFormatTests
     {
         var file = new TapeFile([]);
         using var stream = new MemoryStream();
-        AssertThat.Invoking(() => TapeFormat.Instance.Write(file, stream)).Should().Throw<NotSupportedException>();
+        using var writer = new SyncStreamBinaryWriter(stream);
+        AssertThat.Invoking(() => TapeFormat.Instance.WriteAsync(file, writer)).Should().Throw<NotSupportedException>();
     }
 }

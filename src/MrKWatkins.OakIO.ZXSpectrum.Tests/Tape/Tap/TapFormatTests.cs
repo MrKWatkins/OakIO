@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Tap;
@@ -73,15 +74,17 @@ public sealed class TapFormatTests : TapTestFixture
     }
 
     [Test]
-    public void Write()
+    public async Task Write()
     {
         // Example from https://sinclair.wiki.zxnet.co.uk/wiki/TAP_format.
         var rom = CreateRom();
         var file = TapFile.CreateCode("ROM", 0, rom);
 
         using var output = new MemoryStream();
-
-        TapFormat.Instance.Write(file, output);
+        using (var writer = new SyncStreamBinaryWriter(output))
+        {
+            await TapFormat.Instance.WriteAsync(file, writer);
+        }
 
         var expected = new byte[]
         {

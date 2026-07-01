@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
@@ -280,14 +281,17 @@ public sealed class TzxFormatTests
     }
 
     [Test]
-    public void Write_RoundTrips()
+    public async Task Write_RoundTrips()
     {
         var data = BuildTzxData();
         using var readStream = new MemoryStream(data);
-        var file = TzxFormat.Instance.Read(readStream);
+        var file = (TzxFile)await TzxFormat.Instance.ReadAsync(readStream);
 
         using var writeStream = new MemoryStream();
-        TzxFormat.Instance.Write(file, writeStream);
+        using (var writer = new SyncStreamBinaryWriter(writeStream))
+        {
+            await TzxFormat.Instance.WriteAsync(file, writer);
+        }
 
         writeStream.ToArray().Should().SequenceEqual(data);
     }
@@ -298,7 +302,8 @@ public sealed class TzxFormatTests
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => TzxFormat.Instance.Write(tapFile, output)).Should().Throw<ArgumentException>();
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => TzxFormat.Instance.WriteAsync(tapFile, writer)).Should().Throw<ArgumentException>();
     }
 
     [Test]

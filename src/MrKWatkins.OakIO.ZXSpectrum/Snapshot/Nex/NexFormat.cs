@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 
 /// <summary>
@@ -148,23 +150,23 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(NexFile file, Stream stream)
+    protected override async ValueTask WriteAsync(NexFile file, IBinaryWriter writer)
     {
-        stream.Write(file.Header.AsReadOnlySpan());
+        await file.Header.WriteAsync(writer).ConfigureAwait(false);
 
         if (file.Palette != null)
         {
-            stream.Write(file.Palette);
+            await writer.WriteAsync(file.Palette).ConfigureAwait(false);
         }
 
         foreach (var screen in file.Screens)
         {
-            stream.Write(screen.Data);
+            await writer.WriteAsync(screen.Data).ConfigureAwait(false);
         }
 
         if (file.CopperCode != null)
         {
-            stream.Write(file.CopperCode);
+            await writer.WriteAsync(file.CopperCode).ConfigureAwait(false);
         }
 
         var banksByNumber = file.Banks.ToDictionary(b => b.BankNumber);
@@ -173,7 +175,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
         {
             if (banksByNumber.TryGetValue(bankNumber, out var nexBank))
             {
-                stream.Write(nexBank.Data);
+                await writer.WriteAsync(nexBank.Data).ConfigureAwait(false);
             }
         }
     }

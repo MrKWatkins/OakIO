@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO;
 
@@ -93,6 +94,12 @@ public abstract class IOFileComponent(byte[] data)
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
     public void Write(Stream stream) => stream.Write(data);
+
+    /// <summary>
+    /// Writes the data to a <see cref="IBinaryWriter"/>.
+    /// </summary>
+    /// <param name="writer">The <see cref="IBinaryWriter"/> to write to.</param>
+    internal ValueTask WriteAsync(IBinaryWriter writer) => writer.WriteAsync(data);
 
     /// <summary>
     /// Copies the data to the specified memory span.

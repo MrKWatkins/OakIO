@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>true</IsPackable>
+        <!-- Temp:
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        -->
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MrKWatkins.BinaryPrimitives"/>
@@ -9,6 +11,9 @@
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>MrKWatkins.OakIO.ZXSpectrum</_Parameter1>
+        </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>MrKWatkins.OakIO.ZXSpectrum.Tests</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 </Project>

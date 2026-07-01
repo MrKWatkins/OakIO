@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Testing;
 
 namespace MrKWatkins.OakIO.Tests;
@@ -122,7 +123,8 @@ public sealed class IOFileFormatTests
     {
         var file = new OtherIOFile();
         using var stream = new MemoryStream();
-        TestIOFileFormat.Instance.Invoking(f => f.WriteAsync(file, stream)).Should().Throw<ArgumentException>();
+        using var writer = new SyncStreamBinaryWriter(stream);
+        TestIOFileFormat.Instance.Invoking(f => f.WriteAsync(file, writer)).Should().Throw<ArgumentException>();
     }
 
     [Test]
@@ -130,8 +132,10 @@ public sealed class IOFileFormatTests
     {
         var format = new NonGenericFormat();
         using var stream = new MemoryStream();
-
-        await format.WriteAsync(new TestIOFile(), stream);
+        using (var writer = new SyncStreamBinaryWriter(stream))
+        {
+            await format.WriteAsync(new TestIOFile(), writer);
+        }
 
         stream.ToArray().Should().SequenceEqual(TestIOFileFormat.Contents);
     }
@@ -148,8 +152,8 @@ public sealed class IOFileFormatTests
     {
         var file = new OtherIOFile();
         using var stream = new MemoryStream();
-        // ReSharper disable once AccessToDisposedClosure
-        TestIOFileFormat.Instance.Invoking(f => f.Write(file, stream)).Should().Throw<ArgumentException>();
+        using var writer = new SyncStreamBinaryWriter(stream);
+        TestIOFileFormat.Instance.Invoking(f => f.WriteAsync(file, writer)).Should().Throw<ArgumentException>();
     }
 
     [MustDisposeResource]
@@ -180,20 +184,24 @@ public sealed class IOFileFormatTests
     {
         public override IOFile Read(Stream stream) => throw new NotSupportedException();
 
-        protected internal override void Write(IOFile file, Stream stream) => stream.Write(TestIOFileFormat.Contents);
+        protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer)
+        {
+            writer.WriteBytes(TestIOFileFormat.Contents);
+            return ValueTask.CompletedTask;
+        }
     }
 
     private sealed class OtherIOFileFormat() : IOFileFormat("other", "oth", typeof(OtherIOFile))
     {
         public override IOFile Read(Stream stream) => throw new NotSupportedException();
 
-        protected internal override void Write(IOFile file, Stream stream) => throw new NotSupportedException();
+        protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => throw new NotSupportedException();
     }
 
     private sealed class InvalidFileTypeFormat() : IOFileFormat("Invalid", "inv", typeof(string))
     {
         public override IOFile Read(Stream stream) => throw new NotSupportedException();
 
-        protected internal override void Write(IOFile file, Stream stream) => throw new NotSupportedException();
+        protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => throw new NotSupportedException();
     }
 }

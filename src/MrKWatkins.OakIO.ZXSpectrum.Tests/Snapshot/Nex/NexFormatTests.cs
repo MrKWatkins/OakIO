@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
@@ -138,19 +139,19 @@ public sealed class NexFormatTests
     }
 
     [Test]
-    public void RoundTrip_MinimalNoBanks()
+    public async Task RoundTrip_MinimalNoBanks()
     {
         var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: []);
 
         using var readStream = new MemoryStream(data);
-        var file = NexFormat.Instance.Read(readStream);
+        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
 
-        var actual = file.ToByteArray();
+        var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);
     }
 
     [Test]
-    public void RoundTrip_WithBanks()
+    public async Task RoundTrip_WithBanks()
     {
         var bank5Data = new byte[16384];
         bank5Data[0] = 0x05;
@@ -160,14 +161,14 @@ public sealed class NexFormatTests
         var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: [(5, bank5Data), (2, bank2Data)]);
 
         using var readStream = new MemoryStream(data);
-        var file = NexFormat.Instance.Read(readStream);
+        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
 
-        var actual = file.ToByteArray();
+        var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);
     }
 
     [Test]
-    public void RoundTrip_WithScreenAndPalette()
+    public async Task RoundTrip_WithScreenAndPalette()
     {
         var paletteData = new byte[512];
         paletteData[0] = 0xE0;
@@ -177,9 +178,9 @@ public sealed class NexFormatTests
         var data = CreateMinimalNexData("V1.2", loadScreens: 0b0000_0001, banks: [], paletteData: paletteData, screenBlocks: [screenData]);
 
         using var readStream = new MemoryStream(data);
-        var file = NexFormat.Instance.Read(readStream);
+        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
 
-        var actual = file.ToByteArray();
+        var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);
     }
 
@@ -189,7 +190,8 @@ public sealed class NexFormatTests
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => NexFormat.Instance.Write(tapFile, output))
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => NexFormat.Instance.WriteAsync(tapFile, writer))
             .Should().Throw<ArgumentException>();
     }
 
@@ -205,6 +207,17 @@ public sealed class NexFormatTests
         file.Palette.Should().BeNull();
         file.Screens.Should().HaveCount(1);
         file.Screens[0].Type.Should().Equal(NexScreenType.Layer2);
+    }
+
+    private static async Task<byte[]> WriteToBytesAsync(NexFile file)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new SyncStreamBinaryWriter(stream))
+        {
+            await NexFormat.Instance.WriteAsync(file, writer);
+        }
+
+        return stream.ToArray();
     }
 
     [Pure]

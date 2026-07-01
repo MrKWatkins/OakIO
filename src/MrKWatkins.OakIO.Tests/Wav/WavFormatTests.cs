@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Wav;
 
 namespace MrKWatkins.OakIO.Tests.Wav;
@@ -28,18 +29,19 @@ public sealed class WavFormatTests
     }
 
     [Test]
-    public void Write_NonSeekableStream()
+    public async Task Write()
     {
         byte[] sampleData = [0x80, 0xC0, 0x40];
         var wavFile = new WavFile(44100, sampleData);
 
         using var memoryStream = new MemoryStream();
-        using var nonSeekableStream = new NonSeekableStream(memoryStream);
-
-        WavFormat.Instance.Write(wavFile, nonSeekableStream);
+        using (var writer = new SyncStreamBinaryWriter(memoryStream))
+        {
+            await WavFormat.Instance.WriteAsync(wavFile, writer);
+        }
 
         memoryStream.Position = 0;
-        var result = WavFormat.Instance.Read(memoryStream);
+        var result = (WavFile)await WavFormat.Instance.ReadAsync(memoryStream);
         result.SampleRate.Should().Equal(44100u);
         result.SampleData.Should().SequenceEqual(sampleData);
     }
@@ -220,20 +222,5 @@ public sealed class WavFormatTests
         writer.Write((ushort)1); // block align
         writer.Write((ushort)8); // 8 bits
         writer.Write("data"u8);
-    }
-
-    private sealed class NonSeekableStream(MemoryStream inner) : Stream
-    {
-        public override bool CanRead => inner.CanRead;
-        public override bool CanSeek => false;
-        public override bool CanWrite => inner.CanWrite;
-        public override long Length => inner.Length;
-        public override long Position { get => inner.Position; set => inner.Position = value; }
-
-        public override void Flush() => inner.Flush();
-        public override int Read(byte[] buffer, int offset, int count) => inner.Read(buffer, offset, count);
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-        public override void SetLength(long value) => inner.SetLength(value);
-        public override void Write(byte[] buffer, int offset, int count) => inner.Write(buffer, offset, count);
     }
 }

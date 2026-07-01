@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
@@ -36,17 +37,17 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
     }
 
     [Test]
-    public void RoundTrip_48k()
+    public async Task RoundTrip_48k()
     {
-        using var monty = OpenResource(Resources.AufWiedersehenMontySna);
+        await using var monty = OpenResource(Resources.AufWiedersehenMontySna);
         using var ms = new MemoryStream();
-        monty.CopyTo(ms);
+        await monty.CopyToAsync(ms);
         var expected = ms.ToArray();
 
         ms.Position = 0;
-        var file = SnaFormat.Instance.Read(ms);
+        var file = (SnaFile)await SnaFormat.Instance.ReadAsync(ms);
 
-        var actual = file.ToByteArray();
+        var actual = await WriteToBytesAsync(file);
 
         actual.Should().SequenceEqual(expected);
     }
@@ -67,7 +68,8 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => SnaFormat.Instance.Write(tapFile, output))
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => SnaFormat.Instance.WriteAsync(tapFile, writer))
             .Should().Throw<ArgumentException>();
     }
 
@@ -85,6 +87,17 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
         snapshot.TryLoadInto(actual).Should().BeTrue();
 
         actual.Should().SequenceEqual(memory);
+    }
+
+    private static async Task<byte[]> WriteToBytesAsync(SnaFile file)
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new SyncStreamBinaryWriter(stream))
+        {
+            await SnaFormat.Instance.WriteAsync(file, writer);
+        }
+
+        return stream.ToArray();
     }
 
     private static void AssertMontyRegisters(SnaFile file)

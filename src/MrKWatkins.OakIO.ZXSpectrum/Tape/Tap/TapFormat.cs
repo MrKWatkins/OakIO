@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Wav;
 
@@ -75,18 +76,18 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(TapFile file, Stream stream)
+    protected override async ValueTask WriteAsync(TapFile file, IBinaryWriter writer)
     {
         foreach (var block in file.Blocks)
         {
-            WriteBlock(block, stream);
+            await WriteBlockAsync(block, writer).ConfigureAwait(false);
         }
     }
 
-    private static void WriteBlock(TapBlock block, Stream stream)
+    private static async ValueTask WriteBlockAsync(TapBlock block, IBinaryWriter writer)
     {
-        block.Header.Write(stream);
-        block.Write(stream);
-        block.Trailer.Write(stream);
+        await block.Header.WriteAsync(writer).ConfigureAwait(false);
+        await block.WriteAsync(writer).ConfigureAwait(false);
+        await block.Trailer.WriteAsync(writer).ConfigureAwait(false);
     }
 }

@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.Tests;
 
 public sealed class IOFileConverterTests
@@ -49,12 +51,12 @@ public sealed class IOFileConverterTests
 
         public override IOFile Read(Stream stream) => new TargetIOFile();
 
-        protected override void Write(TargetIOFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(TargetIOFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class TestToTargetConverter() : IOFileConverter<TestIOFile, TargetIOFile>(TestIOFileFormat.Instance, TargetIOFileFormat.Instance)
     {
-        public override TargetIOFile Convert(TestIOFile source) => new TargetIOFile();
+        public override TargetIOFile Convert(TestIOFile source) => new();
     }
 
     private sealed class WrongIOFile() : IOFile(WrongIOFileFormat.Instance);
@@ -65,6 +67,6 @@ public sealed class IOFileConverterTests
 
         public override IOFile Read(Stream stream) => new WrongIOFile();
 
-        protected override void Write(WrongIOFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(WrongIOFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 }

@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.Tests;
 
@@ -19,5 +20,9 @@ internal sealed class TestIOFileFormat : IOFileFormat<TestIOFile>
         return new TestIOFile();
     }
 
-    protected override void Write(TestIOFile _, Stream stream) => stream.Write(Contents);
+    protected override ValueTask WriteAsync(TestIOFile _, IBinaryWriter writer)
+    {
+        writer.WriteBytes(Contents);
+        return ValueTask.CompletedTask;
+    }
 }

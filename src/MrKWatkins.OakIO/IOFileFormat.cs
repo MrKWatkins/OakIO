@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Compression;
 
 namespace MrKWatkins.OakIO;
@@ -162,23 +163,11 @@ public abstract class IOFileFormat
     public virtual Task<IOFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) => Task.FromResult(Read(stream));
 
     /// <summary>
-    /// Writes a file to a stream.
+    /// Writes a file to a <see cref="IBinaryWriter" /> asynchronously.
     /// </summary>
     /// <param name="file">The file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    protected internal abstract void Write(IOFile file, Stream stream);
-
-    /// <summary>
-    /// Writes a file to a stream asynchronously.
-    /// </summary>
-    /// <param name="file">The file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the writing.</param>
-    protected internal virtual Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default)
-    {
-        Write(file, stream);
-        return Task.CompletedTask;
-    }
+    /// <param name="writer">The <see cref="IBinaryWriter" /> to write to.</param>
+    protected internal abstract ValueTask WriteAsync(IOFile file, IBinaryWriter writer);
 }
 
 /// <summary>
@@ -189,38 +178,15 @@ public abstract class IOFileFormat<TFile>(string name, string fileExtension) : I
     where TFile : IOFile
 {
     /// <inheritdoc />
-    protected internal sealed override void Write(IOFile file, Stream stream)
-    {
-        if (file is not TFile typedFile)
-        {
-            throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
-        }
-
-        Write(typedFile, stream);
-    }
-
-    /// <summary>
-    /// Writes a strongly typed file to a stream.
-    /// </summary>
-    /// <param name="file">The file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    protected abstract void Write(TFile file, Stream stream);
-
-    /// <inheritdoc />
-    protected internal sealed override Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default) =>
+    protected internal sealed override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) =>
         file is TFile typedFile
-            ? WriteAsync(typedFile, stream, cancellationToken)
+            ? WriteAsync(typedFile, writer)
             : throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
 
     /// <summary>
     /// Writes a strongly typed file to a stream.
     /// </summary>
     /// <param name="file">The file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    /// <param name="cancellationToken">An <see cref="CancellationToken"/> to cancel the writing.</param>
-    protected virtual Task WriteAsync(TFile file, Stream stream, CancellationToken cancellationToken)
-    {
-        Write(file, stream);
-        return Task.CompletedTask;
-    }
+    /// <param name="writer">The <see cref="IBinaryWriter" /> to write to.</param>
+    protected abstract ValueTask WriteAsync(TFile file, IBinaryWriter writer);
 }

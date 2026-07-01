@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Wav;
 
@@ -80,14 +81,14 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(TzxFile file, Stream stream)
+    protected override async ValueTask WriteAsync(TzxFile file, IBinaryWriter writer)
     {
-        file.Header.Write(stream);
+        await file.Header.WriteAsync(writer).ConfigureAwait(false);
         foreach (var block in file.Blocks)
         {
-            stream.WriteByte((byte)block.Header.Type);
-            block.Header.Write(stream);
-            block.Write(stream);
+            writer.WriteByte((byte)block.Header.Type);
+            await block.Header.WriteAsync(writer).ConfigureAwait(false);
+            await block.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

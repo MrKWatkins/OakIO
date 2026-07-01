@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 
@@ -90,22 +91,15 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(SnaFile file, Stream stream)
-    {
-        switch (file)
+    protected override ValueTask WriteAsync(SnaFile file, IBinaryWriter writer) =>
+        file switch
         {
-            case Sna48kFile file48K:
-                Write48k(file48K, stream);
-                break;
-            case Sna128kFile file128K:
-                Write128k(file128K, stream);
-                break;
-            default:
-                throw new NotSupportedException($"The SNA file type {file.GetType().Name} is not supported.");
-        }
-    }
+            Sna48kFile file48K => Write48kAsync(file48K, writer),
+            Sna128kFile file128K => Write128kAsync(file128K, writer),
+            _ => throw new NotSupportedException($"The SNA file type {file.GetType().Name} is not supported.")
+        };
 
-    private static void Write48k(Sna48kFile file, Stream stream)
+    private static async ValueTask Write48kAsync(Sna48kFile file, IBinaryWriter writer)
     {
         // In 48K SNA files, PC is pushed onto the stack.
         var sp = file.Header.Registers.SP;
@@ -114,26 +108,24 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
         // Write the header with adjusted SP.
         var headerBytes = file.Header.AsReadOnlySpan().ToArray();
         headerBytes.SetUInt16(23, sp);
-        stream.Write(headerBytes);
+        await writer.WriteAsync(headerBytes).ConfigureAwait(false);
 
         // Write the RAM with PC at SP-2.
         var ram = file.Ram.ToArray();
         ram.SetUInt16(sp - 16384, file.Header.Registers.PC);
-        stream.Write(ram);
+        await writer.WriteAsync(ram).ConfigureAwait(false);
     }
 
-    private static void Write128k(Sna128kFile file, Stream stream)
+    private static async ValueTask Write128kAsync(Sna128kFile file, IBinaryWriter writer)
     {
-        stream.Write(file.Header.AsReadOnlySpan());
-        stream.Write(file.GetBank(5));
-        stream.Write(file.GetBank(2));
-        stream.Write(file.GetBank(file.PagedBank));
+        await file.Header.WriteAsync(writer).ConfigureAwait(false);
+        writer.WriteBytes(file.GetBank(5));
+        writer.WriteBytes(file.GetBank(2));
+        writer.WriteBytes(file.GetBank(file.PagedBank));
 
-        var footer = new byte[4];
-        footer.SetUInt16(0, file.Registers.PC);
-        footer[2] = file.Port7FFD;
-        footer[3] = file.TrDosRomPaged ? (byte)1 : (byte)0;
-        stream.Write(footer);
+        writer.WriteUInt16LittleEndian(file.Registers.PC);
+        writer.WriteByte(file.Port7FFD);
+        writer.WriteByte(file.TrDosRomPaged ? (byte)1 : (byte)0);
 
         foreach (var bankNumber in new byte[] { 0, 1, 3, 4, 6, 7 })
         {
@@ -142,7 +134,7 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
                 continue;
             }
 
-            stream.Write(file.GetBank(bankNumber));
+            writer.WriteBytes(file.GetBank(bankNumber));
         }
     }
 }

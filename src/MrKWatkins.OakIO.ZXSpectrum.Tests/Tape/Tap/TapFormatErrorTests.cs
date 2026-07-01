@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
@@ -78,7 +79,8 @@ public sealed class TapFormatErrorTests
         var pzxFile = PzxFormat.Instance.Read(pzxStream);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => TapFormat.Instance.Write(pzxFile, output))
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => TapFormat.Instance.WriteAsync(pzxFile, writer))
             .Should().ThrowArgumentException("Value is not of type TapFile.", "file");
     }
 

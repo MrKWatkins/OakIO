@@ -1,4 +1,5 @@
 using System.Text;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.Wav;
 
@@ -96,29 +97,28 @@ public sealed class WavFormat : IOFileFormat<WavFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(WavFile file, Stream stream)
+    protected override async ValueTask WriteAsync(WavFile file, IBinaryWriter writer)
     {
-        using var writer = new BinaryWriter(stream, Encoding.ASCII, true);
-
         var dataLength = file.SampleData.Length;
 
         // RIFF header
-        writer.Write("RIFF"u8);
-        writer.Write(dataLength + HeaderSize - 8);
-        writer.Write("WAVEfmt "u8);
+        writer.WriteBytes("RIFF"u8);
+        writer.WriteInt32LittleEndian(dataLength + HeaderSize - 8);
+        writer.WriteBytes("WAVEfmt "u8);
 
         // fmt subchunk
-        writer.Write(16);               // Subchunk1Size (PCM)
-        writer.Write((ushort)1);        // AudioFormat (PCM)
-        writer.Write((ushort)1);        // NumChannels (mono)
-        writer.Write(file.SampleRate);  // SampleRate
-        writer.Write(file.SampleRate);  // ByteRate (SampleRate * NumChannels * BitsPerSample/8)
-        writer.Write((ushort)1);        // BlockAlign (NumChannels * BitsPerSample/8)
-        writer.Write((ushort)8);        // BitsPerSample
+        writer.WriteUInt32LittleEndian(16);                 // Subchunk1Size (PCM)
+        writer.WriteUInt16LittleEndian(1);                  // AudioFormat (PCM)
+        writer.WriteUInt16LittleEndian(1);                  // NumChannels (mono)
+        writer.WriteUInt32LittleEndian(file.SampleRate);    // SampleRate
+        writer.WriteUInt32LittleEndian(file.SampleRate);    // ByteRate (SampleRate * NumChannels * BitsPerSample/8)
+        writer.WriteUInt16LittleEndian(1);                  // BlockAlign (NumChannels * BitsPerSample/8)
+        writer.WriteUInt16LittleEndian(8);                  // BitsPerSample
 
         // data subchunk
-        writer.Write("data"u8);
-        writer.Write(dataLength);
-        writer.Write(file.SampleData);
+        writer.WriteBytes("data"u8);
+        writer.WriteInt32LittleEndian(dataLength);
+
+        await writer.WriteAsync(file.SampleData).ConfigureAwait(false);
     }
 }

@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
@@ -8,7 +9,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Snapshot.Z80;
 public sealed class Z80FormatTests : ZXSpectrumTestFixture
 {
     [Test]
-    public void Write_V1_ThrowsForPC0([Values] bool isCompressed)
+    public async Task Write_V1_ThrowsForPC0([Values] bool isCompressed)
     {
         var header = new Z80V1Header
         {
@@ -21,10 +22,10 @@ public sealed class Z80FormatTests : ZXSpectrumTestFixture
         var snapshot = new Z80V1File(header, new byte[16384]);
 
         using var memoryStream = new MemoryStream();
+        using var writer = new SyncStreamBinaryWriter(memoryStream);
         // ReSharper disable once AccessToDisposedClosure
-        Z80Format.Instance.Invoking(f => f.Write(snapshot, memoryStream))
-            .Should().Throw<InvalidOperationException>()
-            .Exception.Message.Should().Equal("PC cannot be 0 for a v1 file; a PC value of 0 is to specify a v2 or v3 file.");
+        await Z80Format.Instance.Awaiting(f => f.WriteAsync(snapshot, writer).AsTask())
+            .Should().ThrowAsync<InvalidOperationException>("PC cannot be 0 for a v1 file; a PC value of 0 is to specify a v2 or v3 file.");
     }
 
     [TestCase(Resources.AufWiedersehenMontyZ80V1Compressed, true)]
@@ -161,7 +162,8 @@ public sealed class Z80FormatTests : ZXSpectrumTestFixture
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => Z80Format.Instance.Write(tapFile, output))
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => Z80Format.Instance.WriteAsync(tapFile, writer))
             .Should().Throw<ArgumentException>();
     }
 }

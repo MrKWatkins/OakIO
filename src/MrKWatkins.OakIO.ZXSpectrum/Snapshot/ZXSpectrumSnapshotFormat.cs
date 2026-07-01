@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 
 /// <summary>
@@ -58,38 +60,15 @@ public abstract class ZXSpectrumSnapshotFormat<TFile>(string name, string fileEx
     public new TFile Read(Stream stream) => (TFile)base.Read(stream);
 
     /// <inheritdoc />
-    protected internal sealed override void Write(IOFile file, Stream stream)
-    {
-        if (file is not TFile typedFile)
-        {
-            throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
-        }
-
-        Write(typedFile, stream);
-    }
-
-    /// <summary>
-    /// Writes a snapshot file to a stream.
-    /// </summary>
-    /// <param name="file">The snapshot file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    protected abstract void Write(TFile file, Stream stream);
-
-    /// <inheritdoc />
-    protected internal sealed override Task WriteAsync(IOFile file, Stream stream, CancellationToken cancellationToken = default) =>
+    protected internal sealed override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) =>
         file is TFile typedFile
-            ? WriteAsync(typedFile, stream, cancellationToken)
+            ? WriteAsync(typedFile, writer)
             : throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
 
     /// <summary>
-    /// Writes a strongly typed snapshot file to a stream.
+    /// Writes a strongly typed tape file to a <see cref="IBinaryWriter" />.
     /// </summary>
     /// <param name="file">The file to write.</param>
-    /// <param name="stream">The stream to write to.</param>
-    /// <param name="cancellationToken">An <see cref="CancellationToken"/> to cancel the writing.</param>
-    protected virtual Task WriteAsync(TFile file, Stream stream, CancellationToken cancellationToken)
-    {
-        Write(file, stream);
-        return Task.CompletedTask;
-    }
+    /// <param name="writer">The <see cref="IBinaryWriter" /> to write to.</param>
+    protected abstract ValueTask WriteAsync(TFile file, IBinaryWriter writer);
 }

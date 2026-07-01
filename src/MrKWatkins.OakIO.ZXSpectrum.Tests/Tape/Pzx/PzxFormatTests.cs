@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 using DataBlock = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx.DataBlock;
@@ -301,14 +302,17 @@ public sealed class PzxFormatTests
     }
 
     [Test]
-    public void Write_RoundTrips()
+    public async Task Write_RoundTrips()
     {
         var data = BuildPzxData();
         using var readStream = new MemoryStream(data);
-        var file = PzxFormat.Instance.Read(readStream);
+        var file = (PzxFile)await PzxFormat.Instance.ReadAsync(readStream);
 
         using var writeStream = new MemoryStream();
-        PzxFormat.Instance.Write(file, writeStream);
+        using (var writer = new SyncStreamBinaryWriter(writeStream))
+        {
+            await PzxFormat.Instance.WriteAsync(file, writer);
+        }
 
         writeStream.ToArray().Should().SequenceEqual(data);
     }
@@ -319,7 +323,8 @@ public sealed class PzxFormatTests
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);
 
         using var output = new MemoryStream();
-        AssertThat.Invoking(() => PzxFormat.Instance.Write(tapFile, output)).Should().Throw<ArgumentException>();
+        using var writer = new SyncStreamBinaryWriter(output);
+        AssertThat.Invoking(() => PzxFormat.Instance.WriteAsync(tapFile, writer)).Should().Throw<ArgumentException>();
     }
 
     [Test]

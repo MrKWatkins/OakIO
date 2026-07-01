@@ -1,5 +1,6 @@
 using System.Text;
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Wav;
 
@@ -66,15 +67,13 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     }
 
     /// <inheritdoc />
-    protected override void Write(PzxFile file, Stream stream)
+    protected override async ValueTask WriteAsync(PzxFile file, IBinaryWriter writer)
     {
-        Span<byte> tagBytes = stackalloc byte[4];
         foreach (var block in file.Blocks)
         {
-            System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(tagBytes, (uint)block.Header.Type);
-            stream.Write(tagBytes);
-            block.Header.Write(stream);
-            block.Write(stream);
+            writer.WriteUInt32BigEndian((uint)block.Header.Type);
+            await block.Header.WriteAsync(writer).ConfigureAwait(false);
+            await block.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 
@@ -94,30 +95,30 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     }
 
     /// <inheritdoc />
-    protected override void Write(Z80File file, Stream stream)
+    protected override async ValueTask WriteAsync(Z80File file, IBinaryWriter writer)
     {
         if (file is Z80V1File && file.Registers.PC == 0)
         {
             throw new InvalidOperationException("PC cannot be 0 for a v1 file; a PC value of 0 is to specify a v2 or v3 file.");
         }
 
-        stream.Write(file.Header.AsReadOnlySpan());
+        await file.Header.WriteAsync(writer).ConfigureAwait(false);
         if (file is Z80V1File v1File)
         {
-            stream.Write(v1File.CompressedData);
+            writer.WriteBytes(v1File.CompressedData);
         }
         else
         {
-            WriteV2OrV3Data((IZ80SnapshotV2OrV3File)file, stream);
+            await WriteV2OrV3DataAsync((IZ80SnapshotV2OrV3File)file, writer).ConfigureAwait(false);
         }
     }
 
-    private static void WriteV2OrV3Data(IZ80SnapshotV2OrV3File v2File, Stream stream)
+    private static async ValueTask WriteV2OrV3DataAsync(IZ80SnapshotV2OrV3File v2File, IBinaryWriter writer)
     {
         foreach (var page in v2File.Pages)
         {
-            stream.Write(page.Header.AsReadOnlySpan());
-            stream.Write(page.AsReadOnlySpan());
+            await page.Header.WriteAsync(writer).ConfigureAwait(false);
+            await page.WriteAsync(writer).ConfigureAwait(false);
         }
     }
 }

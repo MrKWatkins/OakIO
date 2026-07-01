@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Compression;
 
 namespace MrKWatkins.OakIO;
@@ -47,14 +49,27 @@ public abstract class IOFile
     /// Writes this file to a stream.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
-    public void Write(Stream stream) => Format.Write(this, stream);
+    public void Write(Stream stream)
+    {
+        using var writer = new SyncStreamBinaryWriter(stream);
+        var write = Format.WriteAsync(this, writer);
+        Debug.Assert(write.IsCompleted, $"{nameof(SyncStreamBinaryWriter)} must complete synchronously.");
+        write.GetAwaiter().GetResult();
+    }
 
     /// <summary>
     /// Writes this file to a stream asynchronously.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
     /// <param name="cancellationToken">An <see cref="CancellationToken"/> to cancel the writing.</param>
-    public Task WriteAsync(Stream stream, CancellationToken cancellationToken = default) => Format.WriteAsync(this, stream, cancellationToken);
+    public async Task WriteAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        var writer = new AsyncStreamBinaryWriter(stream, cancellationToken);
+        await using (writer.ConfigureAwait(false))
+        {
+            await Format.WriteAsync(this, writer).ConfigureAwait(false);
+        }
+    }
 
     /// <summary>
     /// Converts this file to a byte array.
@@ -63,8 +78,9 @@ public abstract class IOFile
     [Pure]
     public byte[] ToByteArray()
     {
+        // TODO: Straight to array?
         using var memoryStream = new MemoryStream();
-        Format.Write(this, memoryStream);
+        Write(memoryStream);
         return memoryStream.ToArray();
     }
 

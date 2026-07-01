@@ -14,20 +14,20 @@ public enum CompressionFormat
     /// Specifies that the file should be compressed using the ZIP algorithm when writing. A single file archive will be produced.
     /// </summary>
     Zip = 1,
-/*
-    /// <summary>
-    /// Specifies that the file should be compressed using the GZip algorithm when writing.
-    /// </summary>
-    GZip = 2,
+    /*
+        /// <summary>
+        /// Specifies that the file should be compressed using the GZip algorithm when writing.
+        /// </summary>
+        GZip = 2,
 
-    /// <summary>
-    /// Specifies that the file should be compressed using the Brotli algorithm when writing.
-    /// </summary>
-    Brotli = 3,
+        /// <summary>
+        /// Specifies that the file should be compressed using the Brotli algorithm when writing.
+        /// </summary>
+        Brotli = 3,
 
-    /// <summary>
-    /// Specifies that the file should be compressed using the Zstandard algorithm when writing.
-    /// </summary>
-    Zstd = 4
-*/
+        /// <summary>
+        /// Specifies that the file should be compressed using the Zstandard algorithm when writing.
+        /// </summary>
+        Zstd = 4
+    */
 }

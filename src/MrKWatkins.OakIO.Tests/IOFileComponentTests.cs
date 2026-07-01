@@ -1,4 +1,5 @@
 using MrKWatkins.BinaryPrimitives;
+using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.Tests;
 
@@ -149,6 +150,21 @@ public sealed class IOFileComponentTests
 
         using var stream = new MemoryStream();
         header.Write(stream);
+
+        stream.ToArray().Should().SequenceEqual(bytes);
+    }
+
+    [Test]
+    public async Task WriteAsync()
+    {
+        var bytes = new byte[] { 1, 2, 3 };
+        var header = new TestIOFileComponent(bytes);
+
+        using var stream = new MemoryStream();
+        using (var writer = new SyncStreamBinaryWriter(stream))
+        {
+            await header.WriteAsync(writer);
+        }
 
         stream.ToArray().Should().SequenceEqual(bytes);
     }

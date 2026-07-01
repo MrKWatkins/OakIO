@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Wav;
 
@@ -94,6 +95,6 @@ public sealed class TapeToWavConverterTests
 
         public override IOFile Read(Stream stream) => new WrongFile();
 
-        protected override void Write(WrongFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(WrongFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 }

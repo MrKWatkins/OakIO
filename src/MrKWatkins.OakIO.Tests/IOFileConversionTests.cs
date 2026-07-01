@@ -1,3 +1,5 @@
+using MrKWatkins.OakIO.Binary;
+
 namespace MrKWatkins.OakIO.Tests;
 
 public sealed class IOFileConversionTests
@@ -114,7 +116,7 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new ConversionSourceFile();
 
-        protected override void Write(ConversionSourceFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(ConversionSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class ConversionTargetFile() : IOFile(ConversionTargetFileFormat.Instance);
@@ -125,7 +127,7 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new ConversionTargetFile();
 
-        protected override void Write(ConversionTargetFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(ConversionTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class ConversionSecondTargetFile() : IOFile(ConversionSecondTargetFileFormat.Instance);
@@ -136,22 +138,22 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new ConversionSecondTargetFile();
 
-        protected override void Write(ConversionSecondTargetFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(ConversionSecondTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class SourceToTargetConverter() : IOFileConverter<ConversionSourceFile, ConversionTargetFile>(ConversionSourceFileFormat.Instance, ConversionTargetFileFormat.Instance)
     {
-        public override ConversionTargetFile Convert(ConversionSourceFile source) => new ConversionTargetFile();
+        public override ConversionTargetFile Convert(ConversionSourceFile source) => new();
     }
 
     private sealed class SourceToSecondTargetConverter() : IOFileConverter<ConversionSourceFile, ConversionSecondTargetFile>(ConversionSourceFileFormat.Instance, ConversionSecondTargetFileFormat.Instance)
     {
-        public override ConversionSecondTargetFile Convert(ConversionSourceFile source) => new ConversionSecondTargetFile();
+        public override ConversionSecondTargetFile Convert(ConversionSourceFile source) => new();
     }
 
     private sealed class AlternativeSourceToTargetConverter() : IOFileConverter<ConversionSourceFile, ConversionTargetFile>(ConversionSourceFileFormat.Instance, ConversionTargetFileFormat.Instance)
     {
-        public override ConversionTargetFile Convert(ConversionSourceFile source) => new ConversionTargetFile();
+        public override ConversionTargetFile Convert(ConversionSourceFile source) => new();
     }
 
     private sealed class UnregisteredFile() : IOFile(UnregisteredFileFormat.Instance);
@@ -162,7 +164,7 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new UnregisteredFile();
 
-        protected override void Write(UnregisteredFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(UnregisteredFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class ThrowingSourceFile() : IOFile(ThrowingSourceFileFormat.Instance);
@@ -176,7 +178,7 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new ThrowingSourceFile();
 
-        protected override void Write(ThrowingSourceFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(ThrowingSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class ThrowingTargetFile() : IOFile(ThrowingTargetFileFormat.Instance);
@@ -187,7 +189,7 @@ public sealed class IOFileConversionTests
 
         public override IOFile Read(Stream stream) => new ThrowingTargetFile();
 
-        protected override void Write(ThrowingTargetFile file, Stream stream) { }
+        protected override ValueTask WriteAsync(ThrowingTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
 
     private sealed class ThrowingConverter() : IOFileConverter<ThrowingSourceFile, ThrowingTargetFile>(ThrowingSourceFileFormat.Instance, ThrowingTargetFileFormat.Instance)
