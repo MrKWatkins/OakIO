@@ -5,18 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class PauseHeader : TzxBlockHeader
 {
-    private const int Size = 2;
-
-    internal PauseHeader()
-        : base(TzxBlockType.Pause, Size)
-    {
-    }
-
-    internal PauseHeader(Stream stream)
-        : base(TzxBlockType.Pause, Size, stream)
-    {
-    }
-
     internal PauseHeader(byte[] data)
         : base(TzxBlockType.Pause, data)
     {

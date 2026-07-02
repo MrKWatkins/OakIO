@@ -8,15 +8,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
 {
-    /// <summary>
-    /// Initialises a new instance of the <see cref="PzxHeaderBlock" /> class from a stream.
-    /// </summary>
-    /// <param name="stream">The stream to read from.</param>
-    public PzxHeaderBlock(Stream stream) : base(new PzxHeader(stream), stream)
-    {
-        Info = ReadInfos().ToList();
-    }
-
     internal PzxHeaderBlock(byte[] headerData) : base(new PzxHeader(headerData), [])
     {
         Info = ReadInfos().ToList();

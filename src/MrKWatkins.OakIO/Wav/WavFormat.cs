@@ -18,14 +18,11 @@ public sealed class WavFormat : IOFileFormat<WavFile>
     }
 
     /// <inheritdoc />
-    public override WavFile Read(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var headerBytes = new byte[WavHeader.Size];
-        stream.ReadExactly(headerBytes);
-        var header = new WavHeader(headerBytes);
+        var header = new WavHeader(await reader.ReadAsync(WavHeader.Size).ConfigureAwait(false));
 
-        var sampleData = new byte[header.DataSize];
-        stream.ReadExactly(sampleData);
+        var sampleData = await reader.ReadAsync(header.DataSize).ConfigureAwait(false);
 
         return new WavFile(header.SampleRate, sampleData);
     }

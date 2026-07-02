@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Compression;
 
@@ -151,7 +152,13 @@ public abstract class IOFileFormat
     /// <param name="stream">The stream to read from.</param>
     /// <returns>The file that was read.</returns>
     [MustUseReturnValue]
-    public abstract IOFile Read(Stream stream);
+    public IOFile Read(Stream stream)
+    {
+        using var reader = new SyncStreamBinaryReader(stream);
+        var read = ReadAsync(reader);
+        Debug.Assert(read.IsCompleted, $"{nameof(SyncStreamBinaryReader)} must complete synchronously.");
+        return read.GetAwaiter().GetResult();
+    }
 
     /// <summary>
     /// Reads a file from a stream asynchronously.
@@ -160,7 +167,22 @@ public abstract class IOFileFormat
     /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
     /// <returns>The file that was read.</returns>
     [MustUseReturnValue]
-    public virtual Task<IOFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) => Task.FromResult(Read(stream));
+    public async Task<IOFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default)
+    {
+        var reader = new AsyncStreamBinaryReader(stream, cancellationToken);
+        await using (reader.ConfigureAwait(false))
+        {
+            return await ReadAsync(reader).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Reads a file from an <see cref="IBinaryReader" />.
+    /// </summary>
+    /// <param name="reader">The <see cref="IBinaryReader" /> to read from.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    protected abstract ValueTask<IOFile> ReadAsync(IBinaryReader reader);
 
     /// <summary>
     /// Writes a file to a <see cref="IBinaryWriter" /> asynchronously.
@@ -177,6 +199,32 @@ public abstract class IOFileFormat
 public abstract class IOFileFormat<TFile>(string name, string fileExtension) : IOFileFormat(name, fileExtension, typeof(TFile))
     where TFile : IOFile
 {
+    /// <summary>
+    /// Reads a strongly typed file from a byte array.
+    /// </summary>
+    /// <param name="bytes">The byte array to read from.</param>
+    /// <returns>The file that was read.</returns>
+    [Pure]
+    public new TFile Read(byte[] bytes) => (TFile)base.Read(bytes);
+
+    /// <summary>
+    /// Reads a strongly typed file from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public new TFile Read(Stream stream) => (TFile)base.Read(stream);
+
+    /// <summary>
+    /// Reads a strongly typed file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public new async Task<TFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (TFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
+
     /// <inheritdoc />
     protected internal sealed override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) =>
         file is TFile typedFile

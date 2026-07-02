@@ -50,6 +50,12 @@ The library is organised around a set of base classes:
 - [**IOFileConverter**](API/MrKWatkins.OakIO/IOFileConverter-TSource-TTarget/index.md) — Base class for format converters.
 - [**IOFileConversion**](API/MrKWatkins.OakIO/IOFileConversion/index.md) — Static methods for converting between formats.
 
+## Use of AI
+
+My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, set up the online converter, and
+to help with documentation and unit tests.
+
 ## Licencing
 
 The project is licensed under GPL v3.0.

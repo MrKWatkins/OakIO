@@ -5,16 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class PauseHeader : PzxBlockHeader
 {
-    internal PauseHeader()
-        : base(PzxBlockType.Pause, 8)
-    {
-    }
-
-    internal PauseHeader(Stream stream)
-        : base(PzxBlockType.Pause, 8, stream)
-    {
-    }
-
     internal PauseHeader(byte[] data)
         : base(PzxBlockType.Pause, data)
     {

@@ -6,22 +6,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class TurboSpeedDataHeader : TzxBlockHeader
 {
-    private const int Size = 18;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TurboSpeedDataHeader"/> class with default values.
-    /// </summary>
-    public TurboSpeedDataHeader()
-        : base(TzxBlockType.TurboSpeedData, Size)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TurboSpeedDataHeader"/> class by reading from a stream.
-    /// </summary>
-    /// <param name="stream">The stream to read from.</param>
-    public TurboSpeedDataHeader(Stream stream)
-        : base(TzxBlockType.TurboSpeedData, Size, stream)
+    internal TurboSpeedDataHeader(byte[] data)
+        : base(TzxBlockType.TurboSpeedData, data)
     {
     }
 

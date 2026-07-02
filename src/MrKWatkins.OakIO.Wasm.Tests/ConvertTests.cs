@@ -15,7 +15,7 @@ public sealed class ConvertTests : WasmTestFixture
     public void Convert_TapToWav_ProducesValidWav()
     {
         var result = Convert("test.tap", CreateTapData(), "output.wav");
-        var wav = (WavFile)WavFormat.Instance.Read(result);
+        var wav = WavFormat.Instance.Read(result);
         wav.SampleData.Should().NotBeEmpty();
     }
 
@@ -30,7 +30,7 @@ public sealed class ConvertTests : WasmTestFixture
     public void Convert_TzxToWav_ProducesValidWav()
     {
         var result = Convert("test.tzx", CreateTzxData(), "output.wav");
-        var wav = (WavFile)WavFormat.Instance.Read(result);
+        var wav = WavFormat.Instance.Read(result);
         wav.SampleRate.Should().Equal(44100u);
     }
 
@@ -45,7 +45,7 @@ public sealed class ConvertTests : WasmTestFixture
     public void Convert_PzxToWav_ProducesValidWav()
     {
         var result = Convert("test.pzx", CreatePzxData(), "output.wav");
-        var wav = (WavFile)WavFormat.Instance.Read(result);
+        var wav = WavFormat.Instance.Read(result);
         wav.SampleRate.Should().Equal(44100u);
     }
 

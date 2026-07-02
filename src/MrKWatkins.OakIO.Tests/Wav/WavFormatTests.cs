@@ -41,7 +41,7 @@ public sealed class WavFormatTests
         }
 
         memoryStream.Position = 0;
-        var result = (WavFile)await WavFormat.Instance.ReadAsync(memoryStream);
+        var result = await WavFormat.Instance.ReadAsync(memoryStream);
         result.SampleRate.Should().Equal(44100u);
         result.SampleData.Should().SequenceEqual(sampleData);
     }

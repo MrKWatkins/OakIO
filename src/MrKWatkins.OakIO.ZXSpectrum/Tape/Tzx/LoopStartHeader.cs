@@ -5,15 +5,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class LoopStartHeader : TzxBlockHeader
 {
-    private const int Size = 2;
-
-    internal LoopStartHeader()
-        : base(TzxBlockType.LoopStart, Size)
-    {
-    }
-
-    internal LoopStartHeader(Stream stream)
-        : base(TzxBlockType.LoopStart, Size, stream)
+    internal LoopStartHeader(byte[] data)
+        : base(TzxBlockType.LoopStart, data)
     {
     }
 

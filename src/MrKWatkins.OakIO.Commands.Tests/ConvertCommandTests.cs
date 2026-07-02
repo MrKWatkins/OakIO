@@ -18,7 +18,7 @@ public sealed class ConvertCommandTests : CommandsTestFixture
             ConvertCommand.Execute(inputFile.Path, inputStream, outputFile.Path, outputStream);
         }
 
-        var result = (WavFile)WavFormat.Instance.Read(outputFile.Bytes);
+        var result = WavFormat.Instance.Read(outputFile.Bytes);
         result.SampleData.Should().NotBeEmpty();
     }
 
@@ -34,7 +34,7 @@ public sealed class ConvertCommandTests : CommandsTestFixture
             ConvertCommand.Execute(inputFile.Path, inputStream, outputFile.Path, outputStream);
         }
 
-        var result = (WavFile)WavFormat.Instance.Read(outputFile.Bytes);
+        var result = WavFormat.Instance.Read(outputFile.Bytes);
         result.SampleRate.Should().Equal(44100u);
     }
 
@@ -50,7 +50,7 @@ public sealed class ConvertCommandTests : CommandsTestFixture
             ConvertCommand.Execute(inputFile.Path, inputStream, outputFile.Path, outputStream);
         }
 
-        var result = (WavFile)WavFormat.Instance.Read(outputFile.Bytes);
+        var result = WavFormat.Instance.Read(outputFile.Bytes);
         result.SampleRate.Should().Equal(44100u);
     }
 
@@ -100,7 +100,7 @@ public sealed class ConvertCommandTests : CommandsTestFixture
         var result = ConvertCommand.Execute(inputFile.Path, inputFile.Bytes, "output.wav");
         result.Should().NotBeEmpty();
 
-        var wav = (WavFile)WavFormat.Instance.Read(result);
+        var wav = WavFormat.Instance.Read(result);
         wav.SampleData.Should().NotBeEmpty();
     }
 }

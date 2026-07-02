@@ -27,46 +27,45 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     }
 
     /// <inheritdoc />
-    protected override Z80File ReadSnapshot(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var v1HeaderBytes = new byte[30];
-        stream.ReadExactly(v1HeaderBytes, 0, 30);
+        var v1HeaderBytes = await reader.ReadAsync(30).ConfigureAwait(false);
         return v1HeaderBytes.GetUInt16(6) != 0
-            ? ReadV1(stream, v1HeaderBytes)
-            : ReadV2OrV3(stream, v1HeaderBytes);
+            ? await ReadV1Async(reader, v1HeaderBytes).ConfigureAwait(false)
+            : await ReadV2OrV3Async(reader, v1HeaderBytes).ConfigureAwait(false);
     }
 
     [MustUseReturnValue]
-    private static Z80V1File ReadV1(Stream stream, byte[] v1HeaderBytes)
+    private static async ValueTask<Z80File> ReadV1Async(IBinaryReader reader, byte[] v1HeaderBytes)
     {
         var header = new Z80V1Header(v1HeaderBytes);
-        var data = stream.ReadAllBytes();
+        var data = await reader.ReadToEndAsync().ConfigureAwait(false);
 
         return new Z80V1File(header, data);
     }
 
     [MustUseReturnValue]
-    private static Z80File ReadV2OrV3(Stream stream, byte[] v1HeaderBytes)
+    private static async ValueTask<Z80File> ReadV2OrV3Async(IBinaryReader reader, byte[] v1HeaderBytes)
     {
-        var extraLength = stream.ReadUInt16OrThrow();
+        var extraLength = (await reader.ReadAsync(2).ConfigureAwait(false)).GetUInt16(0);
 
         // Extra length does not include the 2 bytes for the extraLength word.
         var headerBytes = new byte[30 + 2 + extraLength];
         v1HeaderBytes.CopyTo(headerBytes, 0);
         headerBytes.SetUInt16(30, extraLength);
-        stream.ReadExactly(headerBytes, 32, extraLength);
+        (await reader.ReadAsync(extraLength).ConfigureAwait(false)).CopyTo(headerBytes, 32);
 
         switch (extraLength)
         {
             case 23:
                 {
                     var header = new Z80V2Header(headerBytes);
-                    return new Z80V2File(header, LoadPages(header.HardwareMode, stream));
+                    return new Z80V2File(header, await LoadPagesAsync(header.HardwareMode, reader).ConfigureAwait(false));
                 }
             case 54 or 55:
                 {
                     var header = new Z80V3Header(headerBytes);
-                    return new Z80V3File(header, LoadPages(header.HardwareMode, stream));
+                    return new Z80V3File(header, await LoadPagesAsync(header.HardwareMode, reader).ConfigureAwait(false));
                 }
         }
 
@@ -74,24 +73,28 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
     }
 
     [MustUseReturnValue]
-    private static IEnumerable<Page> LoadPages(HardwareMode hardwareMode, Stream stream)
+    private static async ValueTask<List<Page>> LoadPagesAsync(HardwareMode hardwareMode, IBinaryReader reader)
     {
-        using var peekableStream = new PeekableStream(stream);
-        while (!peekableStream.EndOfStream)
+        var pages = new List<Page>();
+        while (!await reader.AtEndAsync().ConfigureAwait(false))
         {
-            yield return LoadPage(hardwareMode, peekableStream);
+            pages.Add(await LoadPageAsync(hardwareMode, reader).ConfigureAwait(false));
         }
+
+        return pages;
     }
 
     [MustUseReturnValue]
-    private static Page LoadPage(HardwareMode hardwareMode, Stream stream)
+    private static async ValueTask<Page> LoadPageAsync(HardwareMode hardwareMode, IBinaryReader reader)
     {
-        var headerBytes = new byte[3];
-        stream.ReadExactly(headerBytes);
+        var headerBytes = await reader.ReadAsync(3).ConfigureAwait(false);
 
         var header = new PageHeader(hardwareMode, headerBytes);
 
-        return new Page(header, header.CompressedLength == 0xFFFF ? 16384 : header.CompressedLength, stream);
+        var length = header.CompressedLength == 0xFFFF ? 16384 : header.CompressedLength;
+        var data = await reader.ReadAsync(length).ConfigureAwait(false);
+
+        return new Page(header, data);
     }
 
     /// <inheritdoc />

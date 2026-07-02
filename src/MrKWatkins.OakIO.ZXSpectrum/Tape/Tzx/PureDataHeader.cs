@@ -6,18 +6,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class PureDataHeader : TzxBlockHeader
 {
-    private const int Size = 10;
-
-    internal PureDataHeader()
-        : base(TzxBlockType.PureData, Size)
-    {
-    }
-
-    internal PureDataHeader(Stream stream)
-        : base(TzxBlockType.PureData, Size, stream)
-    {
-    }
-
     internal PureDataHeader(byte[] data)
         : base(TzxBlockType.PureData, data)
     {

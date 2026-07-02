@@ -114,7 +114,7 @@ public sealed class IOFileConversionTests
         protected override IEnumerable<IOFileConverter> CreateConverters() =>
             [new SourceToTargetConverter(), new SourceToSecondTargetConverter()];
 
-        public override IOFile Read(Stream stream) => new ConversionSourceFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new ConversionSourceFile());
 
         protected override ValueTask WriteAsync(ConversionSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -125,7 +125,7 @@ public sealed class IOFileConversionTests
     {
         public static readonly ConversionTargetFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new ConversionTargetFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new ConversionTargetFile());
 
         protected override ValueTask WriteAsync(ConversionTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -136,7 +136,7 @@ public sealed class IOFileConversionTests
     {
         public static readonly ConversionSecondTargetFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new ConversionSecondTargetFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new ConversionSecondTargetFile());
 
         protected override ValueTask WriteAsync(ConversionSecondTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -162,7 +162,7 @@ public sealed class IOFileConversionTests
     {
         public static readonly UnregisteredFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new UnregisteredFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new UnregisteredFile());
 
         protected override ValueTask WriteAsync(UnregisteredFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -176,7 +176,7 @@ public sealed class IOFileConversionTests
         protected override IEnumerable<IOFileConverter> CreateConverters() =>
             [new ThrowingConverter()];
 
-        public override IOFile Read(Stream stream) => new ThrowingSourceFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new ThrowingSourceFile());
 
         protected override ValueTask WriteAsync(ThrowingSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -187,7 +187,7 @@ public sealed class IOFileConversionTests
     {
         public static readonly ThrowingTargetFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new ThrowingTargetFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new ThrowingTargetFile());
 
         protected override ValueTask WriteAsync(ThrowingTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }

@@ -285,7 +285,7 @@ public sealed class TzxFormatTests
     {
         var data = BuildTzxData();
         using var readStream = new MemoryStream(data);
-        var file = (TzxFile)await TzxFormat.Instance.ReadAsync(readStream);
+        var file = await TzxFormat.Instance.ReadAsync(readStream);
 
         using var writeStream = new MemoryStream();
         using (var writer = new SyncStreamBinaryWriter(writeStream))

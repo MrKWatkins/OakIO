@@ -5,15 +5,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class GroupStartHeader : TzxBlockHeader
 {
-    private const int Size = 1;
-
-    internal GroupStartHeader()
-        : base(TzxBlockType.GroupStart, Size)
-    {
-    }
-
-    internal GroupStartHeader(Stream stream)
-        : base(TzxBlockType.GroupStart, Size, stream)
+    internal GroupStartHeader(byte[] data)
+        : base(TzxBlockType.GroupStart, data)
     {
     }
 

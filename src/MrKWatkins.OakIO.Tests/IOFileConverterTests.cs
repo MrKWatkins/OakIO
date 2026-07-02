@@ -49,7 +49,7 @@ public sealed class IOFileConverterTests
     {
         public static readonly TargetIOFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new TargetIOFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new TargetIOFile());
 
         protected override ValueTask WriteAsync(TargetIOFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -65,7 +65,7 @@ public sealed class IOFileConverterTests
     {
         public static readonly WrongIOFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new WrongIOFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new WrongIOFile());
 
         protected override ValueTask WriteAsync(WrongIOFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }

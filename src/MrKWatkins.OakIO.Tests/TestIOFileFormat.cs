@@ -1,4 +1,3 @@
-using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.Binary;
 
 namespace MrKWatkins.OakIO.Tests;
@@ -13,9 +12,9 @@ internal sealed class TestIOFileFormat : IOFileFormat<TestIOFile>
     {
     }
 
-    public override IOFile Read(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var contents = stream.ReadAllBytes();
+        var contents = await reader.ReadToEndAsync();
         contents.Should().SequenceEqual(Contents);
         return new TestIOFile();
     }

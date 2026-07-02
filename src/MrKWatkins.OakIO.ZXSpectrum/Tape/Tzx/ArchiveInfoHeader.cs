@@ -5,18 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class ArchiveInfoHeader : TzxBlockHeader
 {
-    private const int Size = 3;
-
-    internal ArchiveInfoHeader()
-        : base(TzxBlockType.ArchiveInfo, Size)
-    {
-    }
-
-    internal ArchiveInfoHeader(Stream stream)
-        : base(TzxBlockType.ArchiveInfo, Size, stream)
-    {
-    }
-
     internal ArchiveInfoHeader(byte[] data)
         : base(TzxBlockType.ArchiveInfo, data)
     {

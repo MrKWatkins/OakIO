@@ -10,29 +10,6 @@ public abstract class PzxBlockHeader : Header
     /// </summary>
     protected const int StartIndex = 4;
 
-    /// <summary>
-    /// Initialises a new instance of the <see cref="PzxBlockHeader" /> class with the specified type and size.
-    /// </summary>
-    /// <param name="type">The block type.</param>
-    /// <param name="sizeIncludingSizeField">The size of the header including the size field.</param>
-    protected PzxBlockHeader(PzxBlockType type, int sizeIncludingSizeField)
-        : base(sizeIncludingSizeField)
-    {
-        Type = type;
-    }
-
-    /// <summary>
-    /// Initialises a new instance of the <see cref="PzxBlockHeader" /> class from a stream.
-    /// </summary>
-    /// <param name="type">The block type.</param>
-    /// <param name="sizeIncludingSizeField">The size of the header including the size field.</param>
-    /// <param name="stream">The stream to read from.</param>
-    protected PzxBlockHeader(PzxBlockType type, int sizeIncludingSizeField, Stream stream)
-        : base(sizeIncludingSizeField, stream)
-    {
-        Type = type;
-    }
-
     internal PzxBlockHeader(PzxBlockType type, byte[] data)
         : base(data)
     {

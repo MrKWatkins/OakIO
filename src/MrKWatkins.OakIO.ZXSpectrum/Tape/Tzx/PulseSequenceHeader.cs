@@ -5,18 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class PulseSequenceHeader : TzxBlockHeader
 {
-    private const int Size = 1;
-
-    internal PulseSequenceHeader()
-        : base(TzxBlockType.PulseSequence, Size)
-    {
-    }
-
-    internal PulseSequenceHeader(Stream stream)
-        : base(TzxBlockType.PulseSequence, Size, stream)
-    {
-    }
-
     internal PulseSequenceHeader(byte[] data)
         : base(TzxBlockType.PulseSequence, data)
     {

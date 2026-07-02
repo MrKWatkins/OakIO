@@ -31,37 +31,35 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     }
 
     /// <inheritdoc />
-    protected override TapFile ReadTape(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        using var peekable = new PeekableStream(stream);
-
         var blocks = new List<TapBlock>();
 
-        while (!peekable.EndOfStream)
+        while (!await reader.AtEndAsync().ConfigureAwait(false))
         {
-            blocks.Add(ReadBlock(peekable));
+            blocks.Add(await ReadBlockAsync(reader).ConfigureAwait(false));
         }
 
-        return blocks.Count != 0 ? new TapFile(blocks) : throw new ArgumentException("Value was empty.", nameof(stream));
+        return blocks.Count != 0 ? new TapFile(blocks) : throw new ArgumentException("Value was empty.", nameof(reader));
     }
 
     [MustUseReturnValue]
-    private static TapBlock ReadBlock(Stream stream)
+    private static async ValueTask<TapBlock> ReadBlockAsync(IBinaryReader reader)
     {
-        var blockFlagAndChecksumLength = stream.ReadUInt16OrThrow();
-        var flag = stream.ReadByteOrThrow();
+        var blockFlagAndChecksumLength = (await reader.ReadAsync(2).ConfigureAwait(false)).GetUInt16(0);
 
-        var data = new byte[blockFlagAndChecksumLength - 2];
+        // The block is the flag byte, the data and a trailing checksum byte.
+        var content = await reader.ReadAsync(blockFlagAndChecksumLength).ConfigureAwait(false);
+        var flag = content[0];
+        var data = content[1..^1];
 
         var checksum = flag;
-        for (var f = 0; f < data.Length; f++)
+        foreach (var value in data)
         {
-            data[f] = stream.ReadByteOrThrow();
-
-            checksum ^= data[f];
+            checksum ^= value;
         }
 
-        var trailer = new TapTrailer(stream.ReadByteOrThrow());
+        var trailer = new TapTrailer(content[^1]);
         if (checksum != trailer.Checksum)
         {
             throw new InvalidOperationException($"Expected TAP block to have checksum {trailer.Checksum} but found {checksum}.");

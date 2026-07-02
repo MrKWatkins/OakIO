@@ -1,5 +1,3 @@
-using MrKWatkins.BinaryPrimitives;
-
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 /// <summary>
@@ -7,11 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public abstract class TzxBlock : Block<TzxBlockHeader>
 {
-    private protected TzxBlock(TzxBlockHeader header, Stream stream)
-        : base(header, stream.ReadExactly(header.BlockLength))
-    {
-    }
-
     private protected TzxBlock(TzxBlockHeader header, byte[] data)
         : base(header, data)
     {
@@ -28,10 +21,6 @@ public abstract class TzxBlock : Block<TzxBlockHeader>
 public abstract class TzxBlock<THeader> : TzxBlock
     where THeader : TzxBlockHeader
 {
-    private protected TzxBlock(THeader header, Stream stream) : base(header, stream)
-    {
-    }
-
     private protected TzxBlock(THeader header, byte[] data) : base(header, data)
     {
     }

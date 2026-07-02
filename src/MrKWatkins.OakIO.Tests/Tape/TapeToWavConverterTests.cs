@@ -93,7 +93,7 @@ public sealed class TapeToWavConverterTests
     {
         public static readonly WrongFileFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new WrongFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new WrongFile());
 
         protected override ValueTask WriteAsync(WrongFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }

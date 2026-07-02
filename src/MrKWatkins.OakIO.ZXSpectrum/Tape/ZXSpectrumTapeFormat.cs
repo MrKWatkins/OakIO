@@ -22,14 +22,7 @@ public abstract class ZXSpectrumTapeFormat(string name, string fileExtension, Ty
     /// <param name="bytes">The byte array to read from.</param>
     /// <returns>The tape file read from the byte array.</returns>
     [Pure]
-    public new ZXSpectrumTapeFile Read(byte[] bytes)
-    {
-        using var stream = new MemoryStream(bytes);
-        return Read(stream);
-    }
-
-    /// <inheritdoc />
-    public sealed override ZXSpectrumTapeFile Read(Stream stream) => ReadTape(stream);
+    public new ZXSpectrumTapeFile Read(byte[] bytes) => (ZXSpectrumTapeFile)base.Read(bytes);
 
     /// <summary>
     /// Reads a ZX Spectrum tape file from a stream.
@@ -37,7 +30,17 @@ public abstract class ZXSpectrumTapeFormat(string name, string fileExtension, Ty
     /// <param name="stream">The stream to read from.</param>
     /// <returns>The tape file read from the stream.</returns>
     [MustUseReturnValue]
-    protected abstract ZXSpectrumTapeFile ReadTape(Stream stream);
+    public new ZXSpectrumTapeFile Read(Stream stream) => (ZXSpectrumTapeFile)base.Read(stream);
+
+    /// <summary>
+    /// Reads a ZX Spectrum tape file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The tape file read from the stream.</returns>
+    [MustUseReturnValue]
+    public new async Task<ZXSpectrumTapeFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (ZXSpectrumTapeFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
 }
 
 /// <summary>
@@ -64,6 +67,16 @@ public abstract class ZXSpectrumTapeFormat<TFile>(string name, string fileExtens
     /// <returns>The tape file read from the stream.</returns>
     [MustUseReturnValue]
     public new TFile Read(Stream stream) => (TFile)base.Read(stream);
+
+    /// <summary>
+    /// Reads a tape file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The tape file read from the stream.</returns>
+    [MustUseReturnValue]
+    public new async Task<TFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (TFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
 
     /// <inheritdoc />
     protected internal sealed override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) =>

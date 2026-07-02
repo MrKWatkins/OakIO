@@ -144,7 +144,7 @@ public sealed class NexFormatTests
         var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: []);
 
         using var readStream = new MemoryStream(data);
-        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
+        var file = await NexFormat.Instance.ReadAsync(readStream);
 
         var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);
@@ -161,7 +161,7 @@ public sealed class NexFormatTests
         var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: [(5, bank5Data), (2, bank2Data)]);
 
         using var readStream = new MemoryStream(data);
-        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
+        var file = await NexFormat.Instance.ReadAsync(readStream);
 
         var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);
@@ -178,7 +178,7 @@ public sealed class NexFormatTests
         var data = CreateMinimalNexData("V1.2", loadScreens: 0b0000_0001, banks: [], paletteData: paletteData, screenBlocks: [screenData]);
 
         using var readStream = new MemoryStream(data);
-        var file = (NexFile)await NexFormat.Instance.ReadAsync(readStream);
+        var file = await NexFormat.Instance.ReadAsync(readStream);
 
         var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(data);

@@ -1,4 +1,3 @@
-using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.Tape;
 using MrKWatkins.OakIO.Wav;
@@ -33,51 +32,75 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     }
 
     /// <inheritdoc />
-    protected override TzxFile ReadTape(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var header = ReadHeader(stream);
-        var blocks = ReadBlocks(stream).ToList();
+        var header = new TzxHeader(await reader.ReadAsync(TzxHeader.ExpectedLength).ConfigureAwait(false));
+        if (!header.IsValid)
+        {
+            throw new IOException("Not a valid TZX file.");
+        }
+
+        var blocks = new List<TzxBlock>();
+        while (!await reader.AtEndAsync().ConfigureAwait(false))
+        {
+            blocks.Add(await ReadBlockAsync(reader).ConfigureAwait(false));
+        }
 
         return new TzxFile(header, blocks);
     }
 
-    private static IEnumerable<TzxBlock> ReadBlocks(Stream stream)
+    [MustUseReturnValue]
+    private static async ValueTask<TzxBlock> ReadBlockAsync(IBinaryReader reader)
     {
-        while (true)
-        {
-            var typeByte = stream.ReadByte();
-            if (typeByte == -1)
-            {
-                yield break;
-            }
+        var type = (TzxBlockType)(await reader.ReadAsync(1).ConfigureAwait(false))[0];
 
-            var type = (TzxBlockType)typeByte;
-            yield return type switch
-            {
-                TzxBlockType.ArchiveInfo => new ArchiveInfoBlock(stream),
-                TzxBlockType.GroupStart => new GroupStartBlock(stream),
-                TzxBlockType.GroupEnd => new GroupEndBlock(stream),
-                TzxBlockType.LoopStart => new LoopStartBlock(stream),
-                TzxBlockType.LoopEnd => new LoopEndBlock(stream),
-                TzxBlockType.Pause => new PauseBlock(stream),
-                TzxBlockType.PulseSequence => new PulseSequenceBlock(stream),
-                TzxBlockType.PureData => new PureDataBlock(stream),
-                TzxBlockType.PureTone => new PureToneBlock(stream),
-                TzxBlockType.StandardSpeedData => new StandardSpeedDataBlock(stream),
-                TzxBlockType.StopTheTapeIf48K => new StopTheTapeIf48KBlock(stream),
-                TzxBlockType.TextDescription => new TextDescriptionBlock(stream),
-                TzxBlockType.TurboSpeedData => new TurboSpeedDataBlock(stream),
-                _ => throw new NotSupportedException($"The block type {type} is not supported.")
-            };
+        switch (type)
+        {
+            case TzxBlockType.ArchiveInfo:
+                var (archiveHeader, archiveBody) = await ReadHeaderAndBodyAsync(reader, 3, d => new ArchiveInfoHeader(d).BlockLength).ConfigureAwait(false);
+                return new ArchiveInfoBlock(archiveHeader, archiveBody);
+            case TzxBlockType.GroupStart:
+                var (groupStartHeader, groupStartBody) = await ReadHeaderAndBodyAsync(reader, 1, d => new GroupStartHeader(d).BlockLength).ConfigureAwait(false);
+                return new GroupStartBlock(groupStartHeader, groupStartBody);
+            case TzxBlockType.GroupEnd:
+                return new GroupEndBlock(await reader.ReadAsync(0).ConfigureAwait(false));
+            case TzxBlockType.LoopStart:
+                return new LoopStartBlock(await reader.ReadAsync(2).ConfigureAwait(false));
+            case TzxBlockType.LoopEnd:
+                return new LoopEndBlock(await reader.ReadAsync(0).ConfigureAwait(false));
+            case TzxBlockType.Pause:
+                return new PauseBlock(await reader.ReadAsync(2).ConfigureAwait(false));
+            case TzxBlockType.PulseSequence:
+                var (pulseHeader, pulseBody) = await ReadHeaderAndBodyAsync(reader, 1, d => new PulseSequenceHeader(d).BlockLength).ConfigureAwait(false);
+                return new PulseSequenceBlock(pulseHeader, pulseBody);
+            case TzxBlockType.PureData:
+                var (pureDataHeader, pureDataBody) = await ReadHeaderAndBodyAsync(reader, 10, d => new PureDataHeader(d).BlockLength).ConfigureAwait(false);
+                return new PureDataBlock(pureDataHeader, pureDataBody);
+            case TzxBlockType.PureTone:
+                return new PureToneBlock(await reader.ReadAsync(4).ConfigureAwait(false));
+            case TzxBlockType.StandardSpeedData:
+                var (standardHeader, standardBody) = await ReadHeaderAndBodyAsync(reader, 4, d => new StandardSpeedDataHeader(d).BlockLength).ConfigureAwait(false);
+                return new StandardSpeedDataBlock(standardHeader, standardBody);
+            case TzxBlockType.StopTheTapeIf48K:
+                return new StopTheTapeIf48KBlock(await reader.ReadAsync(4).ConfigureAwait(false));
+            case TzxBlockType.TextDescription:
+                var (textHeader, textBody) = await ReadHeaderAndBodyAsync(reader, 1, d => new TextDescriptionHeader(d).BlockLength).ConfigureAwait(false);
+                return new TextDescriptionBlock(textHeader, textBody);
+            case TzxBlockType.TurboSpeedData:
+                var (turboHeader, turboBody) = await ReadHeaderAndBodyAsync(reader, 18, d => new TurboSpeedDataHeader(d).BlockLength).ConfigureAwait(false);
+                return new TurboSpeedDataBlock(turboHeader, turboBody);
+            default:
+                throw new NotSupportedException($"The block type {type} is not supported.");
         }
     }
 
     [MustUseReturnValue]
-    private static TzxHeader ReadHeader(Stream stream)
+    private static async ValueTask<(byte[] Header, byte[] Body)> ReadHeaderAndBodyAsync(IBinaryReader reader, int headerSize, Func<byte[], int> blockLength)
     {
-        var bytes = stream.ReadExactly(TzxHeader.ExpectedLength);
-        var header = new TzxHeader(bytes);
-        return header.IsValid ? header : throw new IOException("Not a valid TZX file.");
+        var header = await reader.ReadAsync(headerSize).ConfigureAwait(false);
+        var body = await reader.ReadAsync(blockLength(header)).ConfigureAwait(false);
+
+        return (header, body);
     }
 
     /// <inheritdoc />

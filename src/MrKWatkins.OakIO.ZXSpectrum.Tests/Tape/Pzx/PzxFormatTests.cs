@@ -120,6 +120,7 @@ public sealed class PzxFormatTests
         dataBlock.Header.Tail.Should().Equal(0);
         dataBlock.Header.NumberOfPulseInZeroBitSequence.Should().Equal(1);
         dataBlock.Header.NumberOfPulseInOneBitSequence.Should().Equal(1);
+        dataBlock.Header.BlockLength.Should().Equal(6);
         dataBlock.ZeroBitPulseSequence.ToArray().Should().SequenceEqual(855);
         dataBlock.OneBitPulseSequence.ToArray().Should().SequenceEqual(1710);
         dataBlock.DataStream.ToArray().Should().SequenceEqual(0xAA, 0x55);
@@ -306,7 +307,7 @@ public sealed class PzxFormatTests
     {
         var data = BuildPzxData();
         using var readStream = new MemoryStream(data);
-        var file = (PzxFile)await PzxFormat.Instance.ReadAsync(readStream);
+        var file = await PzxFormat.Instance.ReadAsync(readStream);
 
         using var writeStream = new MemoryStream();
         using (var writer = new SyncStreamBinaryWriter(writeStream))

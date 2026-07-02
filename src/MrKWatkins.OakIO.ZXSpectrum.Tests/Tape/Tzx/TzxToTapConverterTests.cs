@@ -94,8 +94,7 @@ public sealed class TzxToTapConverterTests
 
         // Add an ArchiveInfoBlock.
         var archiveData = new byte[] { 0x07, 0x00, 0x01, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74 };
-        using var stream = new MemoryStream(archiveData);
-        var archiveBlock = new ArchiveInfoBlock(stream);
+        var archiveBlock = new ArchiveInfoBlock(archiveData[..3], archiveData[3..]);
 
         var blocks = new List<TzxBlock> { archiveBlock };
         blocks.AddRange(tzx.Blocks);
@@ -114,8 +113,7 @@ public sealed class TzxToTapConverterTests
 
         // Add a PauseBlock between the data blocks.
         var pauseData = new byte[] { 0xE8, 0x03 };
-        using var stream = new MemoryStream(pauseData);
-        var pauseBlock = new PauseBlock(stream);
+        var pauseBlock = new PauseBlock(pauseData);
 
         var blocks = new List<TzxBlock>(tzx.Blocks);
         blocks.Insert(1, pauseBlock);
@@ -133,8 +131,7 @@ public sealed class TzxToTapConverterTests
         var tzx = new TapToTzxConverter().Convert(tap);
 
         var textData = new byte[] { 0x04, 0x74, 0x65, 0x73, 0x74 };
-        using var stream = new MemoryStream(textData);
-        var textBlock = new TextDescriptionBlock(stream);
+        var textBlock = new TextDescriptionBlock(textData[..1], textData[1..]);
 
         var blocks = new List<TzxBlock>(tzx.Blocks);
         blocks.Insert(0, textBlock);
@@ -152,11 +149,9 @@ public sealed class TzxToTapConverterTests
         var tzx = new TapToTzxConverter().Convert(tap);
 
         var groupStartData = new byte[] { 0x03, 0x67, 0x72, 0x70 };
-        using var startStream = new MemoryStream(groupStartData);
-        var groupStart = new GroupStartBlock(startStream);
+        var groupStart = new GroupStartBlock(groupStartData[..1], groupStartData[1..]);
 
-        using var endStream = new MemoryStream([]);
-        var groupEnd = new GroupEndBlock(endStream);
+        var groupEnd = new GroupEndBlock([]);
 
         var blocks = new List<TzxBlock> { groupStart };
         blocks.AddRange(tzx.Blocks);
@@ -175,8 +170,7 @@ public sealed class TzxToTapConverterTests
         var tzx = new TapToTzxConverter().Convert(tap);
 
         var stopData = new byte[] { 0x00, 0x00, 0x00, 0x00 };
-        using var stream = new MemoryStream(stopData);
-        var stopBlock = new StopTheTapeIf48KBlock(stream);
+        var stopBlock = new StopTheTapeIf48KBlock(stopData);
 
         var blocks = new List<TzxBlock>(tzx.Blocks) { stopBlock };
         var tzxWithStop = new TzxFile(tzx.Header, blocks);
@@ -192,8 +186,7 @@ public sealed class TzxToTapConverterTests
         // TurboSpeedDataHeader is 18 bytes; set block length = 1 at offset 15 (24-bit).
         var turboData = new byte[19];
         turboData[15] = 0x01;
-        using var stream = new MemoryStream(turboData);
-        var turboBlock = new TurboSpeedDataBlock(stream);
+        var turboBlock = new TurboSpeedDataBlock(turboData[..18], turboData[18..]);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [turboBlock]);
 
@@ -209,8 +202,7 @@ public sealed class TzxToTapConverterTests
         var pureData = new byte[11];
         pureData[4] = 0x08; // UsedBitsInLastByte = 8.
         pureData[7] = 0x01; // BlockLength = 1.
-        using var stream = new MemoryStream(pureData);
-        var pureBlock = new PureDataBlock(stream);
+        var pureBlock = new PureDataBlock(pureData[..10], pureData[10..]);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [pureBlock]);
 
@@ -223,8 +215,7 @@ public sealed class TzxToTapConverterTests
     public void Convert_ThrowsForPureToneBlock()
     {
         var toneData = new byte[] { 0x78, 0x08, 0x7F, 0x1F };
-        using var stream = new MemoryStream(toneData);
-        var toneBlock = new PureToneBlock(stream);
+        var toneBlock = new PureToneBlock(toneData);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [toneBlock]);
 
@@ -237,8 +228,7 @@ public sealed class TzxToTapConverterTests
     public void Convert_ThrowsForPulseSequenceBlock()
     {
         var pulseData = new byte[] { 0x02, 0x9B, 0x02, 0xDF, 0x02 };
-        using var stream = new MemoryStream(pulseData);
-        var pulseBlock = new PulseSequenceBlock(stream);
+        var pulseBlock = new PulseSequenceBlock(pulseData[..1], pulseData[1..]);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [pulseBlock]);
 
@@ -251,8 +241,7 @@ public sealed class TzxToTapConverterTests
     public void Convert_ThrowsForLoopStartBlock()
     {
         var loopData = new byte[] { 0x02, 0x00 };
-        using var stream = new MemoryStream(loopData);
-        var loopBlock = new LoopStartBlock(stream);
+        var loopBlock = new LoopStartBlock(loopData);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [loopBlock]);
 
@@ -264,8 +253,7 @@ public sealed class TzxToTapConverterTests
     [Test]
     public void Convert_ThrowsForLoopEndBlock()
     {
-        using var stream = new MemoryStream([]);
-        var loopBlock = new LoopEndBlock(stream);
+        var loopBlock = new LoopEndBlock([]);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [loopBlock]);
 
@@ -278,8 +266,7 @@ public sealed class TzxToTapConverterTests
     public void Convert_ThrowsForNoStandardSpeedBlocks()
     {
         var textData = new byte[] { 0x04, 0x74, 0x65, 0x73, 0x74 };
-        using var stream = new MemoryStream(textData);
-        var textBlock = new TextDescriptionBlock(stream);
+        var textBlock = new TextDescriptionBlock(textData[..1], textData[1..]);
 
         var tzx = new TzxFile(new TzxHeader(1, 20), [textBlock]);
 

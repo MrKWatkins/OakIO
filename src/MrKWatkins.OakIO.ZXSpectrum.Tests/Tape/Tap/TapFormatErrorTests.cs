@@ -57,7 +57,7 @@ public sealed class TapFormatErrorTests
         using var stream = new MemoryStream();
 
         AssertThat.Invoking(() => TapFormat.Instance.Read(stream))
-            .Should().ThrowArgumentException("Value was empty.", "stream");
+            .Should().ThrowArgumentException("Value was empty.", "reader");
     }
 
     [Test]

@@ -24,7 +24,7 @@ public sealed class TapeFormat : IOFileFormat<TapeFile>
     public override bool CanWrite => false;
 
     /// <inheritdoc />
-    public override IOFile Read(Stream stream) => throw new NotSupportedException("Tape files cannot be read.");
+    protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => throw new NotSupportedException("Tape files cannot be read.");
 
     /// <inheritdoc />
     protected override ValueTask WriteAsync(TapeFile file, IBinaryWriter writer) => throw new NotSupportedException("Tape files cannot be written.");

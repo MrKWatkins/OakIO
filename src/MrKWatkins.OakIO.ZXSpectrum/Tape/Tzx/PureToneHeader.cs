@@ -5,18 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class PureToneHeader : TzxBlockHeader
 {
-    private const int Size = 4;
-
-    internal PureToneHeader()
-        : base(TzxBlockType.PureTone, Size)
-    {
-    }
-
-    internal PureToneHeader(Stream stream)
-        : base(TzxBlockType.PureTone, Size, stream)
-    {
-    }
-
     internal PureToneHeader(byte[] data)
         : base(TzxBlockType.PureTone, data)
     {

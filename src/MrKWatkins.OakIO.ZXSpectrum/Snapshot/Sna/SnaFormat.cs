@@ -28,23 +28,19 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     }
 
     /// <inheritdoc />
-    protected override SnaFile ReadSnapshot(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var headerBytes = new byte[27];
-        stream.ReadExactly(headerBytes, 0, 27);
+        var headerBytes = await reader.ReadAsync(27).ConfigureAwait(false);
+        var rest = await reader.ReadToEndAsync().ConfigureAwait(false);
 
-        var remaining = stream.Length - stream.Position;
-        return remaining == 49152
-            ? Read48k(stream, headerBytes)
-            : Read128k(stream, headerBytes);
+        return rest.Length == 49152
+            ? Read48k(headerBytes, rest)
+            : Read128k(headerBytes, rest);
     }
 
     [MustUseReturnValue]
-    private static Sna48kFile Read48k(Stream stream, byte[] headerBytes)
+    private static Sna48kFile Read48k(byte[] headerBytes, byte[] ram)
     {
-        var ram = new byte[49152];
-        stream.ReadExactly(ram);
-
         // In 48K SNA files, the PC is stored on the stack. Pop it from SP and increment SP.
         var sp = headerBytes.GetUInt16(23);
         var pc = ram.GetUInt16(sp - 16384);
@@ -59,24 +55,20 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     }
 
     [MustUseReturnValue]
-    private static Sna128kFile Read128k(Stream stream, byte[] headerBytes)
+    private static Sna128kFile Read128k(byte[] headerBytes, byte[] rest)
     {
-        var banks = Enumerable.Range(0, 8).Select(_ => new byte[16384]).ToArray();
-
-        stream.ReadExactly(banks[5]);
-        stream.ReadExactly(banks[2]);
-
-        var pagedBankData = new byte[16384];
-        stream.ReadExactly(pagedBankData);
-
-        var footerData = new byte[4];
-        stream.ReadExactly(footerData, 0, 4);
+        var banks = new byte[8][];
+        banks[5] = rest[..16384];
+        banks[2] = rest[16384..32768];
+        var pagedBankData = rest[32768..49152];
+        var footerData = rest[49152..49156];
 
         var pagedBank = footerData[2] & 0x07;
         banks[pagedBank] = pagedBankData;
 
         var header = new SnaHeader(headerBytes, footerData);
 
+        var offset = 49156;
         foreach (var bankNumber in new byte[] { 0, 1, 3, 4, 6, 7 })
         {
             if (bankNumber == pagedBank)
@@ -84,7 +76,8 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
                 continue;
             }
 
-            stream.ReadExactly(banks[bankNumber]);
+            banks[bankNumber] = rest[offset..(offset + 16384)];
+            offset += 16384;
         }
 
         return new Sna128kFile(header, banks, footerData);

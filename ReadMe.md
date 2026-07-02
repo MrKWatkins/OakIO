@@ -4,7 +4,7 @@
 [![NuGet Version](https://img.shields.io/nuget/v/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
 
-> A C# library for reading, writing and converting between various emulator data formats.
+> A C# library for reading, writing, and converting between various emulator data formats.
 
 ## Overview
 
@@ -23,6 +23,12 @@ Full documentation can be found at https://mrkwatkins.github.io/OakIO/.
 ## Online Converter
 
 An online converter using this library is available at https://mrkwatkins.github.io/OakIO/converter/.
+
+## Use of AI
+
+My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, set up the online converter, and
+to help with documentation and unit tests.
 
 ## Licencing
 

@@ -7,14 +7,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class BrowsePointBlock : PzxBlock<BrowsePointHeader>
 {
-    /// <summary>
-    /// Initialises a new instance of the <see cref="BrowsePointBlock" /> class from a stream.
-    /// </summary>
-    /// <param name="stream">The stream to read from.</param>
-    public BrowsePointBlock(Stream stream) : base(new BrowsePointHeader(stream), stream)
-    {
-    }
-
     internal BrowsePointBlock(byte[] headerData, byte[] data) : base(new BrowsePointHeader(headerData), data)
     {
     }

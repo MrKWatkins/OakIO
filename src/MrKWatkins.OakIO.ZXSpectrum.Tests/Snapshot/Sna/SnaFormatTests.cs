@@ -1,3 +1,4 @@
+using MrKWatkins.BinaryPrimitives;
 using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
@@ -45,10 +46,59 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
         var expected = ms.ToArray();
 
         ms.Position = 0;
-        var file = (SnaFile)await SnaFormat.Instance.ReadAsync(ms);
+        var file = await SnaFormat.Instance.ReadAsync(ms);
 
         var actual = await WriteToBytesAsync(file);
 
+        actual.Should().SequenceEqual(expected);
+    }
+
+    [Test]
+    public async Task RoundTrip_128k()
+    {
+        var random = TestContext.CurrentContext.Random;
+
+        var header = new byte[27];
+        random.NextBytes(header);
+
+        var banks = new byte[8][];
+        for (var bank = 0; bank < 8; bank++)
+        {
+            banks[bank] = new byte[16384];
+            random.NextBytes(banks[bank]);
+        }
+
+        var footer = new byte[4];
+        footer.SetUInt16(0, 0x8000);    // PC.
+        footer[2] = 0x10;               // Port 0x7FFD; paged bank = 0.
+        footer[3] = 0;                  // TR-DOS ROM not paged.
+        var pagedBank = footer[2] & 0x07;
+
+        var contents = new List<byte>();
+        contents.AddRange(header);
+        contents.AddRange(banks[5]);
+        contents.AddRange(banks[2]);
+        contents.AddRange(banks[pagedBank]);
+        contents.AddRange(footer);
+        foreach (var bank in new byte[] { 0, 1, 3, 4, 6, 7 })
+        {
+            if (bank == pagedBank)
+            {
+                continue;
+            }
+
+            contents.AddRange(banks[bank]);
+        }
+        var expected = contents.ToArray();
+
+        using var input = new MemoryStream(expected);
+        var file = await SnaFormat.Instance.ReadAsync(input);
+
+        var snaFile = file.Should().BeOfType<Sna128kFile>().Value;
+        snaFile.Port7FFD.Should().Equal(0x10);
+        snaFile.GetBank(5).ToArray().Should().SequenceEqual(banks[5]);
+
+        var actual = await WriteToBytesAsync(file);
         actual.Should().SequenceEqual(expected);
     }
 

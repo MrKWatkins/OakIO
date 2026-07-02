@@ -8,14 +8,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class DataBlock : PzxBlock<DataHeader>
 {
-    /// <summary>
-    /// Initialises a new instance of the <see cref="DataBlock" /> class from a stream.
-    /// </summary>
-    /// <param name="stream">The stream to read from.</param>
-    public DataBlock(Stream stream) : base(new DataHeader(stream), stream)
-    {
-    }
-
     internal DataBlock(byte[] headerData, byte[] bodyData) : base(new DataHeader(headerData), bodyData)
     {
     }

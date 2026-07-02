@@ -5,16 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class DataHeader : PzxBlockHeader
 {
-    internal DataHeader()
-        : base(PzxBlockType.Data, 12)
-    {
-    }
-
-    internal DataHeader(Stream stream)
-        : base(PzxBlockType.Data, 12, stream)
-    {
-    }
-
     internal DataHeader(byte[] data)
         : base(PzxBlockType.Data, data)
     {

@@ -33,37 +33,59 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     }
 
     /// <inheritdoc />
-    protected override PzxFile ReadTape(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
         var blocks = new List<PzxBlock>();
-        blocks.AddRange(ReadBlocks(stream));
+
+        while (!await reader.AtEndAsync().ConfigureAwait(false))
+        {
+            blocks.Add(await ReadBlockAsync(reader).ConfigureAwait(false));
+        }
 
         return new PzxFile(blocks);
     }
 
-    private static IEnumerable<PzxBlock> ReadBlocks(Stream stream)
+    [MustUseReturnValue]
+    private static async ValueTask<PzxBlock> ReadBlockAsync(IBinaryReader reader)
     {
-        using var peekable = new PeekableStream(stream);
-        while (true)
-        {
-            if (peekable.Peek() == -1)
-            {
-                yield break;
-            }
+        var typeBytes = await reader.ReadAsync(4).ConfigureAwait(false);
+        var type = (PzxBlockType)typeBytes.GetUInt32(0, Endian.Big);
 
-            var typeBytes = peekable.ReadExactly(4);
-            var type = (PzxBlockType)typeBytes.GetUInt32(0, Endian.Big);
-            yield return type switch
-            {
-                PzxBlockType.Header => new PzxHeaderBlock(peekable),
-                PzxBlockType.PulseSequence => new PulseSequenceBlock(peekable),
-                PzxBlockType.Data => new DataBlock(peekable),
-                PzxBlockType.Pause => new PauseBlock(peekable),
-                PzxBlockType.BrowsePoint => new BrowsePointBlock(peekable),
-                PzxBlockType.Stop => new StopBlock(peekable),
-                _ => throw new NotSupportedException($"The block type {Encoding.ASCII.GetString(typeBytes)} is not supported.")
-            };
+        switch (type)
+        {
+            case PzxBlockType.Header:
+                var (pzxHeader, pzxBody) = await ReadHeaderAndBodyAsync(reader, 6).ConfigureAwait(false);
+                return new PzxHeaderBlock(pzxHeader, pzxBody);
+            case PzxBlockType.PulseSequence:
+                var (pulseHeader, pulseBody) = await ReadHeaderAndBodyAsync(reader, 4).ConfigureAwait(false);
+                return new PulseSequenceBlock(pulseHeader, pulseBody);
+            case PzxBlockType.Data:
+                var (dataHeader, dataBody) = await ReadHeaderAndBodyAsync(reader, 12).ConfigureAwait(false);
+                return new DataBlock(dataHeader, dataBody);
+            case PzxBlockType.Pause:
+                var (pauseHeader, _) = await ReadHeaderAndBodyAsync(reader, 8).ConfigureAwait(false);
+                return new PauseBlock(pauseHeader);
+            case PzxBlockType.BrowsePoint:
+                var (browseHeader, browseBody) = await ReadHeaderAndBodyAsync(reader, 4).ConfigureAwait(false);
+                return new BrowsePointBlock(browseHeader, browseBody);
+            case PzxBlockType.Stop:
+                var (stopHeader, _) = await ReadHeaderAndBodyAsync(reader, 6).ConfigureAwait(false);
+                return new StopBlock(stopHeader);
+            default:
+                throw new NotSupportedException($"The block type {Encoding.ASCII.GetString(typeBytes)} is not supported.");
         }
+    }
+
+    [MustUseReturnValue]
+    private static async ValueTask<(byte[] Header, byte[] Body)> ReadHeaderAndBodyAsync(IBinaryReader reader, int headerSize)
+    {
+        var header = await reader.ReadAsync(headerSize).ConfigureAwait(false);
+
+        // The size field at the start of the header covers the header fields (after the size field) plus the body.
+        var bodyLength = (int)header.GetUInt32(0) - (headerSize - 4);
+        var body = await reader.ReadAsync(bodyLength).ConfigureAwait(false);
+
+        return (header, body);
     }
 
     /// <inheritdoc />

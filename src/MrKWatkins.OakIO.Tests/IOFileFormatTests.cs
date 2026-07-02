@@ -182,21 +182,21 @@ public sealed class IOFileFormatTests
     // A format deriving directly from the non-generic IOFileFormat, exercising its base WriteAsync implementation.
     private sealed class NonGenericFormat() : IOFileFormat("NonGeneric", "ng", typeof(TestIOFile))
     {
-        public override IOFile Read(Stream stream) => throw new NotSupportedException();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => throw new NotSupportedException();
 
         protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => writer.WriteAsync(TestIOFileFormat.Contents);
     }
 
     private sealed class OtherIOFileFormat() : IOFileFormat("other", "oth", typeof(OtherIOFile))
     {
-        public override IOFile Read(Stream stream) => throw new NotSupportedException();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => throw new NotSupportedException();
 
         protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => throw new NotSupportedException();
     }
 
     private sealed class InvalidFileTypeFormat() : IOFileFormat("Invalid", "inv", typeof(string))
     {
-        public override IOFile Read(Stream stream) => throw new NotSupportedException();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => throw new NotSupportedException();
 
         protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => throw new NotSupportedException();
     }

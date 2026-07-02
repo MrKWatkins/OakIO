@@ -7,14 +7,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class PulseSequenceBlock : TzxBlock<PulseSequenceHeader>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="PulseSequenceBlock"/> class by reading from a stream.
-    /// </summary>
-    /// <param name="stream">The stream to read from.</param>
-    public PulseSequenceBlock(Stream stream) : base(new PulseSequenceHeader(stream), stream)
-    {
-    }
-
     internal PulseSequenceBlock(byte[] headerData, byte[] data) : base(new PulseSequenceHeader(headerData), data)
     {
     }

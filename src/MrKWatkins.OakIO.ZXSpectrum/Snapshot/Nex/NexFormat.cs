@@ -18,28 +18,25 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
     }
 
     /// <inheritdoc />
-    protected override NexFile ReadSnapshot(Stream stream)
+    protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
-        var headerBytes = new byte[NexHeader.Size];
-        stream.ReadExactly(headerBytes);
-
-        var header = new NexHeader(headerBytes);
+        var header = new NexHeader(await reader.ReadAsync(NexHeader.Size).ConfigureAwait(false));
 
         if (header.Magic != "Next")
         {
             throw new InvalidOperationException("Not a valid NEX file; expected magic value \"Next\".");
         }
 
-        var palette = ReadPalette(stream, header);
-        var screens = ReadScreens(stream, header);
-        var copperCode = ReadCopperCode(stream, header);
-        var banks = ReadBanks(stream, header);
+        var palette = await ReadPaletteAsync(reader, header).ConfigureAwait(false);
+        var screens = await ReadScreensAsync(reader, header).ConfigureAwait(false);
+        var copperCode = await ReadCopperCodeAsync(reader, header).ConfigureAwait(false);
+        var banks = await ReadBanksAsync(reader, header).ConfigureAwait(false);
 
         return new NexFile(header, palette, screens, copperCode, banks);
     }
 
     [MustUseReturnValue]
-    private static byte[]? ReadPalette(Stream stream, NexHeader header)
+    private static async ValueTask<byte[]?> ReadPaletteAsync(IBinaryReader reader, NexHeader header)
     {
         if (header.HasNoPaletteBlock)
         {
@@ -58,40 +55,38 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
             return null;
         }
 
-        var palette = new byte[512];
-        stream.ReadExactly(palette);
-        return palette;
+        return await reader.ReadAsync(512).ConfigureAwait(false);
     }
 
     [MustUseReturnValue]
-    private static List<NexScreen> ReadScreens(Stream stream, NexHeader header)
+    private static async ValueTask<List<NexScreen>> ReadScreensAsync(IBinaryReader reader, NexHeader header)
     {
         var screens = new List<NexScreen>();
         var loadScreens = header.LoadScreensByte;
 
         if ((loadScreens & 0b0000_0001) != 0)
         {
-            screens.Add(ReadScreen(stream, NexScreenType.Layer2, 49152));
+            screens.Add(await ReadScreenAsync(reader, NexScreenType.Layer2, 49152).ConfigureAwait(false));
         }
 
         if ((loadScreens & 0b0000_0010) != 0)
         {
-            screens.Add(ReadScreen(stream, NexScreenType.Ula, 6912));
+            screens.Add(await ReadScreenAsync(reader, NexScreenType.Ula, 6912).ConfigureAwait(false));
         }
 
         if ((loadScreens & 0b0000_0100) != 0)
         {
-            screens.Add(ReadScreen(stream, NexScreenType.LoRes, 12288));
+            screens.Add(await ReadScreenAsync(reader, NexScreenType.LoRes, 12288).ConfigureAwait(false));
         }
 
         if ((loadScreens & 0b0000_1000) != 0)
         {
-            screens.Add(ReadScreen(stream, NexScreenType.HiRes, 12288));
+            screens.Add(await ReadScreenAsync(reader, NexScreenType.HiRes, 12288).ConfigureAwait(false));
         }
 
         if ((loadScreens & 0b0001_0000) != 0)
         {
-            screens.Add(ReadScreen(stream, NexScreenType.HiColour, 12288));
+            screens.Add(await ReadScreenAsync(reader, NexScreenType.HiColour, 12288).ConfigureAwait(false));
         }
 
         if ((loadScreens & 0b0100_0000) != 0)
@@ -102,35 +97,29 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
                 NexLoadScreenMode.Layer2x640x256 => NexScreenType.Layer2x640x256,
                 _ => NexScreenType.Layer2x320x256
             };
-            screens.Add(ReadScreen(stream, screenType, 81920));
+            screens.Add(await ReadScreenAsync(reader, screenType, 81920).ConfigureAwait(false));
         }
 
         return screens;
     }
 
     [MustUseReturnValue]
-    private static NexScreen ReadScreen(Stream stream, NexScreenType type, int size)
-    {
-        var data = new byte[size];
-        stream.ReadExactly(data);
-        return new NexScreen(type, data);
-    }
+    private static async ValueTask<NexScreen> ReadScreenAsync(IBinaryReader reader, NexScreenType type, int size) =>
+        new(type, await reader.ReadAsync(size).ConfigureAwait(false));
 
     [MustUseReturnValue]
-    private static byte[]? ReadCopperCode(Stream stream, NexHeader header)
+    private static async ValueTask<byte[]?> ReadCopperCodeAsync(IBinaryReader reader, NexHeader header)
     {
         if (header.Version < NexVersion.V13 || !header.HasCopperCode)
         {
             return null;
         }
 
-        var data = new byte[2048];
-        stream.ReadExactly(data);
-        return data;
+        return await reader.ReadAsync(2048).ConfigureAwait(false);
     }
 
     [MustUseReturnValue]
-    private static List<NexBank> ReadBanks(Stream stream, NexHeader header)
+    private static async ValueTask<List<NexBank>> ReadBanksAsync(IBinaryReader reader, NexHeader header)
     {
         var banks = new List<NexBank>();
 
@@ -141,9 +130,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
                 continue;
             }
 
-            var data = new byte[16384];
-            stream.ReadExactly(data);
-            banks.Add(new NexBank(bank, data));
+            banks.Add(new NexBank(bank, await reader.ReadAsync(16384).ConfigureAwait(false)));
         }
 
         return banks;

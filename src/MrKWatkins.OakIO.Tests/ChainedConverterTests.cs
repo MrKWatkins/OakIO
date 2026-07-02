@@ -43,7 +43,7 @@ public sealed class ChainedConverterTests
     {
         public static readonly StubSourceFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new StubSourceFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new StubSourceFile());
 
         protected override ValueTask WriteAsync(StubSourceFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -54,7 +54,7 @@ public sealed class ChainedConverterTests
     {
         public static readonly StubIntermediateFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new StubIntermediateFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new StubIntermediateFile());
 
         protected override ValueTask WriteAsync(StubIntermediateFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }
@@ -65,7 +65,7 @@ public sealed class ChainedConverterTests
     {
         public static readonly StubTargetFormat Instance = new();
 
-        public override IOFile Read(Stream stream) => new StubTargetFile();
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => new(new StubTargetFile());
 
         protected override ValueTask WriteAsync(StubTargetFile file, IBinaryWriter writer) => ValueTask.CompletedTask;
     }

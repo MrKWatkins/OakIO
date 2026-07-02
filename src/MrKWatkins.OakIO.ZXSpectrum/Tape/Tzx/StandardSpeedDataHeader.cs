@@ -5,18 +5,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// </summary>
 public sealed class StandardSpeedDataHeader : TzxBlockHeader
 {
-    private const int Size = 4;
-
-    internal StandardSpeedDataHeader()
-        : base(TzxBlockType.StandardSpeedData, Size)
-    {
-    }
-
-    internal StandardSpeedDataHeader(Stream stream)
-        : base(TzxBlockType.StandardSpeedData, Size, stream)
-    {
-    }
-
     internal StandardSpeedDataHeader(byte[] data)
         : base(TzxBlockType.StandardSpeedData, data)
     {

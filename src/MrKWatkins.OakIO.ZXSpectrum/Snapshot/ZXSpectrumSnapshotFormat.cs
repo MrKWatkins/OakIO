@@ -16,14 +16,7 @@ public abstract class ZXSpectrumSnapshotFormat(string name, string fileExtension
     /// <param name="bytes">The byte array to read from.</param>
     /// <returns>The snapshot file.</returns>
     [Pure]
-    public new ZXSpectrumSnapshotFile Read(byte[] bytes)
-    {
-        using var stream = new MemoryStream(bytes);
-        return Read(stream);
-    }
-
-    /// <inheritdoc />
-    public sealed override ZXSpectrumSnapshotFile Read(Stream stream) => ReadSnapshot(stream);
+    public new ZXSpectrumSnapshotFile Read(byte[] bytes) => (ZXSpectrumSnapshotFile)base.Read(bytes);
 
     /// <summary>
     /// Reads a snapshot file from a stream.
@@ -31,7 +24,17 @@ public abstract class ZXSpectrumSnapshotFormat(string name, string fileExtension
     /// <param name="stream">The stream to read from.</param>
     /// <returns>The snapshot file.</returns>
     [MustUseReturnValue]
-    protected abstract ZXSpectrumSnapshotFile ReadSnapshot(Stream stream);
+    public new ZXSpectrumSnapshotFile Read(Stream stream) => (ZXSpectrumSnapshotFile)base.Read(stream);
+
+    /// <summary>
+    /// Reads a snapshot file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The snapshot file.</returns>
+    [MustUseReturnValue]
+    public new async Task<ZXSpectrumSnapshotFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (ZXSpectrumSnapshotFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
 }
 
 /// <summary>
@@ -59,6 +62,16 @@ public abstract class ZXSpectrumSnapshotFormat<TFile>(string name, string fileEx
     [MustUseReturnValue]
     public new TFile Read(Stream stream) => (TFile)base.Read(stream);
 
+    /// <summary>
+    /// Reads a snapshot file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The typed snapshot file.</returns>
+    [MustUseReturnValue]
+    public new async Task<TFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (TFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
+
     /// <inheritdoc />
     protected internal sealed override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) =>
         file is TFile typedFile
@@ -66,7 +79,7 @@ public abstract class ZXSpectrumSnapshotFormat<TFile>(string name, string fileEx
             : throw new ArgumentException($"Value is not of type {typeof(TFile).Name}.", nameof(file));
 
     /// <summary>
-    /// Writes a strongly typed tape file to a <see cref="IBinaryWriter" />.
+    /// Writes a strongly typed snapshot file to a <see cref="IBinaryWriter" />.
     /// </summary>
     /// <param name="file">The file to write.</param>
     /// <param name="writer">The <see cref="IBinaryWriter" /> to write to.</param>
