@@ -18,6 +18,7 @@ internal sealed class Pulse(int lengthInTStates) : Sound
         TStatesRemaining = LengthInTStates;
     }
 
+    [MustUseReturnValue]
     public override int Advance(int tStates)
     {
         if (tStates <= TStatesRemaining)
@@ -31,5 +32,6 @@ internal sealed class Pulse(int lengthInTStates) : Sound
         return tStatesLeftOver;
     }
 
+    [Pure]
     public override string ToString() => $"P:{lengthInTStates}";
 }

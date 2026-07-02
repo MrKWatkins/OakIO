@@ -37,5 +37,6 @@ public abstract class PzxBlockHeader : Header
     public int BlockLength => SizeOfBlockExcludingTagAndSizeField - SizeOfHeaderExcludingTagAndSizeField;
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => Type.ToString();
 }

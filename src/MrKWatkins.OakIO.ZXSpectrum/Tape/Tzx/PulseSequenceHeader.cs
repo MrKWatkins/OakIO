@@ -19,5 +19,6 @@ public sealed class PulseSequenceHeader : TzxBlockHeader
     public override int BlockLength => NumberOfPulses * 2;  // Each is a word.
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {NumberOfPulses} pulses";
 }

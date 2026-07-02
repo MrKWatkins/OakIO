@@ -21,5 +21,6 @@ public sealed class PureToneHeader : TzxBlockHeader
     public ushort NumberOfPulses => GetUInt16(2);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {NumberOfPulses} x {LengthOfPulse} T-States";
 }

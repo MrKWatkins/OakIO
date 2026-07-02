@@ -24,6 +24,7 @@ public sealed class StandardSpeedDataHeader : TzxBlockHeader
     public override int BlockLength => GetUInt16(2);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() =>
         $"{Type}: Length = {BlockLength}, pause after = {PauseAfter}";
 }

@@ -10,5 +10,6 @@ public sealed class StopBlock : PzxBlock<StopHeader>
     }
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => Header.Only48k ? "Stop: 48k only" : "Stop: Always";
 }

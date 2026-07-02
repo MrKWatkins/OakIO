@@ -17,8 +17,6 @@ public sealed class PzxFile : ZXSpectrumTapeFile
     public IReadOnlyList<PzxBlock> Blocks { get; }
 
     /// <inheritdoc />
-    public override bool TryLoadInto(Span<byte> memory)
-    {
-        throw new NotImplementedException();
-    }
+    [MustUseReturnValue]
+    public override bool TryLoadInto(Span<byte> memory) => false;
 }

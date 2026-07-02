@@ -40,6 +40,7 @@ public sealed class PureDataHeader : TzxBlockHeader
     public override int BlockLength => GetUInt24(7);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() =>
         $"{Type}: 1/0 = {TStatesInOneBitPulse}/{TStatesInZeroBitPulse} T-States, length = {BlockLength}, used bits in last byte = {UsedBitsInLastByte}, pause after = {PauseAfter}";
 }

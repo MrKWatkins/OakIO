@@ -91,7 +91,7 @@ public abstract class Block : IOFileComponent
 }
 
 /// <summary>
-/// Base class for a block with strongly-typed header and trailer.
+/// Base class for a block with strongly typed header and trailer.
 /// </summary>
 /// <typeparam name="THeader">The type of header for this block.</typeparam>
 /// <typeparam name="TTrailer">The type of trailer for this block.</typeparam>
@@ -146,18 +146,18 @@ public abstract class Block<THeader, TTrailer> : Block
     }
 
     /// <summary>
-    /// Gets the strongly-typed header for this block.
+    /// Gets the strongly typed header for this block.
     /// </summary>
     public new THeader Header => (THeader)base.Header;
 
     /// <summary>
-    /// Gets the strongly-typed trailer for this block.
+    /// Gets the strongly typed trailer for this block.
     /// </summary>
     public new TTrailer Trailer => (TTrailer)base.Trailer;
 }
 
 /// <summary>
-/// Base class for a block with a strongly-typed header and an empty trailer.
+/// Base class for a block with a strongly typed header and an empty trailer.
 /// </summary>
 /// <typeparam name="THeader">The type of header for this block.</typeparam>
 public abstract class Block<THeader> : Block<THeader, EmptyTrailer>

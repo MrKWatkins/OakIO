@@ -6,5 +6,6 @@ internal sealed class ChainedConverter<TSource, TIntermediate, TTarget>(IOFileCo
     where TIntermediate : IOFile
     where TTarget : IOFile
 {
+    [Pure]
     public override TTarget Convert(TSource source) => intermediateToTargetConverter.Convert(sourceToIntermediateConverter.Convert(source));
 }

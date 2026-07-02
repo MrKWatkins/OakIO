@@ -23,6 +23,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     }
 
     /// <inheritdoc />
+    [Pure]
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var pzxToTape = new PzxToTapeConverter();
@@ -33,6 +34,7 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
         var blocks = new List<PzxBlock>();

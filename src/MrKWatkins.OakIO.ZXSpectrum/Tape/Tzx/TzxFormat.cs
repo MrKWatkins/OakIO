@@ -22,6 +22,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     }
 
     /// <inheritdoc />
+    [Pure]
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var tzxToTape = new TzxToTapeConverter();
@@ -32,6 +33,7 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
         var header = new TzxHeader(await reader.ReadAsync(TzxHeader.ExpectedLength).ConfigureAwait(false));

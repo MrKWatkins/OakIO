@@ -35,6 +35,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
     public IReadOnlyList<TapBlock> Blocks { get; }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override bool TryLoadInto(Span<byte> memory)
     {
         for (var f = 0; f < Blocks.Count; f += 2)
@@ -44,7 +45,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
                 return false;
             }
 
-            if (Blocks[f + 1] is not DataBlock data)
+            if (f + 1 >= Blocks.Count || Blocks[f + 1] is not DataBlock data)
             {
                 return false;
             }
@@ -65,7 +66,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
                 throw new IOException("Missing header block when loading TAP file.");
             }
 
-            if (Blocks[f + 1] is not DataBlock data)
+            if (f + 1 >= Blocks.Count || Blocks[f + 1] is not DataBlock data)
             {
                 throw new IOException("Missing data block after header when loading TAP file.");
             }
@@ -171,10 +172,11 @@ public sealed class TapFile : ZXSpectrumTapeFile
 
         var basic = new BasicWriter(memoryStream);
 
-        int lineNumber;
-        for (lineNumber = 0; lineNumber <= numberOfCodeBlocks * 10; lineNumber += 10)
+        var lineNumber = 0;
+        for (var block = 0; block < numberOfCodeBlocks; block++)
         {
-            basic.WriteLine(lineNumber += 10, LOAD, "", CODE);
+            lineNumber += 10;
+            basic.WriteLine(lineNumber, LOAD, "", CODE);
         }
 
         if (entryPoint.HasValue)

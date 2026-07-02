@@ -39,7 +39,7 @@ internal static class NexInfoExtensions
         if (file.Banks.Count > 0)
         {
             var bankItems = file.Banks.Select(b =>
-                new InfoItem($"Bank {b.BankNumber}") { Properties = [new InfoProperty(Info.Properties.Size, b.Data.Length.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)] }
+                new InfoItem($"Bank {b.BankNumber}") { Properties = [new InfoProperty(Info.Properties.Size, b.Data.Count.ToString(NumberFormatInfo.InvariantInfo), Info.Formats.Decimal)] }
             ).ToList();
             sections.Add(new InfoSection(Info.Sections.Banks) { Items = bankItems });
         }

@@ -129,6 +129,7 @@ public sealed class HeaderBlock : TapBlock<HeaderHeader>
     /// </summary>
     /// <param name="header">The extracted header. Always set for <see cref="HeaderBlock" />.</param>
     /// <returns>Always <c>true</c>.</returns>
+    [Pure]
     public bool TryGetStandardFileHeader([NotNullWhen(true)] out StandardFileHeader? header)
     {
         header = new StandardFileHeader(HeaderType, Filename, DataBlockLength, Parameter1, Parameter2);

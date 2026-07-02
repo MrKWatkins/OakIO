@@ -44,7 +44,7 @@ public abstract class ZXSpectrumTapeFormat(string name, string fileExtension, Ty
 }
 
 /// <summary>
-/// Strongly-typed base class for ZX Spectrum tape file formats.
+/// strongly typed base class for ZX Spectrum tape file formats.
 /// </summary>
 /// <typeparam name="TFile">The type of tape file this format reads and writes.</typeparam>
 /// <param name="name">The name of the format.</param>

@@ -3,8 +3,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 internal sealed class NexRegisterSnapshot : RegisterSnapshot
 {
-    internal NexRegisterSnapshot(NexHeader header)
-        : base(header.Data.ToArray())
+    internal NexRegisterSnapshot(byte[] data)
+        : base(data)
     {
     }
 
@@ -62,5 +62,6 @@ internal sealed class NexRegisterSnapshot : RegisterSnapshot
         set { }
     }
 
-    public override ShadowRegisterSnapshot Shadow => throw new NotSupportedException("NEX files do not contain shadow register data.");
+    // NEX files do not store shadow register data; the values are stubbed to zero like the main registers above.
+    public override ShadowRegisterSnapshot Shadow { get; } = new NexShadowRegisterSnapshot();
 }

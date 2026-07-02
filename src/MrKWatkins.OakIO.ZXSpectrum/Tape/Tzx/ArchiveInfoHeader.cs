@@ -24,5 +24,6 @@ public sealed class ArchiveInfoHeader : TzxBlockHeader
     public override int BlockLength => LengthOfWholeBlock - 1;  // NumberOfTextStrings is included in LengthOfWholeBlock.
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {NumberOfTextStrings} entries";
 }

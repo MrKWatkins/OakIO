@@ -36,9 +36,11 @@ public sealed class Z80CompressionStream : Stream
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override int Read(byte[] buffer, int offset, int count) => Read(buffer.AsSpan(offset, count));
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override int Read(Span<byte> buffer)
     {
         VerifyNotDisposed();

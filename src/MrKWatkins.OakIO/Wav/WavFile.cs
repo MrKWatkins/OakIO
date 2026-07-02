@@ -15,5 +15,7 @@ public sealed class WavFile(uint sampleRate, byte[] sampleData) : IOFile(WavForm
     /// <summary>
     /// Gets the raw sample data.
     /// </summary>
-    public byte[] SampleData { get; } = sampleData;
+    public IReadOnlyList<byte> SampleData => sampleData;
+
+    internal ReadOnlyMemory<byte> SampleDataMemory => sampleData;
 }

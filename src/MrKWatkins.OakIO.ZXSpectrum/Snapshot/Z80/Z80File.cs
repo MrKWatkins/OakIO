@@ -18,7 +18,7 @@ public abstract class Z80File : ZXSpectrumSnapshotFile
 }
 
 /// <summary>
-/// Base class for Z80 snapshot files with a strongly-typed header.
+/// Base class for Z80 snapshot files with a strongly typed header.
 /// </summary>
 /// <typeparam name="THeader">The type of header.</typeparam>
 public abstract class Z80File<THeader> : Z80File
@@ -30,7 +30,7 @@ public abstract class Z80File<THeader> : Z80File
     }
 
     /// <summary>
-    /// Gets the strongly-typed header for this Z80 file.
+    /// Gets the strongly typed header for this Z80 file.
     /// </summary>
     public new THeader Header => (THeader)base.Header;
 }

@@ -10,5 +10,6 @@ public sealed class PauseBlock : PzxBlock<PauseHeader>
     }
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"Pause: Initial Level = {(Header.InitialPulseLevel ? 1 : 0)}, Duration = {Header.Duration},";
 }

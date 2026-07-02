@@ -21,5 +21,6 @@ public sealed class PauseHeader : TzxBlockHeader
     public TimeSpan Pause => TimeSpan.FromMilliseconds(PauseMs);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {Pause}";
 }

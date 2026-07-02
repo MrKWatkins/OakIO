@@ -57,6 +57,7 @@ public sealed class StandardFileHeader
     /// <param name="tapeData">The raw tape data including flag and checksum bytes.</param>
     /// <param name="header">The extracted header, or <c>null</c> if the data is not a valid standard file header.</param>
     /// <returns><c>true</c> if the data was a valid standard file header; <c>false</c> otherwise.</returns>
+    [Pure]
     internal static bool TryCreate(ReadOnlySpan<byte> tapeData, [NotNullWhen(true)] out StandardFileHeader? header)
     {
         header = null;

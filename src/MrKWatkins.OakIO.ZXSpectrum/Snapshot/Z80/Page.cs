@@ -9,11 +9,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed class Page : Block<PageHeader>
 {
-    internal Page(PageHeader header, int length, Stream data)
-        : base(header, length, data)
-    {
-    }
-
     internal Page(PageHeader header, byte[] data)
         : base(header, data)
     {
@@ -38,6 +33,7 @@ public sealed class Page : Block<PageHeader>
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override bool TryLoadInto(Span<byte> memory)
     {
         UncompressedData.CopyTo(memory[Header.Location..]);
@@ -68,13 +64,13 @@ public sealed class Page : Block<PageHeader>
     private static Page CreateCompressed48kPage(Span<byte> memory, byte pageNumber)
     {
         var dataLocation = PageHeader.GetLocation(HardwareMode.Spectrum48, pageNumber);
-        var data = Compress(memory.Slice(dataLocation, 16384).ToArray());
+        var data = Compress(memory.Slice(dataLocation, 16384));
 
         return new Page(new PageHeader(HardwareMode.Spectrum48, (ushort)data.Length, pageNumber), data);
     }
 
     [Pure]
-    private static byte[] Compress(byte[] data)
+    private static byte[] Compress(ReadOnlySpan<byte> data)
     {
         using var compressedStream = new MemoryStream();
         using (var compressionStream = new Z80CompressionStream(compressedStream, CompressionMode.Compress, endMarker: false))

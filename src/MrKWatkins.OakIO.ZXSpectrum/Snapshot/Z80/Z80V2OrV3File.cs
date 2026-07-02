@@ -26,6 +26,7 @@ public abstract class Z80V2OrV3File<THeader> : Z80File<THeader>, IZ80SnapshotV2O
     public override RegisterSnapshot Registers => Header.Registers;
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public sealed override bool TryLoadInto(Span<byte> memory)
     {
         foreach (var page in Pages)

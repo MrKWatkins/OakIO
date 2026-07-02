@@ -10,9 +10,15 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 /// <summary>
 /// Converts TZX tape files to the internal tape format.
 /// </summary>
-public sealed class TzxToTapeConverter() : IOFileConverter<TzxFile, OakTapeFile>(TzxFormat.Instance, TapeFormat.Instance)
+public sealed class TzxToTapeConverter : IOFileConverter<TzxFile, OakTapeFile>
 {
+    internal TzxToTapeConverter()
+        : base(TzxFormat.Instance, TapeFormat.Instance)
+    {
+    }
+
     /// <inheritdoc />
+    [Pure]
     public override OakTapeFile Convert(TzxFile source)
     {
         var blocks = ConvertBlocks(source.Blocks);

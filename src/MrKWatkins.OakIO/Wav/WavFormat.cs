@@ -30,9 +30,9 @@ public sealed class WavFormat : IOFileFormat<WavFile>
     /// <inheritdoc />
     protected override async ValueTask WriteAsync(WavFile file, IBinaryWriter writer)
     {
-        var header = new WavHeader(file.SampleRate, file.SampleData.Length);
+        var header = new WavHeader(file.SampleRate, file.SampleData.Count);
         await header.WriteAsync(writer).ConfigureAwait(false);
 
-        await writer.WriteAsync(file.SampleData).ConfigureAwait(false);
+        await writer.WriteAsync(file.SampleDataMemory).ConfigureAwait(false);
     }
 }

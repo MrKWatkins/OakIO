@@ -14,6 +14,11 @@ public sealed class SnaToZ80Converter : IOFileConverter<SnaFile, Z80.Z80File>
     [Pure]
     public override Z80.Z80File Convert(SnaFile source)
     {
+        if (source is Sna128kFile)
+        {
+            throw new NotSupportedException("Converting a 128K SNA snapshot to Z80 is not supported; only the paged-in 48K would be preserved.");
+        }
+
         var memory = new byte[65536];
         if (!source.TryLoadInto(memory))
         {

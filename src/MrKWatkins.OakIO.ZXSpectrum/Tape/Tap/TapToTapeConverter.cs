@@ -9,9 +9,15 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 /// <summary>
 /// Converts TAP files to the generic tape format.
 /// </summary>
-public sealed class TapToTapeConverter() : IOFileConverter<TapFile, OakTapeFile>(TapFormat.Instance, TapeFormat.Instance)
+public sealed class TapToTapeConverter : IOFileConverter<TapFile, OakTapeFile>
 {
+    internal TapToTapeConverter()
+        : base(TapFormat.Instance, TapeFormat.Instance)
+    {
+    }
+
     /// <inheritdoc />
+    [Pure]
     public override OakTapeFile Convert(TapFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();

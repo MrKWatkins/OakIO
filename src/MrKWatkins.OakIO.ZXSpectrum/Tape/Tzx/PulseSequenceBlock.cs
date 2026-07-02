@@ -17,5 +17,6 @@ public sealed class PulseSequenceBlock : TzxBlock<PulseSequenceHeader>
     public ReadOnlySpan<ushort> Pulses => MemoryMarshal.Cast<byte, ushort>(AsSpan());
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses.ToArray())} T-States";
 }

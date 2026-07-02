@@ -21,6 +21,18 @@ public sealed class TapeToWavConverterTests
     }
 
     [Test]
+    public void Convert_SingleArgumentUsesDefaultSampleRate()
+    {
+        var tape = new TapeFile([new PauseBlock(100, initialSignal: true)]);
+        IOFileConverter<TapeFile, WavFile> converter = new TapeToWavConverter(IWavFileConverter.DefaultSampleRateHz);
+
+        // The single-argument Convert (the sealed override) must delegate to the default sample rate, not recurse.
+        var wav = converter.Convert(tape);
+
+        wav.SampleRate.Should().Equal(IWavFileConverter.DefaultSampleRateHz);
+    }
+
+    [Test]
     public void Convert_HighSignal()
     {
         var tape = new TapeFile([new PauseBlock(100, initialSignal: true)]);

@@ -143,17 +143,17 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
 
         if (file.Palette != null)
         {
-            await writer.WriteAsync(file.Palette).ConfigureAwait(false);
+            await writer.WriteAsync(file.PaletteMemory).ConfigureAwait(false);
         }
 
         foreach (var screen in file.Screens)
         {
-            await writer.WriteAsync(screen.Data).ConfigureAwait(false);
+            await writer.WriteAsync(screen.DataMemory).ConfigureAwait(false);
         }
 
         if (file.CopperCode != null)
         {
-            await writer.WriteAsync(file.CopperCode).ConfigureAwait(false);
+            await writer.WriteAsync(file.CopperCodeMemory).ConfigureAwait(false);
         }
 
         var banksByNumber = file.Banks.ToDictionary(b => b.BankNumber);
@@ -162,7 +162,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
         {
             if (banksByNumber.TryGetValue(bankNumber, out var nexBank))
             {
-                await writer.WriteAsync(nexBank.Data).ConfigureAwait(false);
+                await writer.WriteAsync(nexBank.DataMemory).ConfigureAwait(false);
             }
         }
     }

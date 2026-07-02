@@ -30,6 +30,7 @@ internal sealed class SoundSequence : Sound
 
     public override bool Signal => CurrentSound.Signal;
 
+    [MustUseReturnValue]
     public override int Advance(int tStates)
     {
         var sound = CurrentSound;
@@ -51,5 +52,6 @@ internal sealed class SoundSequence : Sound
         return Advance(tStatesLeftOver);
     }
 
+    [Pure]
     public override string ToString() => $"[{string.Join(", ", Sounds)}]";
 }

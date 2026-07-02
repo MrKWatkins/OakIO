@@ -42,17 +42,8 @@ public static class IOFileConversion
     /// <returns>The converted file.</returns>
     [Pure]
     public static TTarget Convert<TTarget>(IOFile source)
-        where TTarget : IOFile
-    {
-        IOFileConverter converter;
-        lock (Lock)
-        {
-            converter = ConvertersByTargetFileType.GetValueOrDefault((source.Format, typeof(TTarget)))
-                        ?? throw new InvalidOperationException($"No converter registered for {source.Format.Name} to {typeof(TTarget).Name}.");
-        }
-
-        return (TTarget)converter.Convert(source);
-    }
+        where TTarget : IOFile =>
+        (TTarget)GetConverter(source.Format, typeof(TTarget)).Convert(source);
 
     /// <summary>
     /// Converts a file to the specified target format.
@@ -61,17 +52,8 @@ public static class IOFileConversion
     /// <param name="targetFormat">The target format to convert to.</param>
     /// <returns>The converted file.</returns>
     [Pure]
-    public static IOFile Convert(IOFile source, IOFileFormat targetFormat)
-    {
-        IOFileConverter converter;
-        lock (Lock)
-        {
-            converter = Converters.GetValueOrDefault((source.Format, targetFormat))
-                        ?? throw new InvalidOperationException($"No converter registered for {source.Format.Name} to {targetFormat.Name}.");
-        }
-
-        return converter.Convert(source);
-    }
+    public static IOFile Convert(IOFile source, IOFileFormat targetFormat) =>
+        GetConverter(source.Format, targetFormat).Convert(source);
 
     /// <summary>
     /// Converts a file to the specified target type.
@@ -87,14 +69,7 @@ public static class IOFileConversion
             throw new ArgumentException("Value must be an IOFile.", nameof(targetType));
         }
 
-        IOFileConverter converter;
-        lock (Lock)
-        {
-            converter = ConvertersByTargetFileType.GetValueOrDefault((source.Format, targetType))
-                        ?? throw new InvalidOperationException($"No converter registered for {source.Format.Name} to {targetType.Name}.");
-        }
-
-        return converter.Convert(source);
+        return GetConverter(source.Format, targetType).Convert(source);
     }
 
     /// <summary>
@@ -104,18 +79,29 @@ public static class IOFileConversion
     /// <param name="sampleRateHz">The sample rate in Hz.</param>
     /// <returns>The converted WAV file.</returns>
     [Pure]
-    public static WavFile ConvertToWav(IOFile source, uint sampleRateHz = IWavFileConverter.DefaultSampleRateHz)
-    {
-        IOFileConverter converter;
-        lock (Lock)
-        {
-            converter = ConvertersByTargetFileType.GetValueOrDefault((source.Format, typeof(WavFile)))
-                        ?? throw new InvalidOperationException($"No converter registered for {source.Format.Name} to {nameof(WavFile)}.");
-        }
-
-        return converter is IWavFileConverter wavConverter
+    public static WavFile ConvertToWav(IOFile source, uint sampleRateHz = IWavFileConverter.DefaultSampleRateHz) =>
+        GetConverter(source.Format, typeof(WavFile)) is IWavFileConverter wavConverter
             ? wavConverter.Convert(source, sampleRateHz)
             : throw new InvalidOperationException($"Converter for {source.Format.Name} to {nameof(WavFile)} does not support custom sample rates.");
+
+    [Pure]
+    private static IOFileConverter GetConverter(IOFileFormat sourceFormat, Type targetType)
+    {
+        lock (Lock)
+        {
+            return ConvertersByTargetFileType.GetValueOrDefault((sourceFormat, targetType))
+                   ?? throw new InvalidOperationException($"No converter registered for {sourceFormat.Name} to {targetType.Name}.");
+        }
+    }
+
+    [Pure]
+    private static IOFileConverter GetConverter(IOFileFormat sourceFormat, IOFileFormat targetFormat)
+    {
+        lock (Lock)
+        {
+            return Converters.GetValueOrDefault((sourceFormat, targetFormat))
+                   ?? throw new InvalidOperationException($"No converter registered for {sourceFormat.Name} to {targetFormat.Name}.");
+        }
     }
 
     /// <summary>
@@ -126,6 +112,7 @@ public static class IOFileConversion
     /// <param name="result">The converted file, or <c>null</c> if conversion failed.</param>
     /// <param name="error">The error message if conversion failed, or <c>null</c> if successful.</param>
     /// <returns><c>true</c> if the conversion succeeded; <c>false</c> otherwise.</returns>
+    [Pure]
     public static bool TryConvert(IOFile source, IOFileFormat targetFormat, [NotNullWhen(true)] out IOFile? result, [NotNullWhen(false)] out string? error)
     {
         try

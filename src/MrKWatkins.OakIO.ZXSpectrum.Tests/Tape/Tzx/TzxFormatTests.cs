@@ -270,14 +270,14 @@ public sealed class TzxFormatTests
     }
 
     [Test]
-    public void TzxFile_TryLoadInto_ThrowsNotImplemented()
+    public void TzxFile_TryLoadInto_ReturnsFalse()
     {
         var data = BuildTzxData();
         using var stream = new MemoryStream(data);
         var file = TzxFormat.Instance.Read(stream);
 
         var memory = new byte[65536];
-        AssertThat.Invoking(() => file.TryLoadInto(memory)).Should().Throw<NotImplementedException>();
+        file.TryLoadInto(memory).Should().BeFalse();
     }
 
     [Test]

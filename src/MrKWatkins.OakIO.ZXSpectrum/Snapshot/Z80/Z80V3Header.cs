@@ -22,6 +22,7 @@ public sealed class Z80V3Header : Z80V2Header
     }
 
     /// <inheritdoc />
+    [Pure]
     protected override HardwareMode GetHardwareMode(byte hardwareMode) =>
         hardwareMode switch
         {

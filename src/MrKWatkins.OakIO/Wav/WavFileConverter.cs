@@ -9,6 +9,7 @@ public abstract class WavFileConverter<TSource>(IOFileFormat sourceFormat) : IOF
     where TSource : IOFile
 {
     /// <inheritdoc />
+    [Pure]
     public sealed override WavFile Convert(TSource source) => Convert(source);
 
     /// <summary>
@@ -22,7 +23,7 @@ public abstract class WavFileConverter<TSource>(IOFileFormat sourceFormat) : IOF
         source is TSource typedSource ? Convert(typedSource, sampleRateHz) : throw new ArgumentException($"Value is not of type {typeof(TSource).Name}.", nameof(source));
 
     /// <summary>
-    /// Converts the specified strongly-typed source file to a WAV file with the given sample rate.
+    /// Converts the specified strongly typed source file to a WAV file with the given sample rate.
     /// </summary>
     /// <param name="source">The source file to convert.</param>
     /// <param name="sampleRateHz">The sample rate in Hz for the output WAV file.</param>

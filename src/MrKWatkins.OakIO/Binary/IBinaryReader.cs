@@ -13,12 +13,14 @@ public interface IBinaryReader
     /// <param name="count">The number of bytes to read.</param>
     /// <returns>A <see cref="ValueTask{TResult}" /> yielding the bytes that were read.</returns>
     /// <exception cref="EndOfStreamException">The source ended before <paramref name="count" /> bytes could be read.</exception>
+    [MustUseReturnValue]
     ValueTask<byte[]> ReadAsync(int count);
 
     /// <summary>
     /// Reads all remaining bytes from the source.
     /// </summary>
     /// <returns>A <see cref="ValueTask{TResult}" /> yielding the remaining bytes.</returns>
+    [MustUseReturnValue]
     ValueTask<byte[]> ReadToEndAsync();
 
     /// <summary>

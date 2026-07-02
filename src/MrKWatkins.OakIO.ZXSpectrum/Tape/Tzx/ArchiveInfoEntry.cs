@@ -18,5 +18,6 @@ public sealed class ArchiveInfoEntry(ArchiveInfoType type, string text)
     public string Text { get; } = text;
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type.ToDescription()}: {Text}";
 }

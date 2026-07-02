@@ -16,5 +16,6 @@ public sealed class LoopStartHeader : TzxBlockHeader
     public ushort NumberOfRepetitions => GetUInt16(0);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {NumberOfRepetitions} repetitions";
 }

@@ -21,6 +21,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     }
 
     /// <inheritdoc />
+    [Pure]
     protected override IEnumerable<IOFileConverter> CreateConverters()
     {
         var tapToTape = new TapToTapeConverter();
@@ -31,6 +32,7 @@ public sealed class TapFormat : ZXSpectrumTapeFormat<TapFile>
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader)
     {
         var blocks = new List<TapBlock>();

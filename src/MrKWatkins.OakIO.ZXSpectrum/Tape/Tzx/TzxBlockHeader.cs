@@ -22,5 +22,6 @@ public abstract class TzxBlockHeader : Header
     public virtual int BlockLength => 0;
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => Type.ToString();
 }

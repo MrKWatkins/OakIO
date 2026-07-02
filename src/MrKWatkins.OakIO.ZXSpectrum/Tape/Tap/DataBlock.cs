@@ -23,5 +23,6 @@ public sealed class DataBlock : TapBlock<DataHeader>
     }
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"Data: {Header.BlockLength} bytes";
 }

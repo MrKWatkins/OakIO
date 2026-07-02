@@ -54,15 +54,15 @@ public sealed class TapeFileTests
         tape.IsFinished.Should().BeFalse();
 
         // Advance partially.
-        tape.Advance(50);
+        _ = tape.Advance(50);
         tape.IsFinished.Should().BeFalse();
 
         // Advance to bring remaining to 0. The pulse has 0 T-states remaining but isn't "finished" yet.
-        tape.Advance(50);
+        _ = tape.Advance(50);
         tape.IsFinished.Should().BeFalse();
 
         // One more advance detects completion and moves to finished block.
-        tape.Advance(1);
+        _ = tape.Advance(1);
         tape.IsFinished.Should().BeTrue();
     }
 
@@ -75,16 +75,16 @@ public sealed class TapeFileTests
         tape.IsFinished.Should().BeFalse();
 
         // Advance past first block into second.
-        tape.Advance(60);
+        _ = tape.Advance(60);
         tape.Position.Should().Equal(1);
         tape.IsFinished.Should().BeFalse();
 
         // Advance second block to 0 remaining.
-        tape.Advance(40);
+        _ = tape.Advance(40);
         tape.IsFinished.Should().BeFalse();
 
         // One more advance to detect completion.
-        tape.Advance(1);
+        _ = tape.Advance(1);
         tape.IsFinished.Should().BeTrue();
     }
 

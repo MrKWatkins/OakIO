@@ -292,14 +292,28 @@ public sealed class PzxFormatTests
     }
 
     [Test]
-    public void PzxFile_TryLoadInto_ThrowsNotImplemented()
+    public void PzxFile_TryLoadInto_ReturnsFalse()
     {
         var data = BuildPzxData();
         using var stream = new MemoryStream(data);
         var file = PzxFormat.Instance.Read(stream);
 
         var memory = new byte[65536];
-        AssertThat.Invoking(() => file.TryLoadInto(memory)).Should().Throw<NotImplementedException>();
+        file.TryLoadInto(memory).Should().BeFalse();
+    }
+
+    [Test]
+    public void PulseSequenceBlock_DecodesExtendedDurationWithoutRepeatCount()
+    {
+        // A single pulse with duration in 0x8000-0xFFFF is encoded as [0x8000, low16]. The leading 0x8000 must be
+        // treated as the start of an extended duration, not a repeat count of 0.
+        var header = new byte[] { 0x04, 0x00, 0x00, 0x00 };     // Size = 4.
+        var body = new byte[] { 0x00, 0x80, 0x34, 0x12 };       // Words 0x8000, 0x1234.
+        var block = new PulseSequenceBlock(header, body);
+
+        block.Pulses.Should().HaveCount(1);
+        block.Pulses[0].Count.Should().Equal(1);
+        block.Pulses[0].Duration.Should().Equal(0x1234u);
     }
 
     [Test]

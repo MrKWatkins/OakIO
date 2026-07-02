@@ -41,6 +41,7 @@ public sealed class TapeFile : IOFile
     /// <param name="tStates">The number of T-states to advance.</param>
     /// <returns>The current signal level after advancing.</returns>
     // Assumes we'll never have a tStates greater than a pulse.
+    [MustUseReturnValue]
     public bool Advance(int tStates)
     {
         var block = CurrentBlock;

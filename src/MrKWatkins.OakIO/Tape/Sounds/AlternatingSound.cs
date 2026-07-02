@@ -23,6 +23,7 @@ internal sealed class AlternatingSound : Sound
 
     public override bool Signal => Sound.Signal;
 
+    [MustUseReturnValue]
     public override int Advance(int tStates)
     {
         var tStatesLeftOver = Sound.Advance(tStates);
@@ -43,5 +44,6 @@ internal sealed class AlternatingSound : Sound
         return Sound.Advance(tStatesLeftOver);
     }
 
+    [Pure]
     public override string ToString() => $"{Repeats} x {Sound}";
 }

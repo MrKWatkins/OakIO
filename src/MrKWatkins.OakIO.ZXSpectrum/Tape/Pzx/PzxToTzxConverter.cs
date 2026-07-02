@@ -10,7 +10,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// <summary>
 /// Converts PZX tape files to TZX format.
 /// </summary>
-internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
+public sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
 {
     private const byte TzxMajorVersion = 1;
     private const byte TzxMinorVersion = 20;
@@ -21,6 +21,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
     {
     }
 
+    /// <inheritdoc />
     [Pure]
     public override TzxFile Convert(PzxFile source)
     {
@@ -35,6 +36,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
         return new TzxFile(header, blocks);
     }
 
+    [Pure]
     private static IEnumerable<TzxBlock> ConvertBlock(PzxBlock pzxBlock) =>
         pzxBlock switch
         {
@@ -159,7 +161,7 @@ internal sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
         }
     }
 
-    [Pure]
+    [MustUseReturnValue]
     private static IEnumerable<TzxBlock> FlushSinglePulses(List<ushort> pulses)
     {
         foreach (var chunk in pulses.Chunk(255))

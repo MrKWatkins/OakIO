@@ -12,9 +12,9 @@ public sealed class PageHeaderTests
         PageHeader.GetLocation(HardwareMode.Spectrum48, pageNumber).Should().Equal(expectedLocation);
     }
 
-    [TestCase((byte)5, (ushort)0x4000)]
-    [TestCase((byte)2, (ushort)0x8000)]
-    [TestCase((byte)0, (ushort)0xC000)]
+    [TestCase((byte)8, (ushort)0x4000)]
+    [TestCase((byte)5, (ushort)0x8000)]
+    [TestCase((byte)3, (ushort)0xC000)]
     public void GetLocation_Spectrum128(byte pageNumber, ushort expectedLocation)
     {
         PageHeader.GetLocation(HardwareMode.Spectrum128, pageNumber).Should().Equal(expectedLocation);

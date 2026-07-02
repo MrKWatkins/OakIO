@@ -24,6 +24,7 @@ public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
     public IReadOnlyList<Info> Info { get; }
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString()
     {
         var header = $"PZX {Header.MajorVersionNumber}.{Header.MinorVersionNumber}";
@@ -33,6 +34,7 @@ public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
             : header;
     }
 
+    [Pure]
     private IEnumerable<Info> ReadInfos()
     {
         var type = "Title";

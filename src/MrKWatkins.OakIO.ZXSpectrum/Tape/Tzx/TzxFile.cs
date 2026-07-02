@@ -23,8 +23,6 @@ public sealed class TzxFile : ZXSpectrumTapeFile
     public IReadOnlyList<TzxBlock> Blocks { get; }
 
     /// <inheritdoc />
-    public override bool TryLoadInto(Span<byte> memory)
-    {
-        throw new NotImplementedException();
-    }
+    [MustUseReturnValue]
+    public override bool TryLoadInto(Span<byte> memory) => false;
 }

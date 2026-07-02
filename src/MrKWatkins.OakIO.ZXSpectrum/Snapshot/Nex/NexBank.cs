@@ -5,10 +5,12 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 /// </summary>
 public sealed class NexBank
 {
+    private readonly byte[] data;
+
     internal NexBank(int bankNumber, byte[] data)
     {
         BankNumber = bankNumber;
-        Data = data;
+        this.data = data;
     }
 
     /// <summary>
@@ -19,8 +21,11 @@ public sealed class NexBank
     /// <summary>
     /// Gets the raw bank data.
     /// </summary>
-    public byte[] Data { get; }
+    public IReadOnlyList<byte> Data => data;
+
+    internal ReadOnlyMemory<byte> DataMemory => data;
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"Bank {BankNumber}";
 }

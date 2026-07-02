@@ -43,7 +43,7 @@ public abstract class TapBlock : Block<TapHeader, TapTrailer>
 }
 
 /// <summary>
-/// Base class for blocks in a TAP file with a strongly-typed header.
+/// Base class for blocks in a TAP file with a strongly typed header.
 /// </summary>
 /// <typeparam name="THeader">The type of header for the block.</typeparam>
 public abstract class TapBlock<THeader> : TapBlock
@@ -61,7 +61,7 @@ public abstract class TapBlock<THeader> : TapBlock
     }
 
     /// <summary>
-    /// Gets the strongly-typed header for the block.
+    /// Gets the strongly typed header for the block.
     /// </summary>
     public new THeader Header => (THeader)base.Header;
 }

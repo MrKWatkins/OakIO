@@ -411,7 +411,7 @@ dotnet_diagnostic.CA1828.severity = error
 # CA1829: Use Length/Count property instead of Count() when available
 dotnet_diagnostic.CA1829.severity = error
 
-# CA1830: Prefer strongly-typed Append and Insert method overloads on StringBuilder
+# CA1830: Prefer strongly typed Append and Insert method overloads on StringBuilder
 dotnet_diagnostic.CA1830.severity = error
 
 # CA1831: Use AsSpan or AsMemory instead of Range-based indexers when appropriate

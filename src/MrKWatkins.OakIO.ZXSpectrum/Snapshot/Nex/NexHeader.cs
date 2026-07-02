@@ -21,7 +21,13 @@ public sealed class NexHeader : Header
     internal NexHeader(byte[] data)
         : base(data)
     {
+        Registers = new NexRegisterSnapshot(data);
     }
+
+    /// <summary>
+    /// Gets the CPU registers stored in the header.
+    /// </summary>
+    public RegisterSnapshot Registers { get; }
 
     /// <summary>
     /// Gets the magic identifier string.
@@ -170,6 +176,7 @@ public sealed class NexHeader : Header
     /// </summary>
     /// <param name="bank">The bank number, from 0 to 111.</param>
     /// <returns><c>true</c> if the bank is included; otherwise, <c>false</c>.</returns>
+    [Pure]
     public bool IsBankIncluded(int bank)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(bank);

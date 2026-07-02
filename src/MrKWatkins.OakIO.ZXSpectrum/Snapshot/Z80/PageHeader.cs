@@ -57,12 +57,13 @@ public sealed class PageHeader : Header
         };
 
     [Pure]
+    // 128K pages are numbered as RAM bank + 3.
     private static ushort GetSpectrum128DataLocation(byte pageNumber) =>
         pageNumber switch
         {
-            5 => 0x4000,
-            2 => 0x8000,
-            0 => 0xC000,
+            8 => 0x4000,
+            5 => 0x8000,
+            3 => 0xC000,
             _ => throw new NotSupportedException($"Page number {pageNumber} is not supported in {nameof(HardwareMode.Spectrum128)} mode.")
         };
 }

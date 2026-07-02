@@ -17,5 +17,6 @@ public sealed class BrowsePointBlock : PzxBlock<BrowsePointHeader>
     public string Text => Encoding.ASCII.GetString(AsSpan());
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"Browse: {Text}";
 }

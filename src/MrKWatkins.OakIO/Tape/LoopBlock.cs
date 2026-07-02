@@ -29,6 +29,7 @@ public sealed class LoopBlock(int loops, IReadOnlyList<TapeBlock> blocks) : Tape
         Blocks[0].Start(signal);
     }
 
+    [MustUseReturnValue]
     internal override int Advance(int tStates)
     {
         var block = Blocks[currentBlock];

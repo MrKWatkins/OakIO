@@ -20,6 +20,7 @@ public sealed class PauseBlock(int lengthInTStates, bool? initialSignal = null) 
 
     internal override void Start(bool signal) => pulse.Start(signal);
 
+    [MustUseReturnValue]
     internal override int Advance(int tStates) => pulse.Advance(tStates);
 
     /// <summary>

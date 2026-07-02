@@ -59,4 +59,16 @@ public sealed class SnaToZ80ConverterTests
         z80Memory[0x8000].Should().Equal(0xF3);
         z80Memory[0x8001].Should().Equal(0xAF);
     }
+
+    [Test]
+    public void Convert_ThrowsFor128k()
+    {
+        // A 128K SNA is a 27-byte header + 8 banks + a 4-byte footer.
+        var data = new byte[27 + 8 * 16384 + 4];
+        using var stream = new MemoryStream(data);
+        var sna = (Sna128kFile)SnaFormat.Instance.Read(stream);
+
+        // Converting would silently drop five banks and the paging state, so it must be rejected.
+        AssertThat.Invoking(() => new SnaToZ80Converter().Convert(sna)).Should().Throw<NotSupportedException>();
+    }
 }

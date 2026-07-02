@@ -18,8 +18,10 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
     public IReadOnlyList<Pulse> Pulses { get; }
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses)}";
 
+    [Pure]
     private List<Pulse> ReadPulses()
     {
         var pulses = new List<Pulse>();
@@ -33,7 +35,8 @@ public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
 
             ushort count = 1;
             uint duration = enumerator.Current;
-            if (duration >= 0x8000)
+            // A first word > 0x8000 is a repeat count; a duration of exactly 0x8000 is an extended (31-bit) duration.
+            if (duration > 0x8000)
             {
                 count = (ushort)(duration & 0x7FFF);
                 if (!enumerator.MoveNext())

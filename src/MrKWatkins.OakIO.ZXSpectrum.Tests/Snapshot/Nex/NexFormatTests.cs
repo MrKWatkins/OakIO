@@ -139,6 +139,22 @@ public sealed class NexFormatTests
     }
 
     [Test]
+    public void Registers_RoundTripThroughWrite()
+    {
+        var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: [], sp: 0x5B76, pc: 0x8000);
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        // The registers share the header's data, so changes must survive a write/read round-trip.
+        file.Registers.PC = 0x1234;
+        file.Registers.SP = 0x5678;
+
+        var roundTripped = NexFormat.Instance.Read(file.ToByteArray());
+        roundTripped.Registers.PC.Should().Equal(0x1234);
+        roundTripped.Registers.SP.Should().Equal(0x5678);
+    }
+
+    [Test]
     public async Task RoundTrip_MinimalNoBanks()
     {
         var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: []);

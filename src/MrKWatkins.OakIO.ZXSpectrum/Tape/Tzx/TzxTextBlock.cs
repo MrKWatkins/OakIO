@@ -19,5 +19,6 @@ public abstract class TzxTextBlock<THeader> : TzxBlock<THeader>
     public string Text => Encoding.ASCII.GetString(AsSpan());
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Header}: {Text}";
 }

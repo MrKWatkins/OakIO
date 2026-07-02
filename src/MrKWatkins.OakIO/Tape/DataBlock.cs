@@ -8,6 +8,7 @@ namespace MrKWatkins.OakIO.Tape;
 /// </summary>
 public sealed class DataBlock : TapeBlock
 {
+    private readonly byte[] data;
     private readonly Sound zeroBitSound;
     private readonly Sound oneBitSound;
     private readonly Sound? tailPulse;
@@ -24,7 +25,7 @@ public sealed class DataBlock : TapeBlock
     internal DataBlock(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null)
         : base(initialSignal)
     {
-        Data = data;
+        this.data = data as byte[] ?? data.ToArray();
         this.zeroBitSound = zeroBitSound;
         this.oneBitSound = oneBitSound;
         tailPulse = lengthOfTailPulse > 0 ? new Pulse(lengthOfTailPulse) : null;
@@ -42,12 +43,12 @@ public sealed class DataBlock : TapeBlock
     /// <summary>
     /// Gets the data bytes in the block.
     /// </summary>
-    public IReadOnlyList<byte> Data { get; }
+    public IReadOnlyList<byte> Data => data;
 
     /// <summary>
     /// Gets the length of the data in bytes.
     /// </summary>
-    public int DataLength => Data.Count;
+    public int DataLength => data.Length;
 
     internal override bool Signal => currentSound.Signal;
 
@@ -60,11 +61,12 @@ public sealed class DataBlock : TapeBlock
 
     private void StartBit(bool signal)
     {
-        var bit = Data[currentByte].GetBit(currentBit);
+        var bit = data[currentByte].GetBit(currentBit);
         currentSound = bit ? oneBitSound : zeroBitSound;
         currentSound.Start(signal);
     }
 
+    [MustUseReturnValue]
     internal override int Advance(int tStates)
     {
         var tStatesLeftOver = currentSound.Advance(tStates);
@@ -81,7 +83,7 @@ public sealed class DataBlock : TapeBlock
         }
 
         // Have we finished the current byte?
-        var isLastByte = currentByte == Data.Count - 1;
+        var isLastByte = currentByte == data.Length - 1;
         if ((isLastByte && currentBit == lastBitOfLastByte) || currentBit == 0)
         {
             // Yes, advance the byte.

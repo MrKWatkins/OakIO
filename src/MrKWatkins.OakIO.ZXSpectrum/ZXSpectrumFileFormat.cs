@@ -61,4 +61,24 @@ public abstract class ZXSpectrumFileFormat : IOFileFormat
     [MustUseReturnValue]
     public static ZXSpectrumFile Load([PathReference] string path, Stream stream) => (ZXSpectrumFile)IOFileFormat.Load(path, stream, AllFormats);
 
+    /// <summary>
+    /// Loads a ZX Spectrum file from disk asynchronously.
+    /// </summary>
+    /// <param name="path">The path to the file to load.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the loading.</param>
+    /// <returns>The file that was read.</returns>
+    [Pure]
+    public static async Task<ZXSpectrumFile> LoadAsync([PathReference] string path, CancellationToken cancellationToken = default) =>
+        (ZXSpectrumFile)await IOFileFormat.LoadAsync(path, AllFormats, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>
+    /// Loads a ZX Spectrum file from a stream asynchronously.
+    /// </summary>
+    /// <param name="path">The path of the file in the stream.</param>
+    /// <param name="stream">The file.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the loading.</param>
+    /// <returns>The file that was read.</returns>
+    [MustUseReturnValue]
+    public static async Task<ZXSpectrumFile> LoadAsync([PathReference] string path, Stream stream, CancellationToken cancellationToken = default) =>
+        (ZXSpectrumFile)await IOFileFormat.LoadAsync(path, stream, AllFormats, cancellationToken).ConfigureAwait(false);
 }

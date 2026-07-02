@@ -8,5 +8,6 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 public sealed record Info(string Type, string Text)
 {
     /// <inheritdoc />
+    [Pure]
     public override string ToString() => $"{Type}: {Text}";
 }

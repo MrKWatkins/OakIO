@@ -18,5 +18,6 @@ public sealed class SoundBlock(Sound sound, bool? initialSignal = null) : TapeBl
 
     internal override void Start(bool signal) => Sound.Start(signal);
 
+    [MustUseReturnValue]
     internal override int Advance(int tStates) => Sound.Advance(tStates);
 }

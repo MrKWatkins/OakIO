@@ -24,7 +24,10 @@ public sealed class PzxToTapConverter : IOFileConverter<PzxFile, TapFile>
             switch (block)
             {
                 case DataBlock data:
-                    blocks.Add(ConvertBlock(data));
+                    if (data.DataStreamSize >= 2)
+                    {
+                        blocks.Add(ConvertBlock(data));
+                    }
                     break;
 
                 // Metadata and structural blocks can be safely skipped.

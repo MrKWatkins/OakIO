@@ -73,6 +73,7 @@ public abstract class IOFileComponent(byte[] data)
     /// Returns the data as a read-only span.
     /// </summary>
     /// <returns>A read-only span over the data.</returns>
+    [Pure]
     public ReadOnlySpan<byte> AsReadOnlySpan() => data;
 
     /// <summary>
@@ -80,6 +81,7 @@ public abstract class IOFileComponent(byte[] data)
     /// </summary>
     /// <param name="start">The start index.</param>
     /// <returns>A read-only span over the data from the specified index.</returns>
+    [Pure]
     public ReadOnlySpan<byte> AsReadOnlySpan(int start) => data.AsSpan(start);
 
     /// <summary>
@@ -87,6 +89,7 @@ public abstract class IOFileComponent(byte[] data)
     /// </summary>
     /// <param name="startIndex">The start index.</param>
     /// <returns>A read-only span over the data from the specified index.</returns>
+    [Pure]
     public ReadOnlySpan<byte> AsReadOnlySpan(Index startIndex) => data.AsSpan(startIndex);
 
     /// <summary>

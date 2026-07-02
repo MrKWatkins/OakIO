@@ -12,9 +12,11 @@ public sealed class TapeToWavConverter(decimal tStatesPerSecond) : WavFileConver
     private const byte WavLowSignal = 0x40;
 
     /// <inheritdoc />
+    [Pure]
     public override WavFile Convert(TapeFile source, uint sampleRateHz = IWavFileConverter.DefaultSampleRateHz)
     {
-        var tStatesPerSample = (int)Math.Round(tStatesPerSecond / sampleRateHz);
+        // At least one T-state per sample, otherwise Advance never progresses and the loop never finishes.
+        var tStatesPerSample = Math.Max(1, (int)Math.Round(tStatesPerSecond / sampleRateHz));
 
         source.Start();
 

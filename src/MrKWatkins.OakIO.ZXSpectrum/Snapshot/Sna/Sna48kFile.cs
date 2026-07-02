@@ -33,6 +33,7 @@ public sealed class Sna48kFile : SnaFile
     public ReadOnlySpan<byte> Ram => ram;
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override bool TryLoadInto(Span<byte> memory)
     {
         ram.CopyTo(memory[16384..]);

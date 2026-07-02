@@ -60,6 +60,7 @@ public sealed class TurboSpeedDataHeader : TzxBlockHeader
     public override int BlockLength => GetUInt24(15);
 
     /// <inheritdoc />
+    [Pure]
     public override string ToString() =>
         $"{Type}: Pilot = {PulsesInPilotTone} x {TStatesInPilotPulse} T-States, sync = {TStatesInSyncFirstPulse}/{TStatesInSyncSecondPulse} T-States, " +
         $"1/0 = {TStatesInOneBitPulse}/{TStatesInZeroBitPulse} T-States, length = {BlockLength}, used bits in last byte = {UsedBitsInLastByte}, pause after = {PauseAfter}";

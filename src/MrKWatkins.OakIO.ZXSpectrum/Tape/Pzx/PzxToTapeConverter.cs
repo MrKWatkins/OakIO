@@ -9,9 +9,15 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// <summary>
 /// Converts a <see cref="PzxFile" /> to a <see cref="OakTapeFile" />.
 /// </summary>
-public sealed class PzxToTapeConverter() : IOFileConverter<PzxFile, OakTapeFile>(PzxFormat.Instance, TapeFormat.Instance)
+public sealed class PzxToTapeConverter : IOFileConverter<PzxFile, OakTapeFile>
 {
+    internal PzxToTapeConverter()
+        : base(PzxFormat.Instance, TapeFormat.Instance)
+    {
+    }
+
     /// <inheritdoc />
+    [Pure]
     public override OakTapeFile Convert(PzxFile source)
     {
         var blocks = source.Blocks.SelectMany(ConvertBlock).ToList();

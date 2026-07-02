@@ -3,6 +3,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 internal sealed class Decompressor
 {
     private readonly bool endMarker;
+    // Reused to stage the 1-3 pending output bytes; the previous writeBuffer is always fully drained before a new one is set.
+    private readonly byte[] writeBufferStorage = new byte[3];
     private ReadOnlyMemory<byte> writeBuffer;
     private State state;
     private int repeatCount;
@@ -14,6 +16,7 @@ internal sealed class Decompressor
         this.endMarker = endMarker;
     }
 
+    [MustUseReturnValue]
     internal int Read(Stream stream, Span<byte> buffer)
     {
         if (endMarkerReached)
@@ -124,7 +127,7 @@ internal sealed class Decompressor
 
             default:
                 // If one ED is followed by a non-ED byte xx, then we output ED xx.
-                writeBuffer = new byte[] { 0xED, (byte)value };
+                writeBuffer = StageWriteBuffer(0xED, (byte)value);
                 state = State.Normal;
                 ProcessWriteBuffer(buffer, ref bufferPosition);
                 break;
@@ -169,13 +172,13 @@ internal sealed class Decompressor
                 // Value is a 00 - could be the start of an end marker, and the previous
                 // 00 was just data. Write the previous 00 and keep the state as one
                 // end marker byte read.
-                writeBuffer = new byte[] { 0x00 };
+                writeBuffer = StageWriteBuffer(0x00);
                 ProcessWriteBuffer(buffer, ref bufferPosition);
                 break;
 
             default:
                 // We've already read a 00. Process that and the current value.
-                writeBuffer = new byte[] { 0x00, (byte)value };
+                writeBuffer = StageWriteBuffer(0x00, (byte)value);
                 ProcessWriteBuffer(buffer, ref bufferPosition);
                 state = State.Normal;
                 break;
@@ -192,7 +195,7 @@ internal sealed class Decompressor
         else
         {
             // We've read 00 ED value. If one ED is followed by a non-ED byte xx, then we output ED xx.
-            writeBuffer = new byte[] { 0x00, 0xED, (byte)value };
+            writeBuffer = StageWriteBuffer(0x00, 0xED, (byte)value);
             state = State.Normal;
             ProcessWriteBuffer(buffer, ref bufferPosition);
         }
@@ -212,6 +215,12 @@ internal sealed class Decompressor
         bufferPosition++;
         ProcessTwoEDsRead(value);
         return false;
+    }
+
+    private ReadOnlyMemory<byte> StageWriteBuffer(params ReadOnlySpan<byte> bytes)
+    {
+        bytes.CopyTo(writeBufferStorage);
+        return writeBufferStorage.AsMemory(0, bytes.Length);
     }
 
     private void ProcessWriteBuffer(Span<byte> buffer, ref int bufferPosition)

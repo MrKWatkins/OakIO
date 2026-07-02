@@ -21,6 +21,7 @@ public sealed class Sna128kFile : SnaFile
     /// </summary>
     /// <param name="bankNumber">The bank number, from 0 to 7.</param>
     /// <returns>The bank data.</returns>
+    [Pure]
     public ReadOnlySpan<byte> GetBank(int bankNumber)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(bankNumber);
@@ -29,6 +30,7 @@ public sealed class Sna128kFile : SnaFile
         return banks[bankNumber];
     }
 
+    [Pure]
     internal ReadOnlyMemory<byte> GetBankMemory(int bankNumber) => banks[bankNumber];
 
     // ReSharper disable once InconsistentNaming
@@ -43,6 +45,7 @@ public sealed class Sna128kFile : SnaFile
     public bool TrDosRomPaged => footerData[3] != 0;
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override bool TryLoadInto(Span<byte> memory)
     {
         banks[5].CopyTo(memory[0x4000..]);

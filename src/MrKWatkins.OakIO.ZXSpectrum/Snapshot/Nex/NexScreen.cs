@@ -5,10 +5,12 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 /// </summary>
 public sealed class NexScreen
 {
+    private readonly byte[] data;
+
     internal NexScreen(NexScreenType type, byte[] data)
     {
         Type = type;
-        Data = data;
+        this.data = data;
     }
 
     /// <summary>
@@ -19,5 +21,7 @@ public sealed class NexScreen
     /// <summary>
     /// Gets the raw screen data.
     /// </summary>
-    public byte[] Data { get; }
+    public IReadOnlyList<byte> Data => data;
+
+    internal ReadOnlyMemory<byte> DataMemory => data;
 }

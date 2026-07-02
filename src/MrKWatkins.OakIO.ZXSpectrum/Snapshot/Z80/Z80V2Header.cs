@@ -42,6 +42,7 @@ public class Z80V2Header : Z80V1Header
     /// </summary>
     /// <param name="hardwareMode">The raw hardware mode byte from the header.</param>
     /// <returns>The corresponding <see cref="HardwareMode" />.</returns>
+    [Pure]
     protected virtual HardwareMode GetHardwareMode(byte hardwareMode) =>
         hardwareMode switch
         {

@@ -5,17 +5,17 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 /// </summary>
 public sealed class NexFile : ZXSpectrumSnapshotFile
 {
-    private readonly NexRegisterSnapshot registers;
+    private readonly byte[]? palette;
+    private readonly byte[]? copperCode;
 
     internal NexFile(NexHeader header, byte[]? palette, IReadOnlyList<NexScreen> screens, byte[]? copperCode, IReadOnlyList<NexBank> banks)
         : base(NexFormat.Instance)
     {
         Header = header;
-        Palette = palette;
+        this.palette = palette;
         Screens = screens;
-        CopperCode = copperCode;
+        this.copperCode = copperCode;
         Banks = banks;
-        registers = new NexRegisterSnapshot(header);
     }
 
     /// <summary>
@@ -26,7 +26,9 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
     /// <summary>
     /// Gets the palette data, or <c>null</c> if the file has no palette.
     /// </summary>
-    public byte[]? Palette { get; }
+    public IReadOnlyList<byte>? Palette => palette;
+
+    internal ReadOnlyMemory<byte> PaletteMemory => palette;
 
     /// <summary>
     /// Gets the loading screens.
@@ -36,7 +38,9 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
     /// <summary>
     /// Gets the copper code data, or <c>null</c> if the file has no copper code.
     /// </summary>
-    public byte[]? CopperCode { get; }
+    public IReadOnlyList<byte>? CopperCode => copperCode;
+
+    internal ReadOnlyMemory<byte> CopperCodeMemory => copperCode;
 
     /// <summary>
     /// Gets the memory banks.
@@ -44,5 +48,5 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
     public IReadOnlyList<NexBank> Banks { get; }
 
     /// <inheritdoc />
-    public override RegisterSnapshot Registers => registers;
+    public override RegisterSnapshot Registers => Header.Registers;
 }

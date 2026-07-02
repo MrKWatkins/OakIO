@@ -39,7 +39,7 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
     private static byte[] Compress(byte[] data)
     {
         using var compressedStream = new MemoryStream();
-        using (var compressionStream = new Z80CompressionStream(compressedStream, CompressionMode.Compress, endMarker: false))
+        using (var compressionStream = new Z80CompressionStream(compressedStream, CompressionMode.Compress, endMarker: true))
         {
             compressionStream.Write(data);
         }
@@ -72,6 +72,7 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
     }
 
     /// <inheritdoc />
+    [MustUseReturnValue]
     public override bool TryLoadInto(Span<byte> memory)
     {
         UncompressedData.CopyTo(memory[16384..]);
