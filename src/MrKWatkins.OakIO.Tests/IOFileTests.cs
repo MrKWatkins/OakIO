@@ -7,7 +7,10 @@ namespace MrKWatkins.OakIO.Tests;
 public sealed class IOFileTests
 {
     [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Brotli, "{name}.tst.br")]
+    [TestCase(CompressionFormat.GZip, "{name}.tst.gz")]
     [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    [TestCase(CompressionFormat.Zstandard, "{name}.tst.zst")]
     public void Save_Load_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
     {
         using var temporaryDirectory = TemporaryDirectory.Create();
@@ -24,7 +27,10 @@ public sealed class IOFileTests
     }
 
     [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Brotli, "{name}.tst.br")]
+    [TestCase(CompressionFormat.GZip, "{name}.tst.gz")]
     [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    [TestCase(CompressionFormat.Zstandard, "{name}.tst.zst")]
     public async Task SaveAsync_LoadAsync_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
     {
         using var temporaryDirectory = TemporaryDirectory.Create();

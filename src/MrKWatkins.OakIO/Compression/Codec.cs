@@ -6,7 +6,10 @@ internal abstract class Codec
 {
     private static readonly FrozenDictionary<string, CompressionFormat> CompressionFormatByFileExtensionWithoutPeriod = new Dictionary<string, CompressionFormat>(StringComparer.OrdinalIgnoreCase)
     {
-        { "zip", CompressionFormat.Zip }
+        { "br", CompressionFormat.Brotli },
+        { "gz", CompressionFormat.GZip },
+        { "zip", CompressionFormat.Zip },
+        { "zst", CompressionFormat.Zstandard },
     }.ToFrozenDictionary();
 
     [MustUseReturnValue]
@@ -117,7 +120,10 @@ internal abstract class Codec
         format switch
         {
             CompressionFormat.None => NoCompressionCodec.Instance,
+            CompressionFormat.Brotli => BrotliCodec.Instance,
+            CompressionFormat.GZip => GZipCodec.Instance,
             CompressionFormat.Zip => ZipCodec.Instance,
+            CompressionFormat.Zstandard => ZstandardCodec.Instance,
             _ => throw new NotSupportedException($"Compression format {format} is not supported.")
         };
 
