@@ -29,6 +29,8 @@ public sealed class Sna128kFile : SnaFile
         return banks[bankNumber];
     }
 
+    internal ReadOnlyMemory<byte> GetBankMemory(int bankNumber) => banks[bankNumber];
+
     // ReSharper disable once InconsistentNaming
     /// <summary>
     /// Gets the value of port 0x7FFD.

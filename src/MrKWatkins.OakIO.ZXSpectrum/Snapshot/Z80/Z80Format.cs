@@ -105,7 +105,7 @@ public sealed class Z80Format : ZXSpectrumSnapshotFormat<Z80File>
         await file.Header.WriteAsync(writer).ConfigureAwait(false);
         if (file is Z80V1File v1File)
         {
-            writer.WriteBytes(v1File.CompressedData);
+            await writer.WriteAsync(v1File.CompressedDataMemory).ConfigureAwait(false);
         }
         else
         {

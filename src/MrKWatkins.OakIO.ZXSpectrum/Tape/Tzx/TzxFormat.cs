@@ -84,9 +84,13 @@ public sealed class TzxFormat : ZXSpectrumTapeFormat<TzxFile>
     protected override async ValueTask WriteAsync(TzxFile file, IBinaryWriter writer)
     {
         await file.Header.WriteAsync(writer).ConfigureAwait(false);
+
+        // Reused for the one-byte type tag written before each block; safe as each write is awaited before the next.
+        var typeTag = new byte[1];
         foreach (var block in file.Blocks)
         {
-            writer.WriteByte((byte)block.Header.Type);
+            typeTag[0] = (byte)block.Header.Type;
+            await writer.WriteAsync(typeTag).ConfigureAwait(false);
             await block.Header.WriteAsync(writer).ConfigureAwait(false);
             await block.WriteAsync(writer).ConfigureAwait(false);
         }

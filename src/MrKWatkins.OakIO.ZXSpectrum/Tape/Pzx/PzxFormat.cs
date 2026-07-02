@@ -69,9 +69,12 @@ public sealed class PzxFormat : ZXSpectrumTapeFormat<PzxFile>
     /// <inheritdoc />
     protected override async ValueTask WriteAsync(PzxFile file, IBinaryWriter writer)
     {
+        // Reused for the four-byte type tag written before each block; safe as each write is awaited before the next.
+        var typeTag = new byte[4];
         foreach (var block in file.Blocks)
         {
-            writer.WriteUInt32BigEndian((uint)block.Header.Type);
+            typeTag.SetUInt32(0, (uint)block.Header.Type, Endian.Big);
+            await writer.WriteAsync(typeTag).ConfigureAwait(false);
             await block.Header.WriteAsync(writer).ConfigureAwait(false);
             await block.WriteAsync(writer).ConfigureAwait(false);
         }

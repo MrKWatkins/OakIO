@@ -184,11 +184,7 @@ public sealed class IOFileFormatTests
     {
         public override IOFile Read(Stream stream) => throw new NotSupportedException();
 
-        protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer)
-        {
-            writer.WriteBytes(TestIOFileFormat.Contents);
-            return ValueTask.CompletedTask;
-        }
+        protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => writer.WriteAsync(TestIOFileFormat.Contents);
     }
 
     private sealed class OtherIOFileFormat() : IOFileFormat("other", "oth", typeof(OtherIOFile))

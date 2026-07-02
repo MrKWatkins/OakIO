@@ -96,10 +96,11 @@ public abstract class IOFileComponent(byte[] data)
     public void Write(Stream stream) => stream.Write(data);
 
     /// <summary>
-    /// Writes the data to a <see cref="IBinaryWriter"/>.
+    /// Writes the data to an <see cref="IBinaryWriter"/>.
     /// </summary>
     /// <param name="writer">The <see cref="IBinaryWriter"/> to write to.</param>
-    internal ValueTask WriteAsync(IBinaryWriter writer) => writer.WriteAsync(data);
+    /// <returns>A <see cref="ValueTask" /> that completes when the data has been written.</returns>
+    public ValueTask WriteAsync(IBinaryWriter writer) => writer.WriteAsync(data);
 
     /// <summary>
     /// Copies the data to the specified memory span.

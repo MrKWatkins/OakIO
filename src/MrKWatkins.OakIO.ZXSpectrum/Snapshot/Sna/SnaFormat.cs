@@ -119,13 +119,15 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
     private static async ValueTask Write128kAsync(Sna128kFile file, IBinaryWriter writer)
     {
         await file.Header.WriteAsync(writer).ConfigureAwait(false);
-        writer.WriteBytes(file.GetBank(5));
-        writer.WriteBytes(file.GetBank(2));
-        writer.WriteBytes(file.GetBank(file.PagedBank));
+        await writer.WriteAsync(file.GetBankMemory(5)).ConfigureAwait(false);
+        await writer.WriteAsync(file.GetBankMemory(2)).ConfigureAwait(false);
+        await writer.WriteAsync(file.GetBankMemory(file.PagedBank)).ConfigureAwait(false);
 
-        writer.WriteUInt16LittleEndian(file.Registers.PC);
-        writer.WriteByte(file.Port7FFD);
-        writer.WriteByte(file.TrDosRomPaged ? (byte)1 : (byte)0);
+        var footer = new byte[4];
+        footer.SetUInt16(0, file.Registers.PC);
+        footer[2] = file.Port7FFD;
+        footer[3] = file.TrDosRomPaged ? (byte)1 : (byte)0;
+        await writer.WriteAsync(footer).ConfigureAwait(false);
 
         foreach (var bankNumber in new byte[] { 0, 1, 3, 4, 6, 7 })
         {
@@ -134,7 +136,7 @@ public sealed class SnaFormat : ZXSpectrumSnapshotFormat<SnaFile>
                 continue;
             }
 
-            writer.WriteBytes(file.GetBank(bankNumber));
+            await writer.WriteAsync(file.GetBankMemory(bankNumber)).ConfigureAwait(false);
         }
     }
 }

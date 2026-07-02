@@ -51,6 +51,8 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
     /// </summary>
     public ReadOnlySpan<byte> CompressedData => compressedData;
 
+    internal ReadOnlyMemory<byte> CompressedDataMemory => compressedData;
+
     /// <summary>
     /// Gets the uncompressed snapshot data.
     /// </summary>

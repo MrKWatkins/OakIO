@@ -20,9 +20,5 @@ internal sealed class TestIOFileFormat : IOFileFormat<TestIOFile>
         return new TestIOFile();
     }
 
-    protected override ValueTask WriteAsync(TestIOFile _, IBinaryWriter writer)
-    {
-        writer.WriteBytes(Contents);
-        return ValueTask.CompletedTask;
-    }
+    protected override ValueTask WriteAsync(TestIOFile _, IBinaryWriter writer) => writer.WriteAsync(Contents);
 }

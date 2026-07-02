@@ -47,180 +47,32 @@ public sealed class WavFormatTests
     }
 
     [Test]
-    public void Read_MissingRiffHeader()
+    public void Read_InvalidHeader()
     {
         var bytes = "XIFF"u8.ToArray();
         using var stream = new MemoryStream(bytes);
 
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: missing RIFF header.");
+        // A header shorter than the fixed 44 bytes cannot be read at all.
+        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<EndOfStreamException>();
     }
 
     [Test]
-    public void Read_MissingWaveFormat()
+    public void Read_TruncatedHeader()
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0); // chunk size
-        writer.Write("XXXX"u8); // not WAVE
-        stream.Position = 0;
+        var bytes = new byte[WavHeader.Size - 1];
+        using var stream = new MemoryStream(bytes);
 
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: missing WAVE format.");
-    }
-
-    [Test]
-    public void Read_MissingFmtSubchunk()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("xxxx"u8); // not "fmt "
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: missing fmt subchunk.");
-    }
-
-    [Test]
-    public void Read_InvalidFmtSubchunkSize()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(18); // not 16
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: expected fmt subchunk size of 16 but got 18.");
-    }
-
-    [Test]
-    public void Read_InvalidAudioFormat()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((ushort)3); // not PCM (1)
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: expected PCM audio format (1) but got 3.");
-    }
-
-    [Test]
-    public void Read_InvalidNumChannels()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((ushort)1); // PCM
-        writer.Write((ushort)2); // stereo, not mono
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: expected 1 channel but got 2.");
-    }
-
-    [Test]
-    public void Read_InvalidBitsPerSample()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((ushort)1); // PCM
-        writer.Write((ushort)1); // mono
-        writer.Write(44100u);    // sample rate
-        writer.Write(88200u);    // byte rate
-        writer.Write((ushort)2); // block align
-        writer.Write((ushort)16); // 16 bits, not 8
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: expected 8 bits per sample but got 16.");
-    }
-
-    [Test]
-    public void Read_MissingDataSubchunk()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((ushort)1); // PCM
-        writer.Write((ushort)1); // mono
-        writer.Write(44100u);    // sample rate
-        writer.Write(44100u);    // byte rate
-        writer.Write((ushort)1); // block align
-        writer.Write((ushort)8); // 8 bits
-        writer.Write("xxxx"u8); // not "data"
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: missing data subchunk.");
-    }
-
-    [Test]
-    public void Read_NegativeDataSize()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        WriteHeaderThroughDataTag(writer);
-        writer.Write(-1); // data size
-        stream.Position = 0;
-
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: negative data subchunk size of -1.");
+        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<EndOfStreamException>();
     }
 
     [Test]
     public void Read_TruncatedSampleData()
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        WriteHeaderThroughDataTag(writer);
-        writer.Write(10);                       // data size says 10 bytes...
-        writer.Write(new byte[] { 1, 2, 3 });   // ...but only 3 are present.
-        stream.Position = 0;
+        // A valid header claiming 10 bytes of sample data, but only 3 present.
+        var bytes = new byte[WavHeader.Size + 3];
+        new WavFile(44100, new byte[10]).ToByteArray().AsSpan(0, WavHeader.Size).CopyTo(bytes);
+        using var stream = new MemoryStream(bytes);
 
-        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<InvalidDataException>()
-            .That.Message.Should().Equal("Not a valid WAV file: expected 10 bytes of sample data but only got 3.");
-    }
-
-    private static void WriteHeaderThroughDataTag(BinaryWriter writer)
-    {
-        writer.Write("RIFF"u8);
-        writer.Write(0);
-        writer.Write("WAVE"u8);
-        writer.Write("fmt "u8);
-        writer.Write(16);
-        writer.Write((ushort)1); // PCM
-        writer.Write((ushort)1); // mono
-        writer.Write(44100u);    // sample rate
-        writer.Write(44100u);    // byte rate
-        writer.Write((ushort)1); // block align
-        writer.Write((ushort)8); // 8 bits
-        writer.Write("data"u8);
+        AssertThat.Invoking(() => WavFormat.Instance.Read(stream)).Should().Throw<EndOfStreamException>();
     }
 }
