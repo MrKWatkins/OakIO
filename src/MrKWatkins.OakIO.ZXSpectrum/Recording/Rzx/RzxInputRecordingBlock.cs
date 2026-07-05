@@ -10,7 +10,7 @@ public sealed class RzxInputRecordingBlock : RzxBlock
     private const int MinimumDataLength = 13;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxInputRecordingBlock" /> class containing uncompressed, unprotected frames.
+    /// Initializes a new instance of the <see cref="RzxInputRecordingBlock" /> class containing uncompressed, unprotected frames.
     /// </summary>
     /// <param name="frames">The input frames.</param>
     /// <param name="startTStates">The T-states counter at the beginning of the recording.</param>

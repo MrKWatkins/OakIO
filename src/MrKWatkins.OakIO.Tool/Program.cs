@@ -3,4 +3,4 @@ using Spectre.Console.Cli;
 
 var app = new CommandApp();
 app.Configure(OakIOTool.Configure);
-return app.Run(args);
+return await app.RunAsync(args).ConfigureAwait(false);

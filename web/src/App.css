@@ -276,6 +276,27 @@
   margin: 0.75rem 0 0.75rem;
 }
 
+.convert-compression {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.convert-compression label {
+  white-space: nowrap;
+  color: #aaa;
+}
+
+.convert-compression select {
+  padding: 0.3em 0.6em;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: inherit;
+  font-size: 0.9em;
+}
+
 .convert-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -358,6 +379,15 @@
 
   .convert-hint {
     color: #666;
+  }
+
+  .convert-compression label {
+    color: #666;
+  }
+
+  .convert-compression select {
+    background: #f0f0f0;
+    border-color: #ccc;
   }
 
   .convert-button {

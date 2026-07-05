@@ -38,7 +38,7 @@ public abstract class ZXSpectrumFileFormat : IOFileFormat
         TapeFormats.Cast<ZXSpectrumFileFormat>().Concat(SnapshotFormats).Concat(RecordingFormats).ToArray();
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="ZXSpectrumFileFormat" /> class.
+    /// Initializes a new instance of the <see cref="ZXSpectrumFileFormat" /> class.
     /// </summary>
     /// <param name="name">The display name of the format.</param>
     /// <param name="fileExtension">The file extension for the format, without a leading dot.</param>

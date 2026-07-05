@@ -11,7 +11,7 @@ namespace MrKWatkins.OakIO;
 public abstract class IOFileComponent(byte[] data)
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="IOFileComponent" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="IOFileComponent" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="length">The length of the data in bytes.</param>
     protected IOFileComponent(int length)
@@ -20,7 +20,7 @@ public abstract class IOFileComponent(byte[] data)
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="IOFileComponent" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="IOFileComponent" /> class by reading data from a stream.
     /// </summary>
     /// <param name="length">The number of bytes to read.</param>
     /// <param name="data">The stream to read the data from.</param>
@@ -30,7 +30,7 @@ public abstract class IOFileComponent(byte[] data)
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="IOFileComponent" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="IOFileComponent" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="length">The expected length of the data in bytes.</param>
     /// <param name="data">The bytes for this component.</param>

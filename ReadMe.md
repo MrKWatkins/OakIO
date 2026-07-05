@@ -27,8 +27,8 @@ An online converter using this library is available at https://mrkwatkins.github
 ## Use of AI
 
 My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
-forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, set up the online converter, and
-to help with documentation and unit tests.
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, setup for the the online converter,
+and help with documentation and unit tests.
 
 ## Licencing
 

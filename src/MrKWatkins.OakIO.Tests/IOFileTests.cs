@@ -46,6 +46,46 @@ public sealed class IOFileTests
         roundTripped.ToByteArray().Should().SequenceEqual(ioFile.ToByteArray());
     }
 
+    [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Brotli, "{name}.tst.br")]
+    [TestCase(CompressionFormat.GZip, "{name}.tst.gz")]
+    [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    [TestCase(CompressionFormat.Zstandard, "{name}.tst.zst")]
+    public void Write_Stream_Filename_CompressionFormat_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
+    {
+        var ioFile = new TestIOFile();
+        var name = Guid.NewGuid().ToString();
+
+        using var stream = new MemoryStream();
+        ioFile.Write(stream, $"{name}.tst", compressionFormat);
+        stream.Position = 0;
+
+        var compressedFilename = expectedFilenameFormat.Replace("{name}", name, StringComparison.OrdinalIgnoreCase);
+        var roundTripped = IOFileFormat.Load(compressedFilename, stream, TestIOFileFormat.Instance);
+
+        roundTripped.ToByteArray().Should().SequenceEqual(ioFile.ToByteArray());
+    }
+
+    [TestCase(CompressionFormat.None, "{name}.tst")]
+    [TestCase(CompressionFormat.Brotli, "{name}.tst.br")]
+    [TestCase(CompressionFormat.GZip, "{name}.tst.gz")]
+    [TestCase(CompressionFormat.Zip, "{name}.zip")]
+    [TestCase(CompressionFormat.Zstandard, "{name}.tst.zst")]
+    public async Task WriteAsync_Stream_Filename_CompressionFormat_Roundtrip(CompressionFormat compressionFormat, string expectedFilenameFormat)
+    {
+        var ioFile = new TestIOFile();
+        var name = Guid.NewGuid().ToString();
+
+        using var stream = new MemoryStream();
+        await ioFile.WriteAsync(stream, $"{name}.tst", compressionFormat);
+        stream.Position = 0;
+
+        var compressedFilename = expectedFilenameFormat.Replace("{name}", name, StringComparison.OrdinalIgnoreCase);
+        var roundTripped = await IOFileFormat.LoadAsync(compressedFilename, stream, [TestIOFileFormat.Instance]);
+
+        roundTripped.ToByteArray().Should().SequenceEqual(ioFile.ToByteArray());
+    }
+
     [Test]
     public void Save_ThrowsIfDirectoryDoesNotExist()
     {
@@ -64,6 +104,25 @@ public sealed class IOFileTests
         const CompressionFormat unsupported = (CompressionFormat)byte.MaxValue;
 
         ioFile.Invoking(f => f.Save(temporaryDirectory.Path, "File", unsupported)).Should().Throw<NotSupportedException>()
+            .That.Message.Should().Equal($"Compression format {unsupported} is not supported.");
+    }
+
+    [TestCase(CompressionFormat.None, "name.tst")]
+    [TestCase(CompressionFormat.Brotli, "name.tst.br")]
+    [TestCase(CompressionFormat.GZip, "name.tst.gz")]
+    [TestCase(CompressionFormat.Zip, "name.zip")]
+    [TestCase(CompressionFormat.Zstandard, "name.tst.zst")]
+    public void GetCompressedFilename(CompressionFormat compressionFormat, string expected)
+    {
+        IOFile.GetCompressedFilename("name.tst", compressionFormat).Should().Equal(expected);
+    }
+
+    [Test]
+    public void GetCompressedFilename_ThrowsIfCompressionFormatNotSupported()
+    {
+        const CompressionFormat unsupported = (CompressionFormat)byte.MaxValue;
+
+        AssertThat.Invoking(() => IOFile.GetCompressedFilename("name.tst", unsupported)).Should().Throw<NotSupportedException>()
             .That.Message.Should().Equal($"Compression format {unsupported} is not supported.");
     }
 

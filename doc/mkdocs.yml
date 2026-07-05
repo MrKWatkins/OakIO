@@ -1,8 +1,8 @@
-site_name: MrKWatkins.OakIO
+site_name: OakIO
 theme:
   name: material
   repo_url: https://github.com/MrKWatkins/OakIO
-  favicon: favicon.ico
+  favicon: images/favicon.ico
   features:
     - navigation.sections
   palette:
@@ -31,9 +31,7 @@ theme:
 plugins:
   - search
   - macros
-  - mkdocs-simple-hooks:
-      hooks:
-        on_nav: "hooks:on_nav"
+  - awesome-nav
 extra_css:
   - stylesheets/overrides.css
   - assets/javascripts/converter.css

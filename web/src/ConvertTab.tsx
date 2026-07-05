@@ -1,7 +1,10 @@
-import type { ConvertibleFormat } from './types';
+import { compressionFormats } from './types';
+import type { CompressionFormat, ConvertibleFormat } from './types';
 
-export function ConvertTab({ formats, onConvert, converting, error }: {
+export function ConvertTab({ formats, compressionFormat, onCompressionFormatChange, onConvert, converting, error }: {
   formats: ConvertibleFormat[];
+  compressionFormat: CompressionFormat;
+  onCompressionFormatChange: (compressionFormat: CompressionFormat) => void;
   onConvert: (ext: string) => void;
   converting: string | null;
   error: string | null;
@@ -13,6 +16,19 @@ export function ConvertTab({ formats, onConvert, converting, error }: {
   return (
     <div className="tab-content">
       <p className="convert-hint">Choose a format to convert and download:</p>
+      <div className="convert-compression">
+        <label htmlFor="compressionFormat">Compression:</label>
+        <select
+          id="compressionFormat"
+          value={compressionFormat}
+          disabled={converting !== null}
+          onChange={e => onCompressionFormatChange(e.target.value as CompressionFormat)}
+        >
+          {compressionFormats.map(f => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+      </div>
       <div className="convert-buttons">
         {formats.map(f => (
           <button

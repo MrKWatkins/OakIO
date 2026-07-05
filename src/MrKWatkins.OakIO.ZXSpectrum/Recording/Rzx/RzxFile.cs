@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 public sealed class RzxFile : ZXSpectrumRecordingFile
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxFile" /> class.
+    /// Initializes a new instance of the <see cref="RzxFile" /> class.
     /// </summary>
     /// <param name="blocks">The blocks in the file.</param>
     /// <param name="header">The file header, or <c>null</c> to create a default version 0.13 header.</param>

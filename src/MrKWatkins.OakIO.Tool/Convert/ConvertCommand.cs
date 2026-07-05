@@ -4,13 +4,19 @@ using Spectre.Console.Cli;
 namespace MrKWatkins.OakIO.Tool.Convert;
 
 [UsedImplicitly]
-internal sealed class ConvertCommand : Command<ConvertSettings>
+internal sealed class ConvertCommand : AsyncCommand<ConvertSettings>
 {
-    public override int Execute(CommandContext context, ConvertSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, ConvertSettings settings, CancellationToken cancellationToken)
     {
-        using var inputStream = File.OpenRead(settings.Input);
-        using var outputStream = File.Create(settings.Output);
-        Commands.ConvertCommand.Execute(settings.Input, inputStream, settings.Output, outputStream);
+        var inputStream = File.OpenRead(settings.Input);
+        await using (inputStream.ConfigureAwait(false))
+        {
+            var outputStream = File.Create(settings.Output);
+            await using (outputStream.ConfigureAwait(false))
+            {
+                await Commands.ConvertCommand.ExecuteAsync(settings.Input, inputStream, settings.Output, outputStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+            }
+        }
         AnsiConsole.MarkupLine($"Converted [green]{settings.Input}[/] to [green]{settings.Output}[/].");
         return 0;
     }

@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Recording;
 public abstract class ZXSpectrumRecordingFile : ZXSpectrumFile
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="ZXSpectrumRecordingFile" /> class.
+    /// Initializes a new instance of the <see cref="ZXSpectrumRecordingFile" /> class.
     /// </summary>
     /// <param name="format">The recording format of the file.</param>
     private protected ZXSpectrumRecordingFile(ZXSpectrumRecordingFormat format)

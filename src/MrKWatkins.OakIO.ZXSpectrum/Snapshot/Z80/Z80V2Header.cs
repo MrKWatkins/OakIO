@@ -8,7 +8,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 public class Z80V2Header : Z80V1Header
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Z80V2Header" /> class with default values.
+    /// Initializes a new instance of the <see cref="Z80V2Header" /> class with default values.
     /// </summary>
     public Z80V2Header()
         : this(new byte[55])

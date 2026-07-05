@@ -16,7 +16,7 @@ public sealed class RzxHeader : Header
     internal const int HeaderLength = 10;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxHeader" /> class for version 0.13.
+    /// Initializes a new instance of the <see cref="RzxHeader" /> class for version 0.13.
     /// </summary>
     /// <param name="flags">The header flags.</param>
     public RzxHeader(uint flags = 0)

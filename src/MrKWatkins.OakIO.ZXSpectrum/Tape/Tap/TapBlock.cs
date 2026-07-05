@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 public abstract class TapBlock : Block<TapHeader, TapTrailer>
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="TapBlock" /> class.
+    /// Initializes a new instance of the <see cref="TapBlock" /> class.
     /// </summary>
     /// <param name="header">The header for the block.</param>
     /// <param name="trailer">The trailer for the block.</param>
@@ -50,7 +50,7 @@ public abstract class TapBlock<THeader> : TapBlock
     where THeader : TapHeader
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="TapBlock{THeader}" /> class.
+    /// Initializes a new instance of the <see cref="TapBlock{THeader}" /> class.
     /// </summary>
     /// <param name="header">The header for the block.</param>
     /// <param name="trailer">The trailer for the block.</param>

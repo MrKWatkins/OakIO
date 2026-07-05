@@ -8,7 +8,7 @@
 
 ## Overview
 
-OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files, inspecting their contents, and converting between formats.
+OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files — synchronously or asynchronously, optionally compressed — inspecting their contents, and converting between formats.
 
 ## Source Code
 
@@ -30,15 +30,19 @@ An online converter using this library is available [here](converter.md).
 
 ### ZX Spectrum Tape Formats
 
-- [TAP](formats/tap.md) — Simple tape format containing raw data blocks.
-- [TZX](formats/tzx.md) — The standard for preserving ZX Spectrum tape recordings.
-- [PZX](formats/pzx.md) — An alternative tape format with pulse-level encoding.
+- [TAP](formats/tape/tap.md) — Simple tape format containing raw data blocks.
+- [TZX](formats/tape/tzx.md) — The standard for preserving ZX Spectrum tape recordings.
+- [PZX](formats/tape/pzx.md) — An alternative tape format with pulse-level encoding.
 
 ### ZX Spectrum Snapshot Formats
 
-- [Z80](formats/z80.md) — Snapshot format supporting versions 1, 2, and 3, with optional compression.
-- [SNA](formats/sna.md) — Simple snapshot format for 48K and 128K machines.
-- [NEX](formats/nex.md) — Snapshot format for the ZX Spectrum Next.
+- [Z80](formats/snapshot/z80.md) — Snapshot format supporting versions 1, 2, and 3, with optional compression.
+- [SNA](formats/snapshot/sna.md) — Simple snapshot format for 48K and 128K machines.
+- [NEX](formats/snapshot/nex.md) — Snapshot format for the ZX Spectrum Next.
+
+### ZX Spectrum Recording Formats
+
+- [RZX](formats/recording/rzx.md) — Input recording format for deterministic replay against an emulator.
 
 ## Architecture
 
@@ -53,8 +57,8 @@ The library is organised around a set of base classes:
 ## Use of AI
 
 My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
-forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, set up the online converter, and
-to help with documentation and unit tests.
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, setup for the the online converter,
+and help with documentation and unit tests.
 
 ## Licencing
 

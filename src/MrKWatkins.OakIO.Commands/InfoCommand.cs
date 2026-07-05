@@ -1,6 +1,8 @@
 using System.Text.Json;
 using MrKWatkins.OakIO.Commands.FileInfo;
 using MrKWatkins.OakIO.ZXSpectrum;
+using MrKWatkins.OakIO.ZXSpectrum.Recording;
+using MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 using MrKWatkins.OakIO.ZXSpectrum.Tape;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
@@ -9,7 +11,7 @@ using TzxTape = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
 namespace MrKWatkins.OakIO.Commands;
 
-public sealed class InfoCommand
+public static class InfoCommand
 {
     [Pure]
     public static FileInfoResult GetFileInfo(string inputFilename, byte[] inputData)
@@ -48,12 +50,52 @@ public sealed class InfoCommand
     }
 
     [Pure]
+    public static async Task<FileInfoResult> GetFileInfoAsync(string inputFilename, byte[] inputData, CancellationToken cancellationToken = default)
+    {
+        using var inputStream = new MemoryStream(inputData);
+        return await GetFileInfoAsync(inputFilename, inputStream, cancellationToken).ConfigureAwait(false);
+    }
+
+    [Pure]
+    public static async Task<FileInfoResult> GetFileInfoAsync(string inputFilename, Stream inputStream, CancellationToken cancellationToken = default)
+    {
+        var file = await ZXSpectrumFileFormat.LoadAsync(inputFilename, inputStream, cancellationToken).ConfigureAwait(false);
+        return BuildFileInfo(file);
+    }
+
+    [Pure]
+    public static async Task<string> GetFileInfoJsonAsync(string inputFilename, byte[] inputData, CancellationToken cancellationToken = default)
+    {
+        var fileInfo = await GetFileInfoAsync(inputFilename, inputData, cancellationToken).ConfigureAwait(false);
+        return JsonSerializer.Serialize(fileInfo, FileInfoJsonContext.Default.FileInfoResult);
+    }
+
+    [Pure]
+    public static async Task<string> ExecuteAsync(string inputFilename, byte[] inputData, string indent = "    ", CancellationToken cancellationToken = default)
+    {
+        var output = new StringWriter();
+        await using (output.ConfigureAwait(false))
+        {
+            var fileInfo = await GetFileInfoAsync(inputFilename, inputData, cancellationToken).ConfigureAwait(false);
+            WriteFileInfo(output, fileInfo, indent);
+            return output.ToString();
+        }
+    }
+
+    public static async Task ExecuteAsync(string inputFilename, Stream inputStream, TextWriter output, string indent = "    ", CancellationToken cancellationToken = default)
+    {
+        var fileInfo = await GetFileInfoAsync(inputFilename, inputStream, cancellationToken).ConfigureAwait(false);
+        WriteFileInfo(output, fileInfo, indent);
+    }
+
+    [Pure]
     private static FileInfoResult BuildFileInfo(IOFile file)
     {
         var type = file switch
         {
             ZXSpectrumTapeFile => "tape",
             ZXSpectrumSnapshotFile => "snapshot",
+            ZXSpectrumRecordingFile => "recording",
             _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 
@@ -68,6 +110,7 @@ public sealed class InfoCommand
             TzxTape.TzxFile tzx => tzx.ToInfoSections(),
             Pzx.PzxFile pzx => pzx.ToInfoSections(),
             ZXSpectrumSnapshotFile snapshot => snapshot.ToInfoSections(),
+            RzxFile rzx => rzx.ToInfoSections(),
             _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 

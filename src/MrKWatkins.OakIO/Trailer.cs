@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO;
 public abstract class Trailer : IOFileComponent
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Trailer" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="Trailer" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="length">The length of the trailer in bytes.</param>
     protected Trailer(int length) : base(length)
@@ -14,7 +14,7 @@ public abstract class Trailer : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Trailer" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="Trailer" /> class by reading data from a stream.
     /// </summary>
     /// <param name="length">The number of bytes to read.</param>
     /// <param name="data">The stream to read the trailer data from.</param>
@@ -23,7 +23,7 @@ public abstract class Trailer : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Trailer" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="Trailer" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="length">The expected length of the trailer in bytes.</param>
     /// <param name="data">The bytes for this trailer.</param>
@@ -32,7 +32,7 @@ public abstract class Trailer : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Trailer" /> class from a byte array.
+    /// Initializes a new instance of the <see cref="Trailer" /> class from a byte array.
     /// </summary>
     /// <param name="data">The raw byte data for this trailer.</param>
     protected Trailer(byte[] data) : base(data)

@@ -1,4 +1,4 @@
-# NEX Snapshot
+# NEX
 
 NEX is a snapshot format for the ZX Spectrum Next. In addition to the standard CPU registers and RAM banks, it supports Next-specific features including multiple screen types (Layer 2, ULA, LoRes, HiRes, HiColour), copper code, and a palette. NEX does not store shadow register data.
 
@@ -6,13 +6,13 @@ Details about the NEX format can be found at [https://wiki.specnext.dev/NEX_file
 
 ## API
 
-| Class                                                                             | Description                                                      |
-|-----------------------------------------------------------------------------------|------------------------------------------------------------------|
-| [`NexFormat`](../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexFormat/index.md) | Singleton format for reading and writing NEX snapshots.          |
-| [`NexFile`](../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexFile/index.md)     | Represents a NEX snapshot file.                                  |
-| [`NexHeader`](../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexHeader/index.md) | 512-byte header containing registers and hardware configuration. |
-| [`NexBank`](../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexBank/index.md)     | A 16 KB RAM bank.                                                |
-| [`NexScreen`](../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexScreen/index.md) | An attached screen buffer.                                       |
+| Class                                                                                | Description                                                      |
+|--------------------------------------------------------------------------------------|------------------------------------------------------------------|
+| [`NexFormat`](../../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexFormat/index.md) | Singleton format for reading and writing NEX snapshots.          |
+| [`NexFile`](../../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexFile/index.md)     | Represents a NEX snapshot file.                                  |
+| [`NexHeader`](../../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexHeader/index.md) | 512-byte header containing registers and hardware configuration. |
+| [`NexBank`](../../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexBank/index.md)     | A 16 KB RAM bank.                                                |
+| [`NexScreen`](../../API/MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex/NexScreen/index.md) | An attached screen buffer.                                       |
 
 ## Reading and Writing
 
@@ -23,7 +23,7 @@ NexFile nex = NexFormat.Instance.Read(stream);
 
 // Write
 using var output = File.Create("output.nex");
-NexFormat.Instance.Write(nex, output);
+nex.Write(output);
 ```
 
 ## Accessing State

@@ -1,5 +1,5 @@
 import type * as DotnetModule from '../dotnet/dotnet.js';
-import type { FileInfo } from './types';
+import type { CompressionFormat, FileInfo } from './types';
 
 interface OakIOExports {
   MrKWatkins: {
@@ -7,7 +7,8 @@ interface OakIOExports {
       Wasm: {
         OakIOInterop: {
           GetInfo: (inputFilename: string, inputData: Uint8Array) => Promise<string>;
-          Convert: (inputFilename: string, inputData: Uint8Array, outputFilename: string) => Promise<string>;
+          Convert: (inputFilename: string, inputData: Uint8Array, outputFilename: string, compressionFormat: string) => Promise<string>;
+          GetCompressedFilename: (filename: string, compressionFormat: string) => string;
         };
       };
     };
@@ -48,13 +49,18 @@ export async function getInfo(inputFilename: string, inputData: Uint8Array): Pro
   return JSON.parse(json) as FileInfo;
 }
 
-export async function convert(inputFilename: string, inputData: Uint8Array, outputFilename: string): Promise<Uint8Array> {
+export async function convert(inputFilename: string, inputData: Uint8Array, outputFilename: string, compressionFormat: CompressionFormat = 'None'): Promise<Uint8Array> {
   const exports = await getExports();
-  const base64 = await exports.MrKWatkins.OakIO.Wasm.OakIOInterop.Convert(inputFilename, inputData, outputFilename);
+  const base64 = await exports.MrKWatkins.OakIO.Wasm.OakIOInterop.Convert(inputFilename, inputData, outputFilename, compressionFormat);
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
     bytes[i] = binary.charCodeAt(i);
   }
   return bytes;
+}
+
+export async function getCompressedFilename(filename: string, compressionFormat: CompressionFormat): Promise<string> {
+  const exports = await getExports();
+  return exports.MrKWatkins.OakIO.Wasm.OakIOInterop.GetCompressedFilename(filename, compressionFormat);
 }

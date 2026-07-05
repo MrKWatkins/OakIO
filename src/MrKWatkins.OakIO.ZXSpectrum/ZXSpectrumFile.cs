@@ -7,7 +7,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum;
 public abstract class ZXSpectrumFile : IOFile
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="ZXSpectrumFile" /> class.
+    /// Initializes a new instance of the <see cref="ZXSpectrumFile" /> class.
     /// </summary>
     /// <param name="format">The ZX Spectrum format of the file.</param>
     private protected ZXSpectrumFile(ZXSpectrumFileFormat format)

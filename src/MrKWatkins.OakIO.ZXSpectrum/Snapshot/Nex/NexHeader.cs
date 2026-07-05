@@ -9,7 +9,7 @@ public sealed class NexHeader : Header
     internal const int Size = 512;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="NexHeader" /> class with default values.
+    /// Initializes a new instance of the <see cref="NexHeader" /> class with default values.
     /// </summary>
     public NexHeader()
         : this(new byte[Size])

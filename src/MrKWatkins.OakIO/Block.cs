@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO;
 public abstract class Block : IOFileComponent
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="Block" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -19,7 +19,7 @@ public abstract class Block : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="Block" /> class by reading data from a stream.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -33,7 +33,7 @@ public abstract class Block : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="Block" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -47,7 +47,7 @@ public abstract class Block : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block" /> class from a byte array.
+    /// Initializes a new instance of the <see cref="Block" /> class from a byte array.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -100,7 +100,7 @@ public abstract class Block<THeader, TTrailer> : Block
     where TTrailer : Trailer
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader, TTrailer}" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="Block{THeader, TTrailer}" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -111,7 +111,7 @@ public abstract class Block<THeader, TTrailer> : Block
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader, TTrailer}" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="Block{THeader, TTrailer}" /> class by reading data from a stream.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -123,7 +123,7 @@ public abstract class Block<THeader, TTrailer> : Block
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader, TTrailer}" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="Block{THeader, TTrailer}" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -135,7 +135,7 @@ public abstract class Block<THeader, TTrailer> : Block
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader, TTrailer}" /> class from a byte array.
+    /// Initializes a new instance of the <see cref="Block{THeader, TTrailer}" /> class from a byte array.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="trailer">The trailer for this block.</param>
@@ -164,7 +164,7 @@ public abstract class Block<THeader> : Block<THeader, EmptyTrailer>
     where THeader : Header
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader}" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="Block{THeader}" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="length">The length of the block data in bytes.</param>
@@ -174,7 +174,7 @@ public abstract class Block<THeader> : Block<THeader, EmptyTrailer>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader}" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="Block{THeader}" /> class by reading data from a stream.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="length">The number of bytes to read.</param>
@@ -185,7 +185,7 @@ public abstract class Block<THeader> : Block<THeader, EmptyTrailer>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader}" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="Block{THeader}" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="length">The expected length of the block data in bytes.</param>
@@ -196,7 +196,7 @@ public abstract class Block<THeader> : Block<THeader, EmptyTrailer>
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Block{THeader}" /> class from a byte array.
+    /// Initializes a new instance of the <see cref="Block{THeader}" /> class from a byte array.
     /// </summary>
     /// <param name="header">The header for this block.</param>
     /// <param name="data">The raw byte data for this block.</param>

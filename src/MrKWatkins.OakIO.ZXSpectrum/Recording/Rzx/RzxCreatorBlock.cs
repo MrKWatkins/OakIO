@@ -11,7 +11,7 @@ public sealed class RzxCreatorBlock : RzxBlock
     private const int MinimumDataLength = 24;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxCreatorBlock" /> class.
+    /// Initializes a new instance of the <see cref="RzxCreatorBlock" /> class.
     /// </summary>
     /// <param name="creator">The creator's identification string, at most 20 ASCII characters.</param>
     /// <param name="majorVersion">The creator's major version number.</param>

@@ -2,5 +2,6 @@
     <ItemGroup>
         <ProjectReference Include="..\MrKWatkins.OakIO.Commands\MrKWatkins.OakIO.Commands.csproj" />
         <ProjectReference Include="..\MrKWatkins.OakIO.ZXSpectrum\MrKWatkins.OakIO.ZXSpectrum.csproj" />
+        <ProjectReference Include="..\MrKWatkins.OakIO.Wasm\MrKWatkins.OakIO.Wasm.csproj" />
     </ItemGroup>
 </Project>

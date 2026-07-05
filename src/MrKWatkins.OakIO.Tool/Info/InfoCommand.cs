@@ -3,12 +3,15 @@ using Spectre.Console.Cli;
 namespace MrKWatkins.OakIO.Tool.Info;
 
 [UsedImplicitly]
-internal sealed class InfoCommand : Command<InfoSettings>
+internal sealed class InfoCommand : AsyncCommand<InfoSettings>
 {
-    public override int Execute(CommandContext context, InfoSettings settings, CancellationToken cancellationToken)
+    public override async Task<int> ExecuteAsync(CommandContext context, InfoSettings settings, CancellationToken cancellationToken)
     {
-        using var inputStream = File.OpenRead(settings.Input);
-        Commands.InfoCommand.Execute(settings.Input, inputStream, Console.Out);
+        var inputStream = File.OpenRead(settings.Input);
+        await using (inputStream.ConfigureAwait(false))
+        {
+            await Commands.InfoCommand.ExecuteAsync(settings.Input, inputStream, Console.Out, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
         return 0;
     }
 }

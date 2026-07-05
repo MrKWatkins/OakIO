@@ -15,7 +15,7 @@ public sealed class RzxInputFrame
     private readonly byte[] inputReads;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxInputFrame" /> class.
+    /// Initializes a new instance of the <see cref="RzxInputFrame" /> class.
     /// </summary>
     /// <param name="fetchCount">The number of instruction fetches performed in this frame.</param>
     /// <param name="inputReads">The values returned by the CPU's I/O port reads during this frame, or <c>null</c> for none.</param>

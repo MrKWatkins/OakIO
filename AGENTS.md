@@ -73,10 +73,11 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 - Documentation is generated using MKDocs and is found in the `doc` folder.
 - Documentation in `doc/docs/API` is generated from the assemblies using the sesharp tool from the root of the repository:
-  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
-  - `sesharp src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
+  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
+- Documentation in `doc/docs/API` is not checked into source control; it is generated as part of the CI build.
 - Documentation in the root of `doc/docs` is handwritten.
 - Handwritten documentation should link to the generated API documentation and Microsoft's API docs (https://learn.microsoft.com/en-us/dotnet/api/) for types, members, etc.
+- Use "strongly typed" rather than "strongly-typed" in documentation and comments.
 
 ## Code Conventions
 

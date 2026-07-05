@@ -169,6 +169,82 @@ public sealed class InfoCommandTests : CommandsTestFixture
     }
 
     [Test]
+    public void GetFileInfo_RzxFile()
+    {
+        using var inputFile = CreateRzxFile();
+        var result = InfoCommand.GetFileInfo(inputFile.Path, inputFile.Bytes);
+        result.Format.Should().Equal("RZX Input Recording");
+        result.FileExtension.Should().Equal("rzx");
+        result.Type.Should().Equal("recording");
+
+        var headerSection = result.Sections.Single(s => s.Title == "Header");
+        headerSection.Properties.Single(p => p.Name == "Version").Value.Should().Equal("0.13");
+
+        var blocksSection = result.Sections.Single(s => s.Title == "Blocks");
+        blocksSection.Items.Count.Should().Equal(3);
+        blocksSection.Items[0].Title.Should().Equal("Creator: OakIO");
+        blocksSection.Items[1].Title.Should().Equal("Snapshot");
+        blocksSection.Items[2].Title.Should().Equal("Input Recording");
+    }
+
+    [Test]
+    public void Execute_RzxFile_ShowsBlocks()
+    {
+        using var inputFile = CreateRzxFile();
+        var lines = RunInfoCommand(inputFile);
+        lines[0].Should().Equal("Format: RZX Input Recording");
+        lines.Should().Contain("Blocks: 3");
+    }
+
+    [Test]
+    public async Task ExecuteAsync_TapFile()
+    {
+        using var inputFile = CreateTapFile();
+        var lines = await RunInfoCommandAsync(inputFile);
+        lines[0].Should().Equal("Format: TAP Tape");
+        lines[1].Should().Equal("Blocks: 2");
+    }
+
+    [Test]
+    public async Task ExecuteAsync_UnsupportedExtension_Throws()
+    {
+        using var inputFile = CreateTapFile();
+        await using var inputStream = inputFile.OpenRead();
+        await using var output = new StringWriter();
+
+        await "test.blah".Awaiting(f => InfoCommand.ExecuteAsync(f, inputStream, output))
+            .Should().ThrowAsync<NotSupportedException>();
+    }
+
+    [Test]
+    public async Task GetFileInfoAsync_TapFile()
+    {
+        using var inputFile = CreateTapFile();
+        var result = await InfoCommand.GetFileInfoAsync(inputFile.Path, inputFile.Bytes);
+        result.Format.Should().Equal("TAP Tape");
+        result.Type.Should().Equal("tape");
+        result.Sections[0].Items.Count.Should().Equal(2);
+    }
+
+    [Test]
+    public async Task GetFileInfoJsonAsync_TapFile()
+    {
+        using var inputFile = CreateTapFile();
+        var json = await InfoCommand.GetFileInfoJsonAsync(inputFile.Path, inputFile.Bytes);
+        json.Should().StartWith("{");
+        json.Should().Contain("\"format\":\"TAP Tape\"");
+    }
+
+    [Test]
+    public async Task ExecuteAsync_ByteArray_TapFile()
+    {
+        using var inputFile = CreateTapFile();
+        var output = await InfoCommand.ExecuteAsync(inputFile.Path, inputFile.Bytes);
+        output.Should().Contain("Format: TAP Tape");
+        output.Should().Contain("Blocks: 2");
+    }
+
+    [Test]
     public void GetFileInfoJson_TapFile()
     {
         using var inputFile = CreateTapFile();
@@ -244,6 +320,15 @@ public sealed class InfoCommandTests : CommandsTestFixture
         using var inputStream = inputFile.OpenRead();
         using var output = new StringWriter();
         InfoCommand.Execute(inputFile.Path, inputStream, output);
+        return output.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    [Pure]
+    private static async Task<IReadOnlyList<string>> RunInfoCommandAsync(TemporaryFile inputFile)
+    {
+        await using var inputStream = inputFile.OpenRead();
+        await using var output = new StringWriter();
+        await InfoCommand.ExecuteAsync(inputFile.Path, inputStream, output);
         return output.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
     }
 

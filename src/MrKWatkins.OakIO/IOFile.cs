@@ -11,7 +11,7 @@ namespace MrKWatkins.OakIO;
 public abstract class IOFile
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="IOFile" /> class.
+    /// Initializes a new instance of the <see cref="IOFile" /> class.
     /// </summary>
     /// <param name="format">The format of the file.</param>
     protected IOFile(IOFileFormat format)
@@ -70,6 +70,34 @@ public abstract class IOFile
             await Format.WriteAsync(this, writer).ConfigureAwait(false);
         }
     }
+
+    /// <summary>
+    /// Writes this file to a stream, optionally compressing it.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="filename">The filename of the file, with extension. Used as the name of the entry when <paramref name="compressionFormat" /> is <see cref="CompressionFormat.Zip" />.</param>
+    /// <param name="compressionFormat">The compression format to use.</param>
+    public void Write(Stream stream, string filename, CompressionFormat compressionFormat) => Codec.Write(this, stream, filename, compressionFormat);
+
+    /// <summary>
+    /// Writes this file to a stream asynchronously, optionally compressing it.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
+    /// <param name="filename">The filename of the file, with extension. Used as the name of the entry when <paramref name="compressionFormat" /> is <see cref="CompressionFormat.Zip" />.</param>
+    /// <param name="compressionFormat">The compression format to use.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the writing.</param>
+    public Task WriteAsync(Stream stream, string filename, CompressionFormat compressionFormat, CancellationToken cancellationToken = default) =>
+        Codec.WriteAsync(this, stream, filename, compressionFormat, cancellationToken);
+
+    /// <summary>
+    /// Gets the filename to use for a file written with the specified compression format, e.g. <c>"name.wav"</c>
+    /// compressed with <see cref="CompressionFormat.GZip" /> becomes <c>"name.wav.gz"</c>.
+    /// </summary>
+    /// <param name="filename">The filename of the uncompressed file, with extension.</param>
+    /// <param name="compressionFormat">The compression format.</param>
+    /// <returns>The filename to use for the compressed file.</returns>
+    [Pure]
+    public static string GetCompressedFilename(string filename, CompressionFormat compressionFormat) => Codec.GetCompressedFilename(filename, compressionFormat);
 
     /// <summary>
     /// Converts this file to a byte array.

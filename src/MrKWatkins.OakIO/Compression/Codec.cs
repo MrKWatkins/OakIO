@@ -93,6 +93,14 @@ internal abstract class Codec
     }
 
     [Pure]
+    public static string GetCompressedFilename(string filename, CompressionFormat compressionFormat) => GetCodec(compressionFormat).GetCompressedFilename(filename);
+
+    public static void Write(IOFile file, Stream stream, string filename, CompressionFormat compressionFormat) => GetCodec(compressionFormat).Write(file, stream, filename);
+
+    public static async Task WriteAsync(IOFile file, Stream stream, string filename, CompressionFormat compressionFormat, CancellationToken cancellationToken) =>
+        await GetCodec(compressionFormat).WriteAsync(file, stream, filename, cancellationToken).ConfigureAwait(false);
+
+    [Pure]
     private static (Codec Codec, string FilenameWithFormatExtension, string CompressedPath) GetCodecAndCompressedPathForSave(IOFile file, [PathReference] string outputDirectory, string filename, CompressionFormat format)
     {
         if (!Directory.Exists(outputDirectory))

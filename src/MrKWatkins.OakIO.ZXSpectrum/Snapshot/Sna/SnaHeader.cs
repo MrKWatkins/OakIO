@@ -7,7 +7,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 public sealed class SnaHeader : Header
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="SnaHeader" /> class with default values.
+    /// Initializes a new instance of the <see cref="SnaHeader" /> class with default values.
     /// </summary>
     public SnaHeader()
         : this(new byte[27])

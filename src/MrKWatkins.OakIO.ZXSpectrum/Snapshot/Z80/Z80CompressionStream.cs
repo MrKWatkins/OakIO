@@ -15,7 +15,7 @@ public sealed class Z80CompressionStream : Stream
     private bool disposed;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Z80CompressionStream" /> class.
+    /// Initializes a new instance of the <see cref="Z80CompressionStream" /> class.
     /// </summary>
     /// <param name="stream">The underlying stream to read from or write to.</param>
     /// <param name="mode">Whether to compress or decompress.</param>

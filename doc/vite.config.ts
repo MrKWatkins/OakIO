@@ -16,7 +16,13 @@ export default defineConfig({
     },
     build: {
         outDir: resolve(__dirname, 'docs/assets/javascripts'),
-        emptyOutDir: true,
+        // false, not true: this directory only ever holds this build's own fixed-named output
+        // (converter.css/converter.js), so there's nothing stale to clean up between rebuilds.
+        // Emptying it first (the default) means every rebuild briefly deletes both files before
+        // recreating them; if mkdocs' one-shot startup file scan lands in that window (a real
+        // race when "vite build --watch" and "mkdocs serve" start concurrently), the files are
+        // permanently missing from that mkdocs session with no later rescan to recover them.
+        emptyOutDir: false,
         sourcemap: false,
         rollupOptions: {
             input: resolve(__dirname, 'src/converter-entry.tsx'),

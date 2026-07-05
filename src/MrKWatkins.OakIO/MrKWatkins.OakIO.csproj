@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>true</IsPackable>
-        <!-- Temp:
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        -->
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MrKWatkins.BinaryPrimitives"/>

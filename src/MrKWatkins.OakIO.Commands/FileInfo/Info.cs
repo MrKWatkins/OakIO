@@ -23,12 +23,15 @@ internal static class Info
     internal static class Items
     {
         internal const string BrowsePoint = "Browse Point";
+        internal const string Creator = "Creator";
         internal const string Data = "Data";
+        internal const string InputRecording = "Input Recording";
         internal const string Loop = "Loop";
         internal const string Pause = "Pause";
         internal const string PulseSequence = "Pulse Sequence";
         internal const string PureData = "Pure Data";
         internal const string PureTone = "Pure Tone";
+        internal const string Snapshot = "Snapshot";
         internal const string StandardSpeedData = "Standard Speed Data";
         internal const string Stop = "Stop";
         internal const string StopTape48K = "Stop Tape (48K)";
@@ -44,6 +47,7 @@ internal static class Info
         internal const string ShadowBC = "BC'";
         internal const string BorderColour = "Border Colour";
         internal const string CoreVersion = "Core Version";
+        internal const string Creator = "Creator";
         internal const string DataCompressed = "Data Compressed";
         internal const string DataLength = "Data Length";
         internal const string DE = "DE";
@@ -51,8 +55,10 @@ internal static class Info
         internal const string Duration = "Duration";
         internal const string EntryBank = "Entry Bank";
         internal const string ExpansionBus = "Expansion Bus";
+        internal const string Extension = "Extension";
         internal const string ExtraBits = "Extra Bits";
         internal const string Filename = "Filename";
+        internal const string Frames = "Frames";
         internal const string HardwareMode = "Hardware Mode";
         internal const string HeaderType = "Header Type";
         internal const string HiColour = "HiColour";
@@ -85,6 +91,7 @@ internal static class Info
         internal const string Repetitions = "Repetitions";
         internal const string Size = "Size";
         internal const string SP = "SP";
+        internal const string StartTStates = "Start T-States";
         internal const string SyncFirstPulse = "Sync First Pulse";
         internal const string SyncSecondPulse = "Sync Second Pulse";
         internal const string Tail = "Tail";

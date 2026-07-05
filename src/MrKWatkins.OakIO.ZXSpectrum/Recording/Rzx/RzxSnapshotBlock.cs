@@ -13,7 +13,7 @@ public sealed class RzxSnapshotBlock : RzxBlock
     private readonly byte[] snapshotData;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="RzxSnapshotBlock" /> class containing an uncompressed, embedded snapshot.
+    /// Initializes a new instance of the <see cref="RzxSnapshotBlock" /> class containing an uncompressed, embedded snapshot.
     /// </summary>
     /// <param name="extension">The snapshot filename extension, e.g. "Z80" or "SNA".</param>
     /// <param name="data">The uncompressed snapshot data.</param>

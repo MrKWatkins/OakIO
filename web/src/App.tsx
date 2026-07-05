@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
-import { getInfo, convert } from './oakio'
-import type { FileInfo } from './types'
+import { getInfo, convert, getCompressedFilename } from './oakio'
+import type { CompressionFormat, FileInfo } from './types'
 import { FileTab } from './FileTab'
 import { ContentsTab } from './ContentsTab'
 import { ConvertTab } from './ConvertTab'
@@ -17,6 +17,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
   const [fileSize, setFileSize] = useState(0);
   const [converting, setConverting] = useState<string | null>(null);
   const [convertError, setConvertError] = useState<string | null>(null);
+  const [compressionFormat, setCompressionFormat] = useState<CompressionFormat>('None');
   const fileDataRef = useRef<Uint8Array | null>(null);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +31,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
     setInfoResult(null);
     setConverting(null);
     setConvertError(null);
+    setCompressionFormat('None');
     setTab('file');
 
     try {
@@ -59,13 +61,16 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
     setError(null);
 
     try {
-      const result = await convert(fileName, data, outputFilename);
+      const [result, downloadFilename] = await Promise.all([
+        convert(fileName, data, outputFilename, compressionFormat),
+        getCompressedFilename(outputFilename, compressionFormat),
+      ]);
 
       const blob = new Blob([result.buffer as ArrayBuffer]);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = outputFilename;
+      a.download = downloadFilename;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -73,7 +78,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
     } finally {
       setConverting(null);
     }
-  }, [fileName]);
+  }, [fileName, compressionFormat]);
 
   return (
     <div className="app">
@@ -85,7 +90,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
         <input
           type="file"
           id="fileInput"
-          accept=".tap,.tzx,.pzx,.z80,.sna,.nex"
+          accept=".tap,.tzx,.pzx,.z80,.sna,.nex,.rzx"
           onChange={handleFileChange}
         />
         {loading && <span className="loading">Loading…</span>}
@@ -111,7 +116,16 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
         )}
         {infoResult && tab === 'file' && <FileTab info={infoResult} fileName={fileName} fileSize={fileSize} />}
         {infoResult && tab === 'contents' && <ContentsTab info={infoResult} />}
-        {infoResult && tab === 'convert' && <ConvertTab formats={infoResult.convertibleTo} onConvert={handleConvert} converting={converting} error={convertError} />}
+        {infoResult && tab === 'convert' && (
+          <ConvertTab
+            formats={infoResult.convertibleTo}
+            compressionFormat={compressionFormat}
+            onCompressionFormatChange={setCompressionFormat}
+            onConvert={handleConvert}
+            converting={converting}
+            error={convertError}
+          />
+        )}
       </div>
     </div>
   );

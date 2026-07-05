@@ -13,26 +13,63 @@ byte[] bytes = File.ReadAllBytes("tape.tap");
 TapFile tap = TapFormat.Instance.Read(bytes);
 ```
 
-The returned object is a strongly-typed subclass of [`IOFile`](API/MrKWatkins.OakIO/IOFile/index.md) specific to the format.
+The returned object is a strongly typed subclass of [`IOFile`](API/MrKWatkins.OakIO/IOFile/index.md) specific to the format.
+
+If you don't know the format ahead of time, use [`IOFileFormat.Load`](API/MrKWatkins.OakIO/IOFileFormat/Load.md) with the set of formats you support — it picks the right one based on the file's extension:
+
+```c#
+IOFile file = IOFileFormat.Load("tape.tap", TapFormat.Instance, TzxFormat.Instance, PzxFormat.Instance);
+```
+
+[`Load`](API/MrKWatkins.OakIO/IOFileFormat/Load.md) also transparently decompresses `.zip`, `.gz`, `.br`, and `.zst` files — see [Compression](#compression) below.
 
 ## Writing Files
 
-Pass the file object and a [`Stream`](https://learn.microsoft.com/en-us/dotnet/api/system.io.stream) to [`Write`](API/MrKWatkins.OakIO/IOFileFormat/Write.md):
+An [`IOFile`](API/MrKWatkins.OakIO/IOFile/index.md) writes itself — pass a [`Stream`](https://learn.microsoft.com/en-us/dotnet/api/system.io.stream) to [`Write`](API/MrKWatkins.OakIO/IOFile/Write.md):
 
 ```c#
 using var stream = File.Create("output.tap");
-TapFormat.Instance.Write(tap, stream);
+tap.Write(stream);
 ```
 
-There are also overloads that write directly to a file path, or return a `byte[]`:
+Use [`ToByteArray`](API/MrKWatkins.OakIO/IOFile/ToByteArray.md) to get a `byte[]` instead, or [`Save`](API/MrKWatkins.OakIO/IOFile/Save.md) to write straight to a directory — it works out the filename, appending the format's extension automatically:
 
 ```c#
-// Write to a file path:
-TapFormat.Instance.Write(tap, "/path/to/output.tap");
+byte[] bytes = tap.ToByteArray();
 
-// Write to a byte array:
-byte[] bytes = TapFormat.Instance.Write(tap);
+// Writes to "/path/to/output.tap":
+string path = tap.Save("/path/to", "output");
 ```
+
+## Reading and Writing Asynchronously
+
+Every reading and writing method has an asynchronous counterpart — [`ReadAsync`](API/MrKWatkins.OakIO/IOFileFormat/ReadAsync.md), [`LoadAsync`](API/MrKWatkins.OakIO/IOFileFormat/LoadAsync.md), [`WriteAsync`](API/MrKWatkins.OakIO/IOFile/WriteAsync.md), and [`SaveAsync`](API/MrKWatkins.OakIO/IOFile/SaveAsync.md) — each taking an optional `CancellationToken`:
+
+```c#
+using var stream = File.OpenRead("tape.tap");
+TapFile tap = await TapFormat.Instance.ReadAsync(stream);
+
+using var output = File.Create("output.tap");
+await tap.WriteAsync(output);
+
+string path = await tap.SaveAsync("/path/to", "output");
+```
+
+## Compression
+
+Files can be written compressed by passing a [`CompressionFormat`](API/MrKWatkins.OakIO.Compression/CompressionFormat/index.md) to [`Write`](API/MrKWatkins.OakIO/IOFile/Write.md), [`WriteAsync`](API/MrKWatkins.OakIO/IOFile/WriteAsync.md), [`Save`](API/MrKWatkins.OakIO/IOFile/Save.md), or [`SaveAsync`](API/MrKWatkins.OakIO/IOFile/SaveAsync.md). Supported formats are `Zip`, `GZip`, `Brotli`, and `Zstandard`:
+
+```c#
+using var stream = File.Create("output.wav.gz");
+wav.Write(stream, "output.wav", CompressionFormat.GZip);
+
+// Or when saving to a directory, which works out the compressed filename automatically:
+string path = wav.Save("/path/to", "output", CompressionFormat.GZip); // "/path/to/output.wav.gz"
+```
+
+`Zip` compression stores the file as a single entry inside a `.zip` archive, using the `filename` argument as the name of that entry. The other formats append their own extension (`.gz`, `.br`, `.zst`) to the filename instead.
+
+[`Load`](API/MrKWatkins.OakIO/IOFileFormat/Load.md) and [`LoadAsync`](API/MrKWatkins.OakIO/IOFileFormat/LoadAsync.md) transparently decompress a file based on its extension, so no special handling is needed to read a compressed file back.
 
 ## Converting Between Formats
 
@@ -62,7 +99,7 @@ Use [`TryConvert`](API/MrKWatkins.OakIO/IOFileConversion/TryConvert.md) when the
 ```c#
 if (IOFileConversion.TryConvert(tzx, TapFormat.Instance, out var result, out var error))
 {
-    TapFormat.Instance.Write(result, "output.tap");
+    result.Write(stream);
 }
 else
 {
@@ -92,3 +129,5 @@ foreach (var format in targets)
     Console.WriteLine(format.Name);
 }
 ```
+
+Note that [RZX](formats/recording/rzx.md) recordings do not participate in conversion — no converters are registered to or from the format.

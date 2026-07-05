@@ -12,7 +12,7 @@ public abstract class IOFileFormat
     private int convertersRegistered;
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="IOFileFormat" /> class.
+    /// Initializes a new instance of the <see cref="IOFileFormat" /> class.
     /// </summary>
     /// <param name="name">The display name of the format.</param>
     /// <param name="fileExtension">The file extension for the format, without a leading dot.</param>

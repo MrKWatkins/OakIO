@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape;
 public abstract class ZXSpectrumTapeFile : ZXSpectrumFile
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="ZXSpectrumTapeFile" /> class.
+    /// Initializes a new instance of the <see cref="ZXSpectrumTapeFile" /> class.
     /// </summary>
     /// <param name="format">The tape format of the file.</param>
     private protected ZXSpectrumTapeFile(ZXSpectrumTapeFormat format)

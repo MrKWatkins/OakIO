@@ -11,6 +11,12 @@ export interface ConvertibleFormat {
   extension: string;
 }
 
+// Zstandard and Brotli are deliberately omitted: neither works under WASM (Zstandard needs unmanaged
+// code via ZstdSharp; Brotli relies on a native library that isn't available in the browser runtime).
+export const compressionFormats = ['None', 'Zip', 'GZip'] as const;
+
+export type CompressionFormat = (typeof compressionFormats)[number];
+
 export interface Section {
   title: string;
   category: string;

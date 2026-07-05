@@ -22,7 +22,7 @@ describe('App', () => {
     render(<App />);
     const input = document.querySelector('input[type="file"]');
     expect(input).toBeInTheDocument();
-    expect(input?.getAttribute('accept')).toBe('.tap,.tzx,.pzx,.z80,.sna,.nex');
+    expect(input?.getAttribute('accept')).toBe('.tap,.tzx,.pzx,.z80,.sna,.nex,.rzx');
   });
 
   it('shows tabs even before a file is loaded', () => {

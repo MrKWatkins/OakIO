@@ -1,4 +1,5 @@
 using MrKWatkins.OakIO.Testing;
+using MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
@@ -80,5 +81,21 @@ public abstract class CommandsTestFixture
         using var stream = new MemoryStream(header);
         stream.Position = 0;
         return TemporaryFile.Create(stream, "test.nex");
+    }
+
+    [Pure]
+    [MustDisposeResource]
+    protected static TemporaryFile CreateRzxFile()
+    {
+        var rzx = new RzxFile(
+        [
+            new RzxCreatorBlock("OakIO", 1, 0),
+            new RzxSnapshotBlock("Z80", [0xF3, 0xAF]),
+            new RzxInputRecordingBlock([new RzxInputFrame(100, [0xFF])], 69888)
+        ]);
+        using var stream = new MemoryStream();
+        rzx.Write(stream);
+        stream.Position = 0;
+        return TemporaryFile.Create(stream, "test.rzx");
     }
 }

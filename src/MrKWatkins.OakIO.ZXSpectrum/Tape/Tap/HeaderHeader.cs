@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 public sealed class HeaderHeader : TapHeader
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="HeaderHeader" /> class.
+    /// Initializes a new instance of the <see cref="HeaderHeader" /> class.
     /// </summary>
     /// <param name="blockFlagAndChecksumLength">The length of the block including the flag and checksum bytes; must be 19.</param>
     public HeaderHeader(ushort blockFlagAndChecksumLength) : base(TapBlockType.Header, blockFlagAndChecksumLength)

@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO;
 public abstract class Header : IOFileComponent
 {
     /// <summary>
-    /// Initialises a new instance of the <see cref="Header" /> class with zero-filled data of the specified length.
+    /// Initializes a new instance of the <see cref="Header" /> class with zero-filled data of the specified length.
     /// </summary>
     /// <param name="length">The length of the header in bytes.</param>
     protected Header(int length)
@@ -15,7 +15,7 @@ public abstract class Header : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Header" /> class by reading data from a stream.
+    /// Initializes a new instance of the <see cref="Header" /> class by reading data from a stream.
     /// </summary>
     /// <param name="length">The number of bytes to read.</param>
     /// <param name="data">The stream to read the header data from.</param>
@@ -25,7 +25,7 @@ public abstract class Header : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Header" /> class from a sequence of bytes.
+    /// Initializes a new instance of the <see cref="Header" /> class from a sequence of bytes.
     /// </summary>
     /// <param name="length">The expected length of the header in bytes.</param>
     /// <param name="data">The bytes for this header.</param>
@@ -35,7 +35,7 @@ public abstract class Header : IOFileComponent
     }
 
     /// <summary>
-    /// Initialises a new instance of the <see cref="Header" /> class from a byte array.
+    /// Initializes a new instance of the <see cref="Header" /> class from a byte array.
     /// </summary>
     /// <param name="data">The raw byte data for this header.</param>
     protected Header(byte[] data)
