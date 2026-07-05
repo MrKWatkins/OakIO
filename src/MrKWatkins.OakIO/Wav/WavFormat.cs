@@ -24,14 +24,13 @@ public sealed class WavFormat : IOFileFormat<WavFile>
 
         var sampleData = await reader.ReadAsync(header.DataSize).ConfigureAwait(false);
 
-        return new WavFile(header.SampleRate, sampleData);
+        return new WavFile(header, sampleData);
     }
 
     /// <inheritdoc />
     protected override async ValueTask WriteAsync(WavFile file, IBinaryWriter writer)
     {
-        var header = new WavHeader(file.SampleRate, file.SampleData.Count);
-        await header.WriteAsync(writer).ConfigureAwait(false);
+        await file.Header.WriteAsync(writer).ConfigureAwait(false);
 
         await writer.WriteAsync(file.SampleDataMemory).ConfigureAwait(false);
     }

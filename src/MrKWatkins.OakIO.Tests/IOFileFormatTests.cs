@@ -113,9 +113,10 @@ public sealed class IOFileFormatTests
     {
         using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
 
-        var result = await TestIOFileFormat.Instance.ReadAsync(stream);
+        // No cast required: proves IOFileFormat<TFile>.ReadAsync hides the base IOFile-returning overload.
+        TestIOFile result = await TestIOFileFormat.Instance.ReadAsync(stream);
 
-        result.Should().BeOfType<TestIOFile>().That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
 
     [Test]
@@ -143,8 +144,20 @@ public sealed class IOFileFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        var result = TestIOFileFormat.Instance.Read(TestIOFileFormat.Contents);
-        result.Should().BeOfType<TestIOFile>().That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        // No cast required: proves IOFileFormat<TFile>.Read(byte[]) hides the base IOFile-returning overload.
+        TestIOFile result = TestIOFileFormat.Instance.Read(TestIOFileFormat.Contents);
+        result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+    }
+
+    [Test]
+    public void Read_Stream()
+    {
+        using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
+
+        // No cast required: proves IOFileFormat<TFile>.Read(Stream) hides the base IOFile-returning overload.
+        TestIOFile result = TestIOFileFormat.Instance.Read(stream);
+
+        result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
 
     [Test]

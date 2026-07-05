@@ -42,15 +42,20 @@ public sealed class NexHeaderTests
         {
             HasLayer2Screen = true,
             HasUlaScreen = false,
-            HasLoResScreen = true
+            HasLoResScreen = true,
+            HasHiResScreen = true,
+            HasHiColourScreen = true,
+            HasNoPaletteBlock = true,
+            LoadScreenFlags2 = true
         };
 
         header.HasLayer2Screen.Should().BeTrue();
         header.HasUlaScreen.Should().BeFalse();
         header.HasLoResScreen.Should().BeTrue();
-        header.HasHiResScreen.Should().BeFalse();
-        header.HasHiColourScreen.Should().BeFalse();
-        header.HasNoPaletteBlock.Should().BeFalse();
+        header.HasHiResScreen.Should().BeTrue();
+        header.HasHiColourScreen.Should().BeTrue();
+        header.HasNoPaletteBlock.Should().BeTrue();
+        header.LoadScreenFlags2.Should().BeTrue();
     }
 
     [Test]
@@ -72,6 +77,75 @@ public sealed class NexHeaderTests
     {
         var header = new NexHeader { PC = 0x8000 };
         header.PC.Should().Equal(0x8000);
+    }
+
+    [Test]
+    public void NumExtraFiles()
+    {
+        var header = new NexHeader { NumExtraFiles = 2 };
+        header.NumExtraFiles.Should().Equal((ushort)2);
+    }
+
+    [Test]
+    public void LoadingBarSettings()
+    {
+        var header = new NexHeader
+        {
+            LoadingBar = 1,
+            LoadingBarColour = 6,
+            LoadingDelay = 10,
+            StartDelay = 20
+        };
+
+        header.LoadingBar.Should().Equal((byte)1);
+        header.LoadingBarColour.Should().Equal((byte)6);
+        header.LoadingDelay.Should().Equal((byte)10);
+        header.StartDelay.Should().Equal((byte)20);
+    }
+
+    [Test]
+    public void PreserveNextRegisters()
+    {
+        var header = new NexHeader { PreserveNextRegisters = true };
+        header.PreserveNextRegisters.Should().BeTrue();
+    }
+
+    [Test]
+    public void HiResColour()
+    {
+        var header = new NexHeader { HiResColour = 4 };
+        header.HiResColour.Should().Equal((byte)4);
+    }
+
+    [Test]
+    public void FileHandleAddress()
+    {
+        var header = new NexHeader { FileHandleAddress = 0x6000 };
+        header.FileHandleAddress.Should().Equal((ushort)0x6000);
+    }
+
+    [Test]
+    public void TileScreenConfig()
+    {
+        var header = new NexHeader
+        {
+            TileScreenConfigReg6B = 1,
+            TileScreenConfigReg6C = 2,
+            TileScreenConfigReg6E = 3,
+            TileScreenConfigReg6F = 4
+        };
+
+        header.TileScreenConfigReg6B.Should().Equal((byte)1);
+        header.TileScreenConfigReg6C.Should().Equal((byte)2);
+        header.TileScreenConfigReg6E.Should().Equal((byte)3);
+        header.TileScreenConfigReg6F.Should().Equal((byte)4);
+    }
+
+    [Test]
+    public void Crc32C()
+    {
+        var header = new NexHeader { Crc32C = 0xDEADBEEF };
+        header.Crc32C.Should().Equal(0xDEADBEEFu);
     }
 
     [Test]
