@@ -5,7 +5,7 @@ namespace MrKWatkins.OakIO.Tool.Info;
 [UsedImplicitly]
 internal sealed class InfoCommand : AsyncCommand<InfoSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, InfoSettings settings, CancellationToken cancellationToken)
+    protected override async Task<int> ExecuteAsync(CommandContext context, InfoSettings settings, CancellationToken cancellationToken)
     {
         var inputStream = File.OpenRead(settings.Input);
         await using (inputStream.ConfigureAwait(false))

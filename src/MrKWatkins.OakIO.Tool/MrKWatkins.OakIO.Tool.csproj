@@ -3,7 +3,7 @@
         <OutputType>Exe</OutputType>
         <IsPackable>true</IsPackable>
         <PackAsTool>true</PackAsTool>
-        <ToolCommandName>sesharp</ToolCommandName>
+        <ToolCommandName>oakio</ToolCommandName>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\MrKWatkins.OakIO.Commands\MrKWatkins.OakIO.Commands.csproj" />

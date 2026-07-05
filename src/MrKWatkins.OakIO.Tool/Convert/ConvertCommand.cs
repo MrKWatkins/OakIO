@@ -6,7 +6,7 @@ namespace MrKWatkins.OakIO.Tool.Convert;
 [UsedImplicitly]
 internal sealed class ConvertCommand : AsyncCommand<ConvertSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, ConvertSettings settings, CancellationToken cancellationToken)
+    protected override async Task<int> ExecuteAsync(CommandContext context, ConvertSettings settings, CancellationToken cancellationToken)
     {
         var inputStream = File.OpenRead(settings.Input);
         await using (inputStream.ConfigureAwait(false))
