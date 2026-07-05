@@ -15,3 +15,5 @@ unmanaged
 Brotli
 GZip
 Zstandard
+fmt
+subchunk

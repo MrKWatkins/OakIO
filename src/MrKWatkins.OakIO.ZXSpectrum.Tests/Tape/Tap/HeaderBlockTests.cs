@@ -5,6 +5,16 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Tape.Tap;
 public sealed class HeaderBlockTests
 {
     [Test]
+    public void Constructor_ThrowsForInvalidDataLength()
+    {
+        var header = new HeaderHeader(19);
+        var trailer = new TapTrailer(0);
+
+        AssertThat.Invoking(() => new HeaderBlock(header, trailer, new byte[16])).Should().Throw<ArgumentException>()
+            .That.Message.Should().Contain("Value must be exactly 17 bytes long.");
+    }
+
+    [Test]
     public void CreateCode()
     {
         var block = HeaderBlock.CreateCode("test", 0x8000, 100);

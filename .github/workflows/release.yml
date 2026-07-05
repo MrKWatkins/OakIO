@@ -46,7 +46,7 @@ jobs:
         run: dotnet sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        uses: astral-sh/setup-uv@v8.3.0
 
       - name: Lint docs prose
         run: |

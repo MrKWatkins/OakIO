@@ -53,6 +53,32 @@ public abstract class ZXSpectrumFileFormat : IOFileFormat
     }
 
     /// <summary>
+    /// Reads a ZX Spectrum file from a byte array.
+    /// </summary>
+    /// <param name="bytes">The byte array to read from.</param>
+    /// <returns>The file read from the byte array.</returns>
+    [Pure]
+    public new ZXSpectrumFile Read(byte[] bytes) => (ZXSpectrumFile)base.Read(bytes);
+
+    /// <summary>
+    /// Reads a ZX Spectrum file from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <returns>The file read from the stream.</returns>
+    [MustUseReturnValue]
+    public new ZXSpectrumFile Read(Stream stream) => (ZXSpectrumFile)base.Read(stream);
+
+    /// <summary>
+    /// Reads a ZX Spectrum file from a stream asynchronously.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="cancellationToken">An optional <see cref="CancellationToken"/> to cancel the reading.</param>
+    /// <returns>The file read from the stream.</returns>
+    [MustUseReturnValue]
+    public new async Task<ZXSpectrumFile> ReadAsync(Stream stream, CancellationToken cancellationToken = default) =>
+        (ZXSpectrumFile)await base.ReadAsync(stream, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>
     /// Loads a ZX Spectrum file from disk.
     /// </summary>
     /// <param name="path">The path to the file to load.</param>

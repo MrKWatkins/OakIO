@@ -152,6 +152,7 @@ public sealed class TzxFormatTests
         pulseSequence.Header.BlockLength.Should().Equal(4);
         pulseSequence.Pulses.ToArray().Should().SequenceEqual(667, 735);
         pulseSequence.ToString().Should().Contain("PulseSequence");
+        pulseSequence.Header.ToString().Should().Equal("PulseSequence: 2 pulses");
 
         // Pure Data.
         var pureData = file.Blocks[4].Should().BeOfType<PureDataBlock>().Value;

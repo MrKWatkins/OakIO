@@ -111,6 +111,139 @@ public sealed class NexFormatTests
     }
 
     [Test]
+    public void Read_WithLoResScreen()
+    {
+        // A LoRes screen also implies a palette block, like Layer2.
+        var paletteData = new byte[512];
+        var screenData = new byte[12288];
+        screenData[0] = 0xCD;
+
+        var data = CreateMinimalNexData("V1.2", loadScreens: 0b0000_0100, banks: [], paletteData: paletteData, screenBlocks: [screenData]);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.Palette.Should().NotBeNull();
+        file.Screens.Should().HaveCount(1);
+        file.Screens[0].Type.Should().Equal(NexScreenType.LoRes);
+        file.Screens[0].Data[0].Should().Equal(0xCD);
+    }
+
+    [Test]
+    public void Read_WithHiResScreen()
+    {
+        var screenData = new byte[12288];
+        screenData[0] = 0xEF;
+
+        var data = CreateMinimalNexData("V1.2", loadScreens: 0b0000_1000, banks: [], screenBlocks: [screenData]);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.Screens.Should().HaveCount(1);
+        file.Screens[0].Type.Should().Equal(NexScreenType.HiRes);
+        file.Screens[0].Data[0].Should().Equal(0xEF);
+    }
+
+    [Test]
+    public void Read_WithHiColourScreen()
+    {
+        var screenData = new byte[12288];
+        screenData[0] = 0x12;
+
+        var data = CreateMinimalNexData("V1.2", loadScreens: 0b0001_0000, banks: [], screenBlocks: [screenData]);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.Screens.Should().HaveCount(1);
+        file.Screens[0].Type.Should().Equal(NexScreenType.HiColour);
+        file.Screens[0].Data[0].Should().Equal(0x12);
+    }
+
+    [TestCase(NexLoadScreenMode.Layer2x320x256, NexScreenType.Layer2x320x256)]
+    [TestCase(NexLoadScreenMode.Layer2x640x256, NexScreenType.Layer2x640x256)]
+    [TestCase(NexLoadScreenMode.None, NexScreenType.Layer2x320x256)]
+    public void Read_WithFlags2Screen(NexLoadScreenMode mode, NexScreenType expectedType)
+    {
+        var screenData = new byte[81920];
+        screenData[0] = 0x34;
+
+        var data = CreateMinimalNexData("V1.3", loadScreens: 0b0100_0000, banks: [], screenBlocks: [screenData], loadScreens2: mode);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.Screens.Should().HaveCount(1);
+        file.Screens[0].Type.Should().Equal(expectedType);
+        file.Screens[0].Data[0].Should().Equal(0x34);
+    }
+
+    [Test]
+    public void Read_WithTilemodeFlags2_ReadsPaletteWithoutLayer2OrLoRes()
+    {
+        var paletteData = new byte[512];
+        paletteData[0] = 0x56;
+        var screenData = new byte[81920];
+
+        var data = CreateMinimalNexData(
+            "V1.3",
+            loadScreens: 0b0100_0000,
+            banks: [],
+            paletteData: paletteData,
+            screenBlocks: [screenData],
+            loadScreens2: NexLoadScreenMode.Tilemode);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.Palette.Should().NotBeNull();
+        file.Palette![0].Should().Equal(0x56);
+    }
+
+    [Test]
+    public void Read_WithCopperCode()
+    {
+        var copperCode = new byte[2048];
+        copperCode[0] = 0x78;
+
+        var data = CreateMinimalNexData("V1.3", loadScreens: 0, banks: [], copperCode: copperCode);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.CopperCode.Should().NotBeNull();
+        file.CopperCode![0].Should().Equal(0x78);
+    }
+
+    [Test]
+    public void Read_V12_IgnoresCopperCodeFlag()
+    {
+        // The HasCopperCode flag is only meaningful from V1.3 onwards.
+        var data = CreateMinimalNexData("V1.2", loadScreens: 0, banks: [], copperCode: new byte[2048]);
+
+        using var stream = new MemoryStream(data);
+        var file = NexFormat.Instance.Read(stream);
+
+        file.CopperCode.Should().BeNull();
+    }
+
+    [Test]
+    public async Task RoundTrip_WithCopperCode()
+    {
+        var copperCode = new byte[2048];
+        copperCode[0] = 0x9A;
+
+        var data = CreateMinimalNexData("V1.3", loadScreens: 0, banks: [], copperCode: copperCode);
+
+        using var readStream = new MemoryStream(data);
+        var file = await NexFormat.Instance.ReadAsync(readStream);
+
+        var actual = await WriteToBytesAsync(file);
+        actual.Should().SequenceEqual(data);
+    }
+
+    [Test]
     public void Read_InvalidMagic()
     {
         var data = new byte[512];
@@ -244,7 +377,9 @@ public sealed class NexFormatTests
         byte[]? paletteData = null,
         byte[][]? screenBlocks = null,
         ushort sp = 0,
-        ushort pc = 0)
+        ushort pc = 0,
+        NexLoadScreenMode? loadScreens2 = null,
+        byte[]? copperCode = null)
     {
         using var stream = new MemoryStream();
 
@@ -266,6 +401,16 @@ public sealed class NexFormatTests
         header[14] = (byte)(pc & 0xFF);
         header[15] = (byte)(pc >> 8);
 
+        if (loadScreens2 != null)
+        {
+            header[152] = (byte)loadScreens2.Value;
+        }
+
+        if (copperCode != null)
+        {
+            header[153] = 1;
+        }
+
         foreach (var (bank, _) in banks)
         {
             header[18 + bank] = 1;
@@ -284,6 +429,11 @@ public sealed class NexFormatTests
             {
                 stream.Write(screen);
             }
+        }
+
+        if (copperCode != null)
+        {
+            stream.Write(copperCode);
         }
 
         foreach (var bankNumber in NexHeader.BankOrder)

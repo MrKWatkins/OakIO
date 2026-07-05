@@ -10,7 +10,12 @@ public sealed class WavHeaderTests
     {
         var header = new WavHeader(44100, 5);
 
+        header.AudioFormat.Should().Equal((ushort)1);
+        header.NumChannels.Should().Equal((ushort)1);
         header.SampleRate.Should().Equal(44100u);
+        header.ByteRate.Should().Equal(44100u);
+        header.BlockAlign.Should().Equal((ushort)1);
+        header.BitsPerSample.Should().Equal((ushort)8);
         header.DataSize.Should().Equal(5);
         header.Length.Should().Equal(WavHeader.Size);
 

@@ -113,6 +113,52 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
     }
 
     [Test]
+    public void LoadInto_128k()
+    {
+        var random = TestContext.CurrentContext.Random;
+
+        var header = new byte[27];
+        random.NextBytes(header);
+
+        var banks = new byte[8][];
+        for (var bank = 0; bank < 8; bank++)
+        {
+            banks[bank] = new byte[16384];
+            random.NextBytes(banks[bank]);
+        }
+
+        var footer = new byte[4];
+        footer[2] = 0x10;    // Port 0x7FFD; paged bank = 0.
+        var pagedBank = footer[2] & 0x07;
+
+        var contents = new List<byte>();
+        contents.AddRange(header);
+        contents.AddRange(banks[5]);
+        contents.AddRange(banks[2]);
+        contents.AddRange(banks[pagedBank]);
+        contents.AddRange(footer);
+        foreach (var bank in new byte[] { 0, 1, 3, 4, 6, 7 })
+        {
+            if (bank == pagedBank)
+            {
+                continue;
+            }
+
+            contents.AddRange(banks[bank]);
+        }
+
+        using var input = new MemoryStream(contents.ToArray());
+        var file = SnaFormat.Instance.Read(input);
+
+        var memory = new byte[65536];
+        file.TryLoadInto(memory).Should().BeTrue();
+
+        memory.AsSpan(0x4000, 16384).ToArray().Should().SequenceEqual(banks[5]);
+        memory.AsSpan(0x8000, 16384).ToArray().Should().SequenceEqual(banks[2]);
+        memory.AsSpan(0xC000, 16384).ToArray().Should().SequenceEqual(banks[pagedBank]);
+    }
+
+    [Test]
     public void Write_ThrowsForWrongFileType()
     {
         var tapFile = TapFile.CreateCode("test", 0, [0xF3, 0xAF]);

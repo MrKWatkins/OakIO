@@ -48,6 +48,48 @@ public sealed class ZXSpectrumFileFormatTests : ZXSpectrumTestFixture
     }
 
     [Test]
+    public void Read_ByteArray()
+    {
+        using var stream = OpenResource(Resources.AufWiedersehenMontyZ80V2);
+        using var memoryStream = new MemoryStream();
+        stream.CopyTo(memoryStream);
+        var bytes = memoryStream.ToArray();
+
+        ZXSpectrumFileFormat format = Z80Format.Instance;
+
+        // No cast required: proves ZXSpectrumFileFormat.Read(byte[]) hides the base IOFile-returning overload.
+        ZXSpectrumFile file = format.Read(bytes);
+
+        file.Should().BeOfType<Z80V2File>();
+    }
+
+    [Test]
+    public void Read_Stream()
+    {
+        using var stream = OpenResource(Resources.AufWiedersehenMontyZ80V2);
+
+        ZXSpectrumFileFormat format = Z80Format.Instance;
+
+        // No cast required: proves ZXSpectrumFileFormat.Read(Stream) hides the base IOFile-returning overload.
+        ZXSpectrumFile file = format.Read(stream);
+
+        file.Should().BeOfType<Z80V2File>();
+    }
+
+    [Test]
+    public async Task ReadAsync()
+    {
+        await using var stream = OpenResource(Resources.AufWiedersehenMontyZ80V2);
+
+        ZXSpectrumFileFormat format = Z80Format.Instance;
+
+        // No cast required: proves ZXSpectrumFileFormat.ReadAsync hides the base IOFile-returning overload.
+        ZXSpectrumFile file = await format.ReadAsync(stream);
+
+        file.Should().BeOfType<Z80V2File>();
+    }
+
+    [Test]
     public void Constructor_FileTypeIsZXSpectrumFile_Throws()
     {
         AssertThat.Invoking(() => _ = new StubFormat(typeof(ZXSpectrumFile))).Should().Throw<ArgumentException>();

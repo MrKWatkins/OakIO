@@ -3,11 +3,16 @@ namespace MrKWatkins.OakIO.Wav;
 /// <summary>
 /// The 44-byte canonical header of a mono, 8-bit PCM WAV file: the RIFF/WAVE chunk plus the fmt and data subchunk headers.
 /// </summary>
-internal sealed class WavHeader : Header
+public sealed class WavHeader : Header
 {
     internal const int Size = 44;
 
-    internal WavHeader(uint sampleRate, int dataLength)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WavHeader" /> class for the given sample rate and sample data length.
+    /// </summary>
+    /// <param name="sampleRate">The sample rate of the audio in Hz.</param>
+    /// <param name="dataLength">The length of the sample data in bytes.</param>
+    public WavHeader(uint sampleRate, int dataLength)
         : base(Size)
     {
         SetString(0, 4, "RIFF");
@@ -15,14 +20,14 @@ internal sealed class WavHeader : Header
         SetString(8, 4, "WAVE");
         SetString(12, 4, "fmt ");
         SetInt32(16, 16);                       // fmt subchunk size (PCM).
-        SetUInt16(20, 1);                       // Audio format (PCM).
-        SetUInt16(22, 1);                       // Number of channels (mono).
-        SetUInt32(24, sampleRate);              // Sample rate.
-        SetUInt32(28, sampleRate);              // Byte rate = sample rate * channels * bits per sample / 8.
-        SetUInt16(32, 1);                       // Block align = channels * bits per sample / 8.
-        SetUInt16(34, 8);                       // Bits per sample.
+        AudioFormat = 1;
+        NumChannels = 1;
+        SampleRate = sampleRate;
+        ByteRate = sampleRate;                  // NumChannels * BitsPerSample / 8 == 1.
+        BlockAlign = 1;
+        BitsPerSample = 8;
         SetString(36, 4, "data");
-        SetInt32(40, dataLength);               // Data subchunk size.
+        DataSize = dataLength;
     }
 
     internal WavHeader(byte[] data)
@@ -51,22 +56,19 @@ internal sealed class WavHeader : Header
             throw new InvalidDataException($"Not a valid WAV file: expected fmt subchunk size of 16 but got {subChunk1Size}.");
         }
 
-        var audioFormat = GetUInt16(20);
-        if (audioFormat != 1)
+        if (AudioFormat != 1)
         {
-            throw new InvalidDataException($"Not a valid WAV file: expected PCM audio format (1) but got {audioFormat}.");
+            throw new InvalidDataException($"Not a valid WAV file: expected PCM audio format (1) but got {AudioFormat}.");
         }
 
-        var numChannels = GetUInt16(22);
-        if (numChannels != 1)
+        if (NumChannels != 1)
         {
-            throw new InvalidDataException($"Not a valid WAV file: expected 1 channel but got {numChannels}.");
+            throw new InvalidDataException($"Not a valid WAV file: expected 1 channel but got {NumChannels}.");
         }
 
-        var bitsPerSample = GetUInt16(34);
-        if (bitsPerSample != 8)
+        if (BitsPerSample != 8)
         {
-            throw new InvalidDataException($"Not a valid WAV file: expected 8 bits per sample but got {bitsPerSample}.");
+            throw new InvalidDataException($"Not a valid WAV file: expected 8 bits per sample but got {BitsPerSample}.");
         }
 
         if (!span[36..40].SequenceEqual("data"u8))
@@ -74,14 +76,72 @@ internal sealed class WavHeader : Header
             throw new InvalidDataException("Not a valid WAV file: missing data subchunk.");
         }
 
-        var dataSize = GetInt32(40);
-        if (dataSize < 0)
+        if (DataSize < 0)
         {
-            throw new InvalidDataException($"Not a valid WAV file: negative data subchunk size of {dataSize}.");
+            throw new InvalidDataException($"Not a valid WAV file: negative data subchunk size of {DataSize}.");
         }
     }
 
-    internal uint SampleRate => GetUInt32(24);
+    /// <summary>
+    /// Gets or sets the audio format code. Always 1 (PCM) for files this library can read and write.
+    /// </summary>
+    public ushort AudioFormat
+    {
+        get => GetUInt16(20);
+        private init => SetUInt16(20, value);
+    }
 
-    internal int DataSize => GetInt32(40);
+    /// <summary>
+    /// Gets or sets the number of channels. Always 1 (mono) for files this library can read and write.
+    /// </summary>
+    public ushort NumChannels
+    {
+        get => GetUInt16(22);
+        private init => SetUInt16(22, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the sample rate of the audio in Hz.
+    /// </summary>
+    public uint SampleRate
+    {
+        get => GetUInt32(24);
+        private init => SetUInt32(24, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the byte rate: <see cref="SampleRate" /> * <see cref="NumChannels" /> * <see cref="BitsPerSample" /> / 8.
+    /// </summary>
+    public uint ByteRate
+    {
+        get => GetUInt32(28);
+        private init => SetUInt32(28, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the block align: <see cref="NumChannels" /> * <see cref="BitsPerSample" /> / 8.
+    /// </summary>
+    public ushort BlockAlign
+    {
+        get => GetUInt16(32);
+        private init => SetUInt16(32, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the number of bits per sample. Always 8 for files this library can read and write.
+    /// </summary>
+    public ushort BitsPerSample
+    {
+        get => GetUInt16(34);
+        private init => SetUInt16(34, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the length of the sample data in bytes.
+    /// </summary>
+    public int DataSize
+    {
+        get => GetInt32(40);
+        private init => SetInt32(40, value);
+    }
 }

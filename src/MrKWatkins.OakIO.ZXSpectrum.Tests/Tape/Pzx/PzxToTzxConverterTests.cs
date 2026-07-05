@@ -85,6 +85,49 @@ public sealed class PzxToTzxConverterTests
         archiveInfo.Entries[1].Text.Should().Equal("Gremlin");
     }
 
+    [TestCase("Title", ArchiveInfoType.FullTitle)]
+    [TestCase("Publisher", ArchiveInfoType.SoftwareHouseOrPublisher)]
+    [TestCase("Author", ArchiveInfoType.Authors)]
+    [TestCase("Year", ArchiveInfoType.YearOfPublication)]
+    [TestCase("Language", ArchiveInfoType.Language)]
+    [TestCase("Type", ArchiveInfoType.GameOrUtilityType)]
+    [TestCase("Price", ArchiveInfoType.Price)]
+    [TestCase("Protection", ArchiveInfoType.ProtectionSchemeOrLoader)]
+    [TestCase("Origin", ArchiveInfoType.Origin)]
+    [TestCase("Comment", ArchiveInfoType.Comments)]
+    public void Convert_PzxHeaderBlock_MapsInfoType(string pzxType, ArchiveInfoType expected)
+    {
+        var pzx = ReadPzx(BuildPzxHeaderWithSecondInfo(pzxType));
+
+        var tzx = new PzxToTzxConverter().Convert(pzx);
+
+        var archiveInfo = tzx.Blocks[0].Should().BeOfType<ArchiveInfoBlock>().Value;
+        archiveInfo.Entries[1].Type.Should().Equal(expected);
+    }
+
+    [Test]
+    public void Convert_PzxHeaderBlock_UnsupportedInfoType_Throws()
+    {
+        var pzx = ReadPzx(BuildPzxHeaderWithSecondInfo("Unknown"));
+
+        AssertThat.Invoking(() => new PzxToTzxConverter().Convert(pzx))
+            .Should().Throw<NotSupportedException>();
+    }
+
+    [Pure]
+    private static byte[] BuildPzxHeaderWithSecondInfo(string type)
+    {
+        using var stream = new MemoryStream();
+        stream.Write("PZXT"u8);
+        var infoData = System.Text.Encoding.ASCII.GetBytes($"Monty\0{type}\0Gremlin");
+        var size = 2 + infoData.Length;
+        stream.Write([(byte)size, (byte)(size >> 8), 0x00, 0x00]);
+        stream.WriteByte(0x01);
+        stream.WriteByte(0x00);
+        stream.Write(infoData);
+        return stream.ToArray();
+    }
+
     [Test]
     public void Convert_PzxHeaderBlock_NoInfo_NoArchiveInfoBlock()
     {
