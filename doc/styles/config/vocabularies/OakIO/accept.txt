@@ -1,0 +1,17 @@
+Auf
+IOFile
+Raxoft
+Wiedersehen
+enum
+Enum
+TEnum
+tilemap
+Tilemode
+Kempston
+autostart
+ZXColour
+zlib
+unmanaged
+Brotli
+GZip
+Zstandard

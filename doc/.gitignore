@@ -18,3 +18,7 @@ node_modules/
 # Build artifacts (generated in CI / by npm run build:vite and dotnet:publish)
 docs/assets/javascripts/
 docs/dotnet/
+
+# Vale style packages, fetched by `vale sync` (see .vale.ini); our own vocab stays checked in.
+/styles/*
+!/styles/config/

@@ -32,7 +32,7 @@ public sealed class RzxCreatorBlock : RzxBlock
     }
 
     /// <summary>
-    /// Gets the creator's identification string, e.g. "RealSpectrum".
+    /// Gets the creator's identification string, for example "RealSpectrum".
     /// </summary>
     public string Creator => GetString(0, CreatorLength);
 

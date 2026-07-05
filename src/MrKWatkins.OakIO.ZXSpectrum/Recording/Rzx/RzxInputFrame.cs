@@ -8,7 +8,7 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 public sealed class RzxInputFrame
 {
     /// <summary>
-    /// The value of the IN counter that indicates a repeated frame, i.e. the port reads are the same as the previous frame.
+    /// The value of the IN counter that indicates a repeated frame, that is the port reads are the same as the previous frame.
     /// </summary>
     public const ushort RepeatedInputReads = ushort.MaxValue;
 

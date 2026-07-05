@@ -90,7 +90,7 @@ public abstract class IOFile
         Codec.WriteAsync(this, stream, filename, compressionFormat, cancellationToken);
 
     /// <summary>
-    /// Gets the filename to use for a file written with the specified compression format, e.g. <c>"name.wav"</c>
+    /// Gets the filename to use for a file written with the specified compression format, for example <c>"name.wav"</c>
     /// compressed with <see cref="CompressionFormat.GZip" /> becomes <c>"name.wav.gz"</c>.
     /// </summary>
     /// <param name="filename">The filename of the uncompressed file, with extension.</param>

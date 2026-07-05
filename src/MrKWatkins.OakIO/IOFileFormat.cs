@@ -96,7 +96,7 @@ public abstract class IOFileFormat
     }
 
     /// <summary>
-    /// Loads a file from a stream. Use as an alternative to <see cref="Load(string, IReadOnlyList{IOFileFormat})"/> when the file is not on disk, e.g. web upload.
+    /// Loads a file from a stream. Use as an alternative to <see cref="Load(string, IReadOnlyList{IOFileFormat})"/> when the file is not on disk, for example web upload.
     /// </summary>
     /// <param name="path">The path of the file in the stream. Used to determine the type of the file.</param>
     /// <param name="stream">The file.</param>
@@ -123,7 +123,7 @@ public abstract class IOFileFormat
     }
 
     /// <summary>
-    /// Loads a file from a stream asynchronously. Use as an alternative to <see cref="LoadAsync(string, IReadOnlyList{IOFileFormat}, CancellationToken)"/> when the file is not on disk, e.g. web upload.
+    /// Loads a file from a stream asynchronously. Use as an alternative to <see cref="LoadAsync(string, IReadOnlyList{IOFileFormat}, CancellationToken)"/> when the file is not on disk, for example web upload.
     /// </summary>
     /// <param name="path">The path of the file in the stream. Used to determine the type of the file.</param>
     /// <param name="stream">The file.</param>

@@ -8,10 +8,12 @@
     "dotnet:api": "dotnet build ../src/MrKWatkins.OakIO/MrKWatkins.OakIO.csproj -c Release && dotnet build ../src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj -c Release && sesharp ../src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll ../src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output docs/API --repository https://github.com/MrKWatkins/OakIO",
     "build:vite": "vite build",
     "build:mkdocs": "uv run mkdocs build",
-    "build": "npm run dotnet:publish && npm run dotnet:api && npm run build:vite && npm run build:mkdocs",
+    "lint:prose": "uv run vale sync && uv run vale docs",
+    "lint:prose:strict": "uv run vale sync && uv run vale docs --minAlertLevel=error",
+    "build": "npm run dotnet:publish && npm run dotnet:api && npm run build:vite && npm run build:mkdocs && npm run lint:prose:strict",
     "serve:mkdocs": "uv run mkdocs serve",
     "serve:vite": "vite build --watch",
-    "serve": "npm run dotnet:publish && npm run dotnet:api && npm run build:vite && concurrently --kill-others-on-fail --kill-others \"npm:serve:mkdocs\" \"npm:serve:vite\""
+    "serve": "npm run dotnet:publish && npm run dotnet:api && npm run build:vite && npm run lint:prose:strict && concurrently --kill-others-on-fail --kill-others \"npm:serve:mkdocs\" \"npm:serve:vite\""
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

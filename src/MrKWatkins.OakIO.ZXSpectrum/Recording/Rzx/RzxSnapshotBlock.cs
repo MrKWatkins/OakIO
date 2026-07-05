@@ -15,7 +15,7 @@ public sealed class RzxSnapshotBlock : RzxBlock
     /// <summary>
     /// Initializes a new instance of the <see cref="RzxSnapshotBlock" /> class containing an uncompressed, embedded snapshot.
     /// </summary>
-    /// <param name="extension">The snapshot filename extension, e.g. "Z80" or "SNA".</param>
+    /// <param name="extension">The snapshot filename extension, for example "Z80" or "SNA".</param>
     /// <param name="data">The uncompressed snapshot data.</param>
     /// <param name="flags">The snapshot flags. Only <see cref="RzxSnapshotFlags.None" /> is supported for writing.</param>
     /// <param name="uncompressedLength">The uncompressed snapshot length. Defaults to the length of <paramref name="data" />.</param>
@@ -54,7 +54,7 @@ public sealed class RzxSnapshotBlock : RzxBlock
     public RzxSnapshotFlags Flags => (RzxSnapshotFlags)GetUInt32(0);
 
     /// <summary>
-    /// Gets the snapshot filename extension, e.g. "Z80" or "SNA".
+    /// Gets the snapshot filename extension, for example "Z80" or "SNA".
     /// </summary>
     public string Extension => GetString(4, ExtensionLength);
 

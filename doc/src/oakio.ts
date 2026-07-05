@@ -27,8 +27,10 @@ let exportsPromise: Promise<OakIOExports> | null = null;
 
 async function initRuntime(): Promise<OakIOExports> {
   // Resolve dotnet.js relative to this module so the URL is correct at any
-  // base path (local: /, GitHub Pages: /OakIO/).
-  const dotnetUrl = /* @vite-ignore */ new URL('../../dotnet/dotnet.js', import.meta.url).href;
+  // base path (local: /, GitHub Pages: /OakIO/). This only exists at runtime,
+  // after "npm run dotnet:publish" - see vite.config.ts for the corresponding
+  // warning suppression (Vite can't resolve it as a build-time asset).
+  const dotnetUrl = new URL('../../dotnet/dotnet.js', import.meta.url).href;
   const { dotnet } = await import(/* @vite-ignore */ dotnetUrl).catch(() => {
     throw new Error(`Failed to load the .NET runtime from ${dotnetUrl}. Run "npm run dotnet:publish" in the doc/ directory to build the WASM assets.`);
   }) as { dotnet: DotnetBuilder };

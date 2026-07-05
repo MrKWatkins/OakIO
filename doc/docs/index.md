@@ -57,7 +57,7 @@ The library is organised around a set of base classes:
 ## Use of AI
 
 My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
-forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, setup for the the online converter,
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some converters, setup for the online converter,
 and help with documentation and unit tests.
 
 ## Licencing

@@ -1,6 +1,6 @@
 # TAP
 
-TAP is a simple tape format for the ZX Spectrum. A TAP file is a flat sequence of blocks, each consisting of a flag byte, raw data bytes, and a checksum byte. There is no metadata about the recording itself — it is purely the data that would have been read from or written to tape.
+TAP is a simple tape format for the ZX Spectrum. A TAP file is a flat sequence of blocks, each consisting of a flag byte, raw data bytes, and a checksum byte. TAP carries no metadata about the recording itself — it is purely the data that would have been read from or written to tape.
 
 Details about the SNA format can be found at [https://sinclair.wiki.zxnet.co.uk/wiki/TAP_format](https://sinclair.wiki.zxnet.co.uk/wiki/TAP_format).
 
@@ -49,7 +49,7 @@ foreach (TapBlock block in tap.Blocks)
 
 ## Creating TAP Files
 
-Factory methods on [`HeaderBlock`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/HeaderBlock/index.md) and [`DataBlock`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/DataBlock/index.md) create individual blocks, and factory methods on [`TapFile`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/TapFile/index.md) create a file with correctly-paired header/data block sequences:
+Factory methods on [`HeaderBlock`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/HeaderBlock/index.md) and [`DataBlock`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/DataBlock/index.md) create individual blocks, and factory methods on [`TapFile`](../../API/MrKWatkins.OakIO.ZXSpectrum.Tape.Tap/TapFile/index.md) create a file with correctly paired header/data block sequences:
 
 ```c#
 // A code block at location 0x8000

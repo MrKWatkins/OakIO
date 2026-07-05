@@ -1,8 +1,25 @@
-import { defineConfig } from 'vite';
+import { defineConfig, createLogger } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
+// dotnet.js is loaded via new URL('../../dotnet/dotnet.js', import.meta.url) in
+// src/oakio.ts, resolved at runtime after "npm run dotnet:publish" generates it.
+// Vite statically detects that pattern and warns that the file doesn't exist at
+// build time, even though leaving it unresolved for runtime is exactly what we
+// want. @vite-ignore doesn't suppress it (tested against vite 8.1.3 / rolldown -
+// the comment gets normalized away before the warning check runs, regardless of
+// where it's placed), so filter the one known-benign message here instead.
+const logger = createLogger();
+const { warnOnce } = logger;
+logger.warnOnce = (message, options) => {
+    if (message.includes("dotnet/dotnet.js")) {
+        return;
+    }
+    warnOnce.call(logger, message, options);
+};
+
 export default defineConfig({
+    customLogger: logger,
     plugins: [react()],
     resolve: {
         // Force all React imports (including those from web/src/ files outside this
