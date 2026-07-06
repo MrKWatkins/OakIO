@@ -5,7 +5,11 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 /// </summary>
 public abstract class ZXSpectrumSnapshotFile : ZXSpectrumFile
 {
-    private protected ZXSpectrumSnapshotFile(ZXSpectrumSnapshotFormat format)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ZXSpectrumSnapshotFile" /> class.
+    /// </summary>
+    /// <param name="format">The snapshot format of the file.</param>
+    protected ZXSpectrumSnapshotFile(ZXSpectrumSnapshotFormat format)
         : base(format)
     {
     }

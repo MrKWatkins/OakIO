@@ -10,7 +10,7 @@ public abstract class ZXSpectrumFile : IOFile
     /// Initializes a new instance of the <see cref="ZXSpectrumFile" /> class.
     /// </summary>
     /// <param name="format">The ZX Spectrum format of the file.</param>
-    private protected ZXSpectrumFile(ZXSpectrumFileFormat format)
+    protected ZXSpectrumFile(ZXSpectrumFileFormat format)
         : base(format)
     {
     }

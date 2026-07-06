@@ -9,7 +9,7 @@ public abstract class ZXSpectrumRecordingFile : ZXSpectrumFile
     /// Initializes a new instance of the <see cref="ZXSpectrumRecordingFile" /> class.
     /// </summary>
     /// <param name="format">The recording format of the file.</param>
-    private protected ZXSpectrumRecordingFile(ZXSpectrumRecordingFormat format)
+    protected ZXSpectrumRecordingFile(ZXSpectrumRecordingFormat format)
         : base(format)
     {
     }
