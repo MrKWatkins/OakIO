@@ -28,6 +28,7 @@ An online converter using this library is available [here](converter.md).
 ## Documentation
 
 - [Reading, Writing and Converting](reading-writing-converting.md)
+- [Resources](resources.md) — Shared image, palette and tile models and file format bases.
 
 ### ZX Spectrum Tape Formats
 
@@ -76,4 +77,3 @@ The ZX Spectrum file format tests use some files found in the wild:
 * A TAP of Z80 Tests by Raxoft, https://github.com/raxoft/z80test, which is released under the MIT license.
 
 If I've made a mistake with the above, please let me know.
-
