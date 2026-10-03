@@ -33,6 +33,7 @@ An online converter using this library is available [here](converter.md).
 ### Image Formats
 
 - [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
+- [SCR](formats/image/scr.md) — Native Spectrum bitmap and colour-attribute screen dumps.
 
 ### Palette Formats
 

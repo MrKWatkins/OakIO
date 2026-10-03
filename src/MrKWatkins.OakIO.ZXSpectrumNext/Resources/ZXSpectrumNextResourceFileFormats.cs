@@ -1,4 +1,5 @@
 using MrKWatkins.OakIO.Resources;
+using MrKWatkins.OakIO.ZXSpectrum.Resources;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Spr;
@@ -13,7 +14,7 @@ public static class ZXSpectrumNextResourceFileFormats
     /// <summary>
     /// Gets resource formats that do not require an externally supplied bit depth, separate from snapshots and tapes.
     /// </summary>
-    public static readonly IReadOnlyList<ResourceFormat> AllFormats = [.. ResourceFileFormats.AllFormats, NxpFormat.Instance];
+    public static readonly IReadOnlyList<ResourceFormat> AllFormats = [.. ZXSpectrumResourceFileFormats.AllFormats, NxpFormat.Instance];
 
     /// <summary>
     /// Gets resource formats including SPR and NXT at explicitly selected bit depths.

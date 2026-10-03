@@ -1,6 +1,8 @@
 using MrKWatkins.OakIO.Compression;
 using MrKWatkins.OakIO.Resources;
 using MrKWatkins.OakIO.Resources.Jasc;
+using MrKWatkins.OakIO.ZXSpectrum.Resources;
+using MrKWatkins.OakIO.ZXSpectrum.Resources.Scr;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
@@ -10,6 +12,14 @@ namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources;
 
 public sealed class ZXSpectrumNextResourceFileFormatsTests
 {
+    [Test]
+    public void AllFormats_LoadScr()
+    {
+        var bytes = Enumerable.Range(0, 6912).Select(index => (byte)(index * 37)).ToArray();
+        using var stream = new MemoryStream(bytes);
+        IOFileFormat.Load("screen.scr", stream, ZXSpectrumNextResourceFileFormats.AllFormats)
+            .Should().BeOfType<ScrFile>().Value.ToByteArray().Should().SequenceEqual(bytes);
+    }
     [TestCase(4, 1)]
     [TestCase(4, 4)]
     [TestCase(4, 8)]
@@ -63,7 +73,7 @@ public sealed class ZXSpectrumNextResourceFileFormatsTests
     [Test]
     public void AllFormats()
     {
-        ZXSpectrumNextResourceFileFormats.AllFormats.Should().SequenceEqual([.. ResourceFileFormats.AllFormats, NxpFormat.Instance]);
+        ZXSpectrumNextResourceFileFormats.AllFormats.Should().SequenceEqual([.. ZXSpectrumResourceFileFormats.AllFormats, NxpFormat.Instance]);
         ResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxp");
         ZXSpectrumNextFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxp");
     }
