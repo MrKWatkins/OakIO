@@ -34,6 +34,7 @@ An online converter using this library is available [here](converter.md).
 
 - [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
 - [SCR](formats/image/scr.md) — Native Spectrum bitmap and colour-attribute screen dumps.
+- [NXI](formats/image/nxi.md) — Palette-prefixed Next Layer 2 images in native screen layouts.
 
 ### Palette Formats
 

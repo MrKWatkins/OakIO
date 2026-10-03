@@ -1,14 +1,31 @@
 using MrKWatkins.OakIO.Resources;
+using MrKWatkins.OakIO.Resources.Bmp;
 using MrKWatkins.OakIO.Resources.Gpl;
 using MrKWatkins.OakIO.Resources.Jasc;
 using MrKWatkins.OakIO.Resources.PaintNet;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 
 namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources;
 
 public sealed class ResourceConversionsTests
 {
+    [TestCase(256, 192)]
+    [TestCase(320, 256)]
+    [TestCase(640, 256)]
+    public void Initialize_Nxi(int width, int height)
+    {
+        ResourceConversions.Initialize();
+        ResourceConversions.Initialize();
+        var source = new BmpFile(Nxi.NxiTestData.Image(width, height));
+        var expected = Nxi.NxiTestData.Bytes(width, height);
+        IOFileConversion.Convert<NxiFile>(source).ToByteArray().Should().SequenceEqual(expected);
+        IOFileConversion.Convert(source, typeof(NxiFile)).ToByteArray().Should().SequenceEqual(expected);
+        IOFileConversion.Convert(source, NxiFormat.Instance).ToByteArray().Should().SequenceEqual(expected);
+        IOFileConversion.GetSupportedConversionFormats(source.Format).Count(format => format == NxiFormat.Instance).Should().Equal(1);
+    }
+
     [TestCase(0)]
     [TestCase(1)]
     [TestCase(2)]

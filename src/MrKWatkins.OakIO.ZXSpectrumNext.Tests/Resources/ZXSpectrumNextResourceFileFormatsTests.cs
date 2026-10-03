@@ -4,6 +4,7 @@ using MrKWatkins.OakIO.Resources.Jasc;
 using MrKWatkins.OakIO.ZXSpectrum.Resources;
 using MrKWatkins.OakIO.ZXSpectrum.Resources.Scr;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Spr;
@@ -12,6 +13,45 @@ namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources;
 
 public sealed class ZXSpectrumNextResourceFileFormatsTests
 {
+    [TestCase(256, 192)]
+    [TestCase(320, 256)]
+    [TestCase(640, 256)]
+    public async Task AllFormats_LoadNxiAsync(int width, int height)
+    {
+        var bytes = Nxi.NxiTestData.Bytes(width, height);
+        using var stream = new MemoryStream(bytes);
+        var file = (NxiFile)await IOFileFormat.LoadAsync("screen.nxi", stream, ZXSpectrumNextResourceFileFormats.AllFormats);
+        file.PixelData.Width.Should().Equal(width);
+        file.PixelData.Height.Should().Equal(height);
+        file.ToByteArray().Should().SequenceEqual(bytes);
+    }
+
+    [TestCase(256, 192, false)]
+    [TestCase(320, 256, false)]
+    [TestCase(640, 256, false)]
+    [TestCase(256, 192, true)]
+    [TestCase(320, 256, true)]
+    [TestCase(640, 256, true)]
+    public void AllFormats_LoadNxi(int width, int height, bool compressed)
+    {
+        var bytes = Nxi.NxiTestData.Bytes(width, height);
+        using var stream = new MemoryStream();
+        var original = NxiFormat.Instance.Read(bytes);
+        if (compressed)
+        {
+            original.Write(stream, "screen.nxi", CompressionFormat.GZip);
+        }
+        else
+        {
+            original.Write(stream);
+        }
+        stream.Position = 0;
+        var file = (NxiFile)IOFileFormat.Load(compressed ? "screen.nxi.gz" : "screen.nxi", stream, ZXSpectrumNextResourceFileFormats.AllFormats);
+        file.PixelData.Width.Should().Equal(width);
+        file.PixelData.Height.Should().Equal(height);
+        file.ToByteArray().Should().SequenceEqual(bytes);
+    }
+
     [Test]
     public void AllFormats_LoadScr()
     {
@@ -73,8 +113,11 @@ public sealed class ZXSpectrumNextResourceFileFormatsTests
     [Test]
     public void AllFormats()
     {
-        ZXSpectrumNextResourceFileFormats.AllFormats.Should().SequenceEqual([.. ZXSpectrumResourceFileFormats.AllFormats, NxpFormat.Instance]);
+        ZXSpectrumNextResourceFileFormats.AllFormats.Should().SequenceEqual([.. ZXSpectrumResourceFileFormats.AllFormats, NxpFormat.Instance, NxiFormat.Instance]);
         ResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxp");
+        ResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxi");
+        ZXSpectrumResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxi");
+        ZXSpectrumNextFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxi");
         ZXSpectrumNextFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxp");
     }
 

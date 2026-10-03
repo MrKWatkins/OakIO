@@ -1,8 +1,10 @@
 using System.Runtime.CompilerServices;
+using MrKWatkins.OakIO.Resources.Bmp;
 using MrKWatkins.OakIO.Resources.Gpl;
 using MrKWatkins.OakIO.Resources.Jasc;
 using MrKWatkins.OakIO.Resources.PaintNet;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 
 namespace MrKWatkins.OakIO.ZXSpectrumNext.Resources;
 
@@ -17,5 +19,7 @@ internal static class ResourceConversions
         IOFileConversion.RegisterConverters(
             new PaletteToNxpConverter(GplFormat.Instance),
             new PaletteToNxpConverter(JascFormat.Instance),
-            new PaletteToNxpConverter(PaintNetFormat.Instance));
+            new PaletteToNxpConverter(PaintNetFormat.Instance),
+            new ImageToNxiConverter(BmpFormat.Instance),
+            new ImageToNxiConverter(NxiFormat.Instance));
 }

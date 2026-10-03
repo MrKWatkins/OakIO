@@ -4,9 +4,9 @@ The resource types are in the core `MrKWatkins.OakIO` package, under the
 `MrKWatkins.OakIO.Resources` namespace. They provide a common data model for image, palette and tile formats.
 Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette/gpl.md),
 [JASC PAL](formats/palette/jasc.md) and [Paint.NET](formats/palette/paintdotnet.md) palettes.
-The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes.
+The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes,
+[NXI](formats/image/nxi.md) images, [SPR](formats/tiles/spr.md) sprite patterns and [NXT](formats/tiles/nxt.md) tiles.
 The `MrKWatkins.OakIO.ZXSpectrum` package supports [SCR](formats/image/scr.md) screen dumps.
-It also provides [SPR](formats/tiles/spr.md) sprite patterns and [NXT](formats/tiles/nxt.md) tiles.
 Resource formats are not yet included in the CLI or online converter.
 
 ## Files and formats
