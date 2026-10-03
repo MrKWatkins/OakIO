@@ -34,6 +34,12 @@ An online converter using this library is available [here](converter.md).
 
 - [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
 
+### Palette Formats
+
+- [GIMP GPL](formats/palette/gpl.md) — RGB palettes with optional palette and colour names.
+- [JASC PAL](formats/palette/jasc.md) — Paint Shop Pro RGB palettes.
+- [Paint.NET](formats/palette/paintdotnet.md) — Text palettes with alpha support.
+
 ### ZX Spectrum Tape Formats
 
 - [TAP](formats/tape/tap.md) — Simple tape format containing raw data blocks.

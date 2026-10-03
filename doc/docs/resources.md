@@ -2,8 +2,9 @@
 
 The resource types are in the core `MrKWatkins.OakIO` package, under the
 `MrKWatkins.OakIO.Resources` namespace. They provide a common data model for image, palette and tile formats.
-The first concrete format is [BMP](formats/image/bmp.md). Resource formats are not yet included in the CLI
-or online converter.
+Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette/gpl.md),
+[JASC PAL](formats/palette/jasc.md) and [Paint.NET](formats/palette/paintdotnet.md) palettes.
+Resource formats are not yet included in the CLI or online converter.
 
 ## Files and formats
 
