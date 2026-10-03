@@ -7,6 +7,9 @@ namespace MrKWatkins.OakIO.Resources.Gpl;
 /// <summary>
 /// Reads and writes GIMP GPL palettes without changing their stored text.
 /// </summary>
+/// <remarks>
+/// Format reference: https://developer.gimp.org/core/standards/gpl/.
+/// </remarks>
 public sealed class GplFormat : PaletteFormat<GplFile>
 {
     /// <summary>

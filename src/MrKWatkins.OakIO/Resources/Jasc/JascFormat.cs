@@ -7,6 +7,9 @@ namespace MrKWatkins.OakIO.Resources.Jasc;
 /// <summary>
 /// Reads and writes JASC-PAL 0100 palettes; other .pal variants are not inferred.
 /// </summary>
+/// <remarks>
+/// Format reference: https://developer.gimp.org/core/standards/.
+/// </remarks>
 public sealed class JascFormat : PaletteFormat<JascFile>
 {
     /// <summary>

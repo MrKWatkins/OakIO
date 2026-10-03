@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dotnet:publish": "dotnet publish ../src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm && node scripts/copy-dotnet-to-docs.mjs && node scripts/generate-dotnet-boot.mjs",
-    "dotnet:api": "dotnet build ../src/MrKWatkins.OakIO/MrKWatkins.OakIO.csproj -c Release && dotnet build ../src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj -c Release && sesharp ../src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll ../src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output docs/API --repository https://github.com/MrKWatkins/OakIO",
+    "dotnet:api": "dotnet build ../src/MrKWatkins.OakIO.ZXSpectrumNext/MrKWatkins.OakIO.ZXSpectrumNext.csproj -c Release && sesharp ../src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll ../src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll ../src/MrKWatkins.OakIO.ZXSpectrumNext/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrumNext.dll --output docs/API --repository https://github.com/MrKWatkins/OakIO",
     "build:vite": "vite build",
     "build:mkdocs": "uv run mkdocs build",
     "lint:prose": "uv run vale sync && uv run vale docs",

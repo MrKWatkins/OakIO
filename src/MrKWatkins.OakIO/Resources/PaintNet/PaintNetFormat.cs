@@ -7,6 +7,9 @@ namespace MrKWatkins.OakIO.Resources.PaintNet;
 /// <summary>
 /// Reads and writes Paint.NET hexadecimal text palettes without changing their stored lines.
 /// </summary>
+/// <remarks>
+/// Format reference: https://paint.net/doc/latest/WorkingWithPalettes.html.
+/// </remarks>
 public sealed class PaintNetFormat : PaletteFormat<PaintNetFile>
 {
     /// <summary>

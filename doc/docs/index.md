@@ -39,6 +39,7 @@ An online converter using this library is available [here](converter.md).
 - [GIMP GPL](formats/palette/gpl.md) — RGB palettes with optional palette and colour names.
 - [JASC PAL](formats/palette/jasc.md) — Paint Shop Pro RGB palettes.
 - [Paint.NET](formats/palette/paintdotnet.md) — Text palettes with alpha support.
+- [NXP](formats/palette/nxp.md) — ZX Spectrum Next RGB333 palettes with 16 or 256 entries.
 
 ### ZX Spectrum Tape Formats
 

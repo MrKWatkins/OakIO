@@ -17,5 +17,8 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>MrKWatkins.OakIO.ZXSpectrumNext.Tests</_Parameter1>
         </AssemblyAttribute>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>MrKWatkins.OakIO.ZXSpectrumNext</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 </Project>
