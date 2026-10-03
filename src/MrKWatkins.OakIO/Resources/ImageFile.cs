@@ -1,20 +1,17 @@
 namespace MrKWatkins.OakIO.Resources;
 
 /// <summary>
-/// Base class for image files.
+/// Base class for image files whose concrete components represent their on-disk format.
 /// </summary>
 public abstract class ImageFile : ResourceFile
 {
     /// <summary>
-    /// Initializes a image file.
+    /// Initializes an image file.
     /// </summary>
     /// <param name="format">The file format.</param>
-    /// <param name="image">The shared image data.</param>
-    protected ImageFile(ImageFormat format, ImageData image)
+    protected ImageFile(ImageFormat format)
         : base(format ?? throw new ArgumentNullException(nameof(format)))
     {
-        ArgumentNullException.ThrowIfNull(image);
-        Image = image;
     }
 
     /// <summary>
@@ -23,7 +20,7 @@ public abstract class ImageFile : ResourceFile
     public new ImageFormat Format => (ImageFormat)base.Format;
 
     /// <summary>
-    /// Gets the shared image data.
+    /// Gets a shared convenience view derived from the file's concrete components.
     /// </summary>
-    public ImageData Image { get; }
+    public abstract ImageData Image { get; }
 }

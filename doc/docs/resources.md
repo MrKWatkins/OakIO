@@ -2,8 +2,8 @@
 
 The resource types are in the core `MrKWatkins.OakIO` package, under the
 `MrKWatkins.OakIO.Resources` namespace. They provide a common data model for image, palette and tile formats.
-Concrete file readers, writers and converters are added separately; this foundation does not yet add resource
-formats to the CLI or online converter.
+The first concrete format is [BMP](formats/image/bmp.md). Resource formats are not yet included in the CLI
+or online converter.
 
 ## Files and formats
 
@@ -20,8 +20,12 @@ Each specialized pair has the same relationship:
 
 Each format also has a generic variant for strongly typed reads and writes. A concrete format implements its
 binary reader and writer hooks and registers applicable converters through `CreateConverters`.
+Concrete resource files retain their own format-specific headers and data components, following the tape
+and snapshot formats. The image, palette and tiles bases take only a format; their abstract `Image`,
+`Palette` and `Tiles` properties provide convenience views implemented by each concrete file. Shared data
+models are conversion views, not a replacement for the on-disk structure or a second source of truth.
 Resource formats are separate from the Spectrum and Next snapshot/tape format lists. Call
-`IOFileFormat.Load` or `LoadAsync` with an explicit list of supported resource formats once those formats exist.
+`IOFileFormat.Load` or `LoadAsync` with `ResourceFileFormats.AllFormats` to discover resource formats.
 
 ## Colours and palettes
 

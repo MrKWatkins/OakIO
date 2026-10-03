@@ -62,7 +62,7 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 ## Project Structure
 
 - ** MrKWatkins.OakIO **: Main library project. Contains base classes for file formats and converters, along with Tape and Wav implementations. Tape is a generic tape file format that does not support reading/writing and is intended for use internally by emulators.
-- Resource bases and immutable shared colour, palette, image and tile models are in `MrKWatkins.OakIO.Resources`. Pixels are top-left-origin and row-major, with tile-major ordering for tiles. Indexed pixels are unpacked bytes; concrete formats handle binary packing.
+- Resource bases and shared colour, palette, image and tile models are in `MrKWatkins.OakIO.Resources`. Concrete resource files must represent their actual file formats with byte-backed headers and data components, following tape/snapshot conventions, and preserve metadata when reading/writing. Shared models are derived convenience/conversion views, not independently stored copies. Pixels in these views are top-left-origin and row-major, with tile-major ordering for tiles. Indexed pixels are unpacked bytes; concrete components retain their on-disk packing and padding.
 - ** MrKWatkins.OakIO.ZXSpectrum **: File formats for the ZX Spectrum. Contains tape formats that represent an actual tape, as well as snapshot formats that represent a snapshot of the a ZX Spectrum's internal state.
 - ** MrKWatkins.OakIO.ZXSpectrumNext **: ZX Spectrum Next formats, including NEX snapshots. References the ZX Spectrum project; Next snapshots retain the Spectrum snapshot hierarchy.
 - ** MrKWatkins.OakIO.Commands **: Commands to be used by a CLI or web-based tool.

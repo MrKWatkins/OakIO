@@ -30,16 +30,20 @@ internal sealed class TestResourceFormat() : ResourceFormat<TestResourceFile>("T
 
 internal sealed class TestImageFile : ImageFile
 {
-    public TestImageFile(ImageData image) : base(TestImageFormat.Instance, image)
+    public TestImageFile(ImageData image) : this(TestImageFormat.Instance, image)
     {
     }
     public TestImageFile(byte value) : this(new ColourImageData(1, 1, [new Colour(value, 0, 0)]))
     {
     }
 
-    public TestImageFile(ImageFormat format, ImageData image) : base(format, image)
+    public TestImageFile(ImageFormat format, ImageData image) : base(format)
     {
+        ArgumentNullException.ThrowIfNull(image);
+        Image = image;
     }
+
+    public override ImageData Image { get; }
 }
 
 internal sealed class TestImageFormat() : ImageFormat<TestImageFile>("Test Image", "image")
@@ -54,16 +58,20 @@ internal sealed class TestImageFormat() : ImageFormat<TestImageFile>("Test Image
 
 internal sealed class TestPaletteFile : PaletteFile
 {
-    public TestPaletteFile(PaletteData palette) : base(TestPaletteFormat.Instance, palette)
+    public TestPaletteFile(PaletteData palette) : this(TestPaletteFormat.Instance, palette)
     {
     }
     public TestPaletteFile(byte value) : this(new PaletteData([new Colour(value, 0, 0)]))
     {
     }
 
-    public TestPaletteFile(PaletteFormat format, PaletteData palette) : base(format, palette)
+    public TestPaletteFile(PaletteFormat format, PaletteData palette) : base(format)
     {
+        ArgumentNullException.ThrowIfNull(palette);
+        Palette = palette;
     }
+
+    public override PaletteData Palette { get; }
 }
 
 internal sealed class TestPaletteFormat() : PaletteFormat<TestPaletteFile>("Test Palette", "palette")
@@ -78,16 +86,20 @@ internal sealed class TestPaletteFormat() : PaletteFormat<TestPaletteFile>("Test
 
 internal sealed class TestTilesFile : TilesFile
 {
-    public TestTilesFile(TilesData tiles) : base(TestTilesFormat.Instance, tiles)
+    public TestTilesFile(TilesData tiles) : this(TestTilesFormat.Instance, tiles)
     {
     }
     public TestTilesFile(byte value) : this(new TilesData(1, 1, [value]))
     {
     }
 
-    public TestTilesFile(TilesFormat format, TilesData tiles) : base(format, tiles)
+    public TestTilesFile(TilesFormat format, TilesData tiles) : base(format)
     {
+        ArgumentNullException.ThrowIfNull(tiles);
+        Tiles = tiles;
     }
+
+    public override TilesData Tiles { get; }
 }
 
 internal sealed class TestTilesFormat() : TilesFormat<TestTilesFile>("Test Tiles", "tiles")

@@ -1,7 +1,7 @@
 namespace MrKWatkins.OakIO.Resources;
 
 /// <summary>
-/// Base class for palette files.
+/// Base class for palette files whose concrete components represent their on-disk format.
 /// </summary>
 public abstract class PaletteFile : ResourceFile
 {
@@ -9,12 +9,9 @@ public abstract class PaletteFile : ResourceFile
     /// Initializes a palette file.
     /// </summary>
     /// <param name="format">The file format.</param>
-    /// <param name="palette">The shared palette data.</param>
-    protected PaletteFile(PaletteFormat format, PaletteData palette)
+    protected PaletteFile(PaletteFormat format)
         : base(format ?? throw new ArgumentNullException(nameof(format)))
     {
-        ArgumentNullException.ThrowIfNull(palette);
-        Palette = palette;
     }
 
     /// <summary>
@@ -23,7 +20,7 @@ public abstract class PaletteFile : ResourceFile
     public new PaletteFormat Format => (PaletteFormat)base.Format;
 
     /// <summary>
-    /// Gets the shared palette data.
+    /// Gets a shared convenience view derived from the file's concrete components.
     /// </summary>
-    public PaletteData Palette { get; }
+    public abstract PaletteData Palette { get; }
 }

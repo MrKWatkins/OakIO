@@ -30,6 +30,10 @@ An online converter using this library is available [here](converter.md).
 - [Reading, Writing and Converting](reading-writing-converting.md)
 - [Resources](resources.md) — Shared image, palette and tile models and file format bases.
 
+### Image Formats
+
+- [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
+
 ### ZX Spectrum Tape Formats
 
 - [TAP](formats/tape/tap.md) — Simple tape format containing raw data blocks.

@@ -1,7 +1,7 @@
 namespace MrKWatkins.OakIO.Resources;
 
 /// <summary>
-/// Base class for tiles files.
+/// Base class for tiles files whose concrete components represent their on-disk format.
 /// </summary>
 public abstract class TilesFile : ResourceFile
 {
@@ -9,12 +9,9 @@ public abstract class TilesFile : ResourceFile
     /// Initializes a tiles file.
     /// </summary>
     /// <param name="format">The file format.</param>
-    /// <param name="tiles">The shared tiles data.</param>
-    protected TilesFile(TilesFormat format, TilesData tiles)
+    protected TilesFile(TilesFormat format)
         : base(format ?? throw new ArgumentNullException(nameof(format)))
     {
-        ArgumentNullException.ThrowIfNull(tiles);
-        Tiles = tiles;
     }
 
     /// <summary>
@@ -23,7 +20,7 @@ public abstract class TilesFile : ResourceFile
     public new TilesFormat Format => (TilesFormat)base.Format;
 
     /// <summary>
-    /// Gets the shared tiles data.
+    /// Gets a shared convenience view derived from the file's concrete components.
     /// </summary>
-    public TilesData Tiles { get; }
+    public abstract TilesData Tiles { get; }
 }
