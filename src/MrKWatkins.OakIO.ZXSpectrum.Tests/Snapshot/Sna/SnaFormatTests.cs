@@ -147,7 +147,7 @@ public sealed class SnaFormatTests : ZXSpectrumTestFixture
             contents.AddRange(banks[bank]);
         }
 
-        using var input = new MemoryStream(contents.ToArray());
+        using var input = new MemoryStream([.. contents]);
         var file = SnaFormat.Instance.Read(input);
 
         var memory = new byte[65536];

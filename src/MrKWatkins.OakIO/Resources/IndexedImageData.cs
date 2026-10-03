@@ -27,7 +27,7 @@ public sealed class IndexedImageData : ImageData
             throw new ArgumentException("The palette is too large for the pixel bit depth.", nameof(palette));
         }
         ValidatePixels(pixels, palette.Colours.Count);
-        Pixels = Array.AsReadOnly(pixels.ToArray());
+        Pixels = Array.AsReadOnly([.. pixels]);
         Palette = palette;
         BitsPerPixel = bitsPerPixel;
     }

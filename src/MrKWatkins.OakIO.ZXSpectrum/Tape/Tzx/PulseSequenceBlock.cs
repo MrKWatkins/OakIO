@@ -18,5 +18,5 @@ public sealed class PulseSequenceBlock : TzxBlock<PulseSequenceHeader>
 
     /// <inheritdoc />
     [Pure]
-    public override string ToString() => $"{Header.Type}: {string.Join(", ", Pulses.ToArray())} T-States";
+    public override string ToString() => $"{Header.Type}: {string.Join(", ", [.. Pulses])} T-States";
 }

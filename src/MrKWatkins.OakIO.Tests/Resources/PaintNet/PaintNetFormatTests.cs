@@ -51,6 +51,6 @@ public sealed class PaintNetFormatTests
     }
 
     [Test]
-    public void Read_InvalidUtf8() => AssertThat.Invoking(() => PaintNetFormat.Instance.Read(new byte[] { 0xC3, 0x28 }))
+    public void Read_InvalidUtf8() => AssertThat.Invoking(() => PaintNetFormat.Instance.Read([0xC3, 0x28]))
         .Should().Throw<InvalidDataException>();
 }

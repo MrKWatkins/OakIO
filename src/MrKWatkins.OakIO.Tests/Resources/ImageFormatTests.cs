@@ -29,7 +29,7 @@ public sealed class ImageFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestImageFile file = TestImageFormat.Instance.Read(new byte[] { 123 });
+        TestImageFile file = TestImageFormat.Instance.Read([123]);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)123);
         file.Format.Should().BeTheSameInstanceAs(TestImageFormat.Instance);
     }
@@ -37,7 +37,7 @@ public sealed class ImageFormatTests
     [Test]
     public void Read_Stream()
     {
-        using var stream = new MemoryStream(new byte[] { 234 });
+        using var stream = new MemoryStream([234]);
         TestImageFile file = TestImageFormat.Instance.Read(stream);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)234);
     }
@@ -45,7 +45,7 @@ public sealed class ImageFormatTests
     [Test]
     public async Task ReadAsync_Stream()
     {
-        using var stream = new MemoryStream(new byte[] { 213 });
+        using var stream = new MemoryStream([213]);
         TestImageFile file = await TestImageFormat.Instance.ReadAsync(stream);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)213);
     }
@@ -53,7 +53,7 @@ public sealed class ImageFormatTests
     [Test]
     public async Task ReadAsync_Stream_Cancelled()
     {
-        using var stream = new MemoryStream(new byte[] { 213 });
+        using var stream = new MemoryStream([213]);
         await stream.Awaiting(s => TestImageFormat.Instance.ReadAsync(s, new CancellationToken(true))).Should().ThrowAsync<OperationCanceledException>();
     }
 

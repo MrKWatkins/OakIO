@@ -89,5 +89,5 @@ public sealed class NxpFormatTests
 
     [Pure]
     internal static byte[] CreateBytes(int count) =>
-        Enumerable.Range(0, count).SelectMany(index => new[] { (byte)(index * 37), (byte)(index & 1) }).ToArray();
+        [.. Enumerable.Range(0, count).SelectMany(index => new[] { (byte)(index * 37), (byte)(index & 1) })];
 }

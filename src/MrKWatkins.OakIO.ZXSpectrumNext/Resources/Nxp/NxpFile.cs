@@ -19,7 +19,7 @@ public sealed class NxpFile : PaletteFile
             throw new ArgumentException("An NXP palette must contain exactly 16 or 256 colours.", nameof(palette));
         }
 
-        Entries = palette.Colours.Select(colour => new NxpColourEntry(colour)).ToArray();
+        Entries = [.. palette.Colours.Select(colour => new NxpColourEntry(colour))];
     }
 
     internal NxpFile(byte[] bytes) : base(NxpFormat.Instance)

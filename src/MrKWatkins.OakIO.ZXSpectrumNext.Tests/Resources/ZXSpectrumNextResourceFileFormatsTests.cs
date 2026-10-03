@@ -3,11 +3,63 @@ using MrKWatkins.OakIO.Resources;
 using MrKWatkins.OakIO.Resources.Jasc;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Spr;
 
 namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources;
 
 public sealed class ZXSpectrumNextResourceFileFormatsTests
 {
+    [TestCase(4, 1)]
+    [TestCase(4, 4)]
+    [TestCase(4, 8)]
+    [TestCase(8, 1)]
+    [TestCase(8, 4)]
+    [TestCase(8, 8)]
+    public void WithTiles(int spriteBits, int tileBits)
+    {
+        ZXSpectrumNextResourceFileFormats.WithTiles(spriteBits, tileBits).Should().SequenceEqual(
+            [.. ZXSpectrumNextResourceFileFormats.AllFormats, SprFormat.ForBitsPerPixel(spriteBits), NxtFormat.ForBitsPerPixel(tileBits)]);
+        ZXSpectrumNextResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("spr");
+        ZXSpectrumNextResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("nxt");
+    }
+
+    [TestCase(1, 4)]
+    [TestCase(4, 2)]
+    public void WithTiles_Invalid(int spriteBits, int tileBits) =>
+        AssertThat.Invoking(() => ZXSpectrumNextResourceFileFormats.WithTiles(spriteBits, tileBits)).Should().Throw<ArgumentOutOfRangeException>();
+
+    [TestCase("patterns.spr", 16, 4)]
+    [TestCase("patterns.spr", 16, 8)]
+    [TestCase("tiles.nxt", 8, 1)]
+    [TestCase("tiles.nxt", 8, 4)]
+    [TestCase("tiles.nxt", 8, 8)]
+    public async Task WithTiles_LoadAsync(string filename, int size, int bits)
+    {
+        var bytes = TileTestData.Bytes(size, bits, 2);
+        using var stream = new MemoryStream(bytes);
+        var formats = ZXSpectrumNextResourceFileFormats.WithTiles(size == 16 ? bits : 4, size == 8 ? bits : 4);
+        var file = (TilesFile)await IOFileFormat.LoadAsync(filename, stream, formats);
+        file.GetType().Should().Equal(size == 16 ? typeof(SprFile) : typeof(NxtFile));
+        file.Tiles.Count.Should().Equal(2);
+        file.Tiles.BitsPerPixel.Should().Equal(bits);
+        file.Tiles.Pixels.Should().SequenceEqual(TileTestData.Pixels(bytes, bits));
+        file.ToByteArray().Should().SequenceEqual(bytes);
+    }
+
+    [TestCase("patterns.spr", 16)]
+    [TestCase("tiles.nxt", 8)]
+    public void WithTiles_LoadCompressed(string filename, int size)
+    {
+        TilesFile original = size == 16 ? SprFormat.FourBit.Read(TileTestData.Bytes(size, 4, 2)) : NxtFormat.FourBit.Read(TileTestData.Bytes(size, 4, 2));
+        using var stream = new MemoryStream();
+        original.Write(stream, filename, CompressionFormat.GZip);
+        stream.Position = 0;
+        var file = (TilesFile)IOFileFormat.Load(filename + ".gz", stream, ZXSpectrumNextResourceFileFormats.WithTiles(4, 4));
+        file.Format.Should().BeTheSameInstanceAs(original.Format);
+        file.Tiles.Pixels.Should().SequenceEqual(original.Tiles.Pixels);
+        file.ToByteArray().Should().SequenceEqual(original.ToByteArray());
+    }
     [Test]
     public void AllFormats()
     {

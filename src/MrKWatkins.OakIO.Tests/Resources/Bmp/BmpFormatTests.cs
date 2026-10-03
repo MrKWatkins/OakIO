@@ -222,7 +222,7 @@ public sealed class BmpFormatTests
         {
             var colours = Enumerable.Range(0, width).Select(i => new Colour((byte)i, 10, 20)).ToArray();
             ImageData image = depth == 24 ? new ColourImageData(width, 1, colours)
-                : new IndexedImageData(width, 1, Enumerable.Range(0, width).Select(i => (byte)i).ToArray(), new PaletteData(colours), depth);
+                : new IndexedImageData(width, 1, [.. Enumerable.Range(0, width).Select(i => (byte)i)], new PaletteData(colours), depth);
             var bytes = new BmpFile(image).ToByteArray();
             var offset = depth == 24 ? 54 : 54 + width * 4;
             var stride = ((width * depth + 31) / 32) * 4;

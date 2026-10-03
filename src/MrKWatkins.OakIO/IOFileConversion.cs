@@ -139,11 +139,13 @@ public static class IOFileConversion
     {
         lock (Lock)
         {
-            return Converters.Keys
-                .Where(key => key.Source == sourceFormat)
-                .Select(key => key.Target)
-                .OrderBy(converter => converter.Name)
-                .ToList();
+            return
+            [
+                .. Converters.Keys
+                    .Where(key => key.Source == sourceFormat)
+                    .Select(key => key.Target)
+                    .OrderBy(converter => converter.Name)
+            ];
         }
     }
 }

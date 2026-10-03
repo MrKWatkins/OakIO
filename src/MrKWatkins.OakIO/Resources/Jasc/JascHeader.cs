@@ -12,7 +12,7 @@ public sealed class JascHeader : Header
     {
     }
 
-    private IReadOnlyList<TextLine> Lines => PaletteText.ReadLines(AsReadOnlySpan().ToArray());
+    private IReadOnlyList<TextLine> Lines => PaletteText.ReadLines([.. AsReadOnlySpan()]);
 
     /// <summary>
     /// Gets the JASC-PAL signature.

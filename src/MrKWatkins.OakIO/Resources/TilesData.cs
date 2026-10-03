@@ -26,7 +26,7 @@ public sealed class TilesData
         Height = height;
         BitsPerPixel = bitsPerPixel;
         Count = pixels.Length / pixelsPerTile;
-        Pixels = Array.AsReadOnly(pixels.ToArray());
+        Pixels = Array.AsReadOnly([.. pixels]);
     }
 
     /// <summary>

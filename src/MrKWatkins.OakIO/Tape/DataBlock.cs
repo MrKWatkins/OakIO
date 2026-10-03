@@ -25,7 +25,7 @@ public sealed class DataBlock : TapeBlock
     internal DataBlock(IReadOnlyList<byte> data, Sound zeroBitSound, Sound oneBitSound, int lengthOfTailPulse, int usedBitsInLastByte = 8, bool? initialSignal = null)
         : base(initialSignal)
     {
-        this.data = data as byte[] ?? data.ToArray();
+        this.data = data as byte[] ?? [.. data];
         this.zeroBitSound = zeroBitSound;
         this.oneBitSound = oneBitSound;
         tailPulse = lengthOfTailPulse > 0 ? new Pulse(lengthOfTailPulse) : null;

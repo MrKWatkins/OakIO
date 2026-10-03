@@ -10,7 +10,7 @@ public abstract class Z80V2OrV3File<THeader> : Z80File<THeader>, IZ80SnapshotV2O
     private protected Z80V2OrV3File(THeader header, [InstantHandle] IEnumerable<Page> pages)
         : base(header)
     {
-        Pages = pages.ToArray();
+        Pages = [.. pages];
         if (Pages.Count == 0)
         {
             throw new ArgumentException("Value is empty.", nameof(pages));

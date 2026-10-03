@@ -32,7 +32,7 @@ public abstract class TapBlock : Block<TapHeader, TapTrailer>
             checksum ^= @byte;
             result.Add(@byte);
         }
-        return (checksum, result.ToArray());
+        return (checksum, [.. result]);
     }
 
     /// <summary>

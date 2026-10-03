@@ -5,7 +5,7 @@ internal sealed class SoundSequence : Sound
     private int index;
 
     internal SoundSequence([InstantHandle] IEnumerable<Sound> sounds)
-        : this(sounds.ToList())
+        : this([.. sounds])
     {
     }
 

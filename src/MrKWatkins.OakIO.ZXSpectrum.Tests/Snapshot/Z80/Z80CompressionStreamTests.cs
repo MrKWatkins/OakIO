@@ -194,7 +194,7 @@ public sealed class Z80CompressionStreamTests
         {
             foreach (var chunk in data.Chunk(sliceSize))
             {
-                z80Stream.Write(chunk.ToArray());
+                z80Stream.Write([.. chunk]);
             }
         }
 
@@ -331,7 +331,7 @@ public sealed class Z80CompressionStreamTests
         {
             yield return CreateTestCase(data, compressed, false);
 
-            yield return CreateTestCase(data, compressed.Concat(endMarker).ToArray(), true);
+            yield return CreateTestCase(data, [.. compressed, .. endMarker], true);
         }
     }
 
@@ -383,7 +383,7 @@ public sealed class Z80CompressionStreamTests
             [0xED, 0x00, 0xED, 0xED, 0x05, 0x00]);
 
         yield return (
-            Enumerable.Repeat((byte)0, 260).ToArray(),
+            [.. Enumerable.Repeat((byte)0, 260)],
             [0xED, 0xED, 0xFF, 0x00, 0xED, 0xED, 0x05, 0x00]);
     }
 

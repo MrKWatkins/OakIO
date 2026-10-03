@@ -38,7 +38,7 @@ public sealed class IOFileFormatTests
     [Test]
     public void Load_Stream()
     {
-        using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
+        using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         IOFileFormat.Load("File.tst", stream, TestIOFileFormat.Instance).Should().BeOfType<TestIOFile>()
             .That.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
@@ -101,7 +101,7 @@ public sealed class IOFileFormatTests
     [Test]
     public async Task LoadAsync_Stream()
     {
-        using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
+        using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         var result = await IOFileFormat.LoadAsync("File.tst", stream, [TestIOFileFormat.Instance]);
 
@@ -111,7 +111,7 @@ public sealed class IOFileFormatTests
     [Test]
     public async Task ReadAsync()
     {
-        using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
+        using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         // No cast required: proves IOFileFormat<TFile>.ReadAsync hides the base IOFile-returning overload.
         TestIOFile result = await TestIOFileFormat.Instance.ReadAsync(stream);
@@ -152,7 +152,7 @@ public sealed class IOFileFormatTests
     [Test]
     public void Read_Stream()
     {
-        using var stream = new MemoryStream(TestIOFileFormat.Contents.ToArray());
+        using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         // No cast required: proves IOFileFormat<TFile>.Read(Stream) hides the base IOFile-returning overload.
         TestIOFile result = TestIOFileFormat.Instance.Read(stream);

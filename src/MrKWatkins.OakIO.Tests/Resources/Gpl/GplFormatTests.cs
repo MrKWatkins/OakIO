@@ -55,6 +55,6 @@ public sealed class GplFormatTests
     }
 
     [Test]
-    public void Read_InvalidUtf8() => AssertThat.Invoking(() => GplFormat.Instance.Read(new byte[] { 0xC3, 0x28 }))
+    public void Read_InvalidUtf8() => AssertThat.Invoking(() => GplFormat.Instance.Read([0xC3, 0x28]))
         .Should().Throw<InvalidDataException>();
 }

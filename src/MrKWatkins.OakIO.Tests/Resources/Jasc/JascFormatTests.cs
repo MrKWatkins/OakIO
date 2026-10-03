@@ -36,7 +36,7 @@ public sealed class JascFormatTests
         .Should().Throw<InvalidDataException>();
 
     [Test]
-    public void Read_UnsupportedVersion() => AssertThat.Invoking(() => JascFormat.Instance.Read("JASC-PAL\n0200\n1\n1 2 3"u8.ToArray()))
+    public void Read_UnsupportedVersion() => AssertThat.Invoking(() => JascFormat.Instance.Read([.. "JASC-PAL\n0200\n1\n1 2 3"u8]))
         .Should().Throw<NotSupportedException>();
 
     [Test]
@@ -59,6 +59,6 @@ public sealed class JascFormatTests
     }
 
     [Test]
-    public void Read_InvalidUtf8() => AssertThat.Invoking(() => JascFormat.Instance.Read(new byte[] { 0xC3, 0x28 }))
+    public void Read_InvalidUtf8() => AssertThat.Invoking(() => JascFormat.Instance.Read([0xC3, 0x28]))
         .Should().Throw<InvalidDataException>();
 }

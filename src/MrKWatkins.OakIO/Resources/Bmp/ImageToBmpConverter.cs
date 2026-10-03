@@ -17,7 +17,7 @@ public sealed class ImageToBmpConverter(ImageFormat sourceFormat)
         {
             // BMP has no two-bit variant; promote one/two-bit data while preserving the original indices and palette.
             return new BmpFile(indexed.BitsPerPixel < 4
-                ? new IndexedImageData(indexed.Width, indexed.Height, indexed.Pixels.ToArray(), indexed.Palette)
+                ? new IndexedImageData(indexed.Width, indexed.Height, [.. indexed.Pixels], indexed.Palette)
                 : indexed);
         }
         if (image is ColourImageData colourImage)

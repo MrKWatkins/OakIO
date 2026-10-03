@@ -34,7 +34,7 @@ public abstract class ZXSpectrumFileFormat : IOFileFormat
     /// All supported ZX Spectrum file formats.
     /// </summary>
     public static readonly IReadOnlyList<ZXSpectrumFileFormat> AllFormats =
-        TapeFormats.Cast<ZXSpectrumFileFormat>().Concat(SnapshotFormats).Concat(RecordingFormats).ToArray();
+        [.. TapeFormats, .. SnapshotFormats, .. RecordingFormats];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ZXSpectrumFileFormat" /> class.

@@ -33,8 +33,12 @@ public sealed class JascFile : PaletteFile
             throw new InvalidDataException("A JASC palette requires a positive colour count.");
         }
         Header = new JascHeader(PaletteText.Join(lines.Take(3)));
-        Lines = lines.Skip(3).Select(line => string.IsNullOrWhiteSpace(line.Text)
-            ? line : new JascColourEntry(line.AsReadOnlySpan().ToArray())).ToArray();
+        Lines =
+        [
+            .. lines.Skip(3).Select(line => string.IsNullOrWhiteSpace(line.Text)
+                ? line
+                : new JascColourEntry([.. line.AsReadOnlySpan()]))
+        ];
         if (Entries.Count != count)
         {
             throw new InvalidDataException("The JASC colour count does not match its entries.");
@@ -59,7 +63,7 @@ public sealed class JascFile : PaletteFile
     /// <summary>
     /// Gets the RGB entries in palette order.
     /// </summary>
-    public IReadOnlyList<JascColourEntry> Entries => Lines.OfType<JascColourEntry>().ToArray();
+    public IReadOnlyList<JascColourEntry> Entries => [.. Lines.OfType<JascColourEntry>()];
 
     /// <inheritdoc />
     public override PaletteData Palette => new(Entries.Select(entry => entry.Colour));

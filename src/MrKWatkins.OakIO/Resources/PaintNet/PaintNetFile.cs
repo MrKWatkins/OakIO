@@ -19,9 +19,13 @@ public sealed class PaintNetFile : PaletteFile
 
     internal PaintNetFile(byte[] data) : base(PaintNetFormat.Instance)
     {
-        Lines = PaletteText.ReadLines(data).Select(line =>
-            string.IsNullOrWhiteSpace(line.Text) || line.Text.TrimStart().StartsWith(';')
-                ? line : new PaintNetColourEntry(line.AsReadOnlySpan().ToArray())).ToArray();
+        Lines =
+        [
+            .. PaletteText.ReadLines(data).Select(line =>
+                string.IsNullOrWhiteSpace(line.Text) || line.Text.TrimStart().StartsWith(';')
+                    ? line
+                    : new PaintNetColourEntry([.. line.AsReadOnlySpan()]))
+        ];
         if (Entries.Count == 0)
         {
             throw new InvalidDataException("A Paint.NET palette must contain at least one colour.");
@@ -41,7 +45,7 @@ public sealed class PaintNetFile : PaletteFile
     /// <summary>
     /// Gets all stored colour entries, without padding or truncating for Paint.NET's UI.
     /// </summary>
-    public IReadOnlyList<PaintNetColourEntry> Entries => Lines.OfType<PaintNetColourEntry>().ToArray();
+    public IReadOnlyList<PaintNetColourEntry> Entries => [.. Lines.OfType<PaintNetColourEntry>()];
 
     /// <inheritdoc />
     public override PaletteData Palette => new(Entries.Select(entry => entry.Colour));

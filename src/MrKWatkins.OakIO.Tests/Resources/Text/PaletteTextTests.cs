@@ -20,7 +20,7 @@ public sealed class PaletteTextTests
     public void ReadLines_Empty() => PaletteText.ReadLines([]).Count.Should().Equal(0);
 
     [Test]
-    public void Decode_InvalidUtf8() => AssertThat.Invoking(() => PaletteText.Decode(new byte[] { 0xC3, 0x28 }))
+    public void Decode_InvalidUtf8() => AssertThat.Invoking(() => PaletteText.Decode([0xC3, 0x28]))
         .Should().Throw<InvalidDataException>().That.InnerException.Should().BeOfType<DecoderFallbackException>();
 
     [TestCase("0 255 128", false, "")]

@@ -18,7 +18,7 @@ public sealed class ColourImageData : ImageData
         {
             throw new ArgumentException("The pixel count must match the image dimensions.", nameof(pixels));
         }
-        Pixels = Array.AsReadOnly(pixels.ToArray());
+        Pixels = Array.AsReadOnly([.. pixels]);
     }
 
     /// <summary>

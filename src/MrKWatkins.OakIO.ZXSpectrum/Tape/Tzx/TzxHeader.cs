@@ -14,7 +14,7 @@ public sealed class TzxHeader(byte[] data) : Header(data)
     /// <param name="majorVersion">The major version number.</param>
     /// <param name="minorVersion">The minor version number.</param>
     public TzxHeader(byte majorVersion, byte minorVersion)
-        : this("ZXTape!\x1A\x00\x00"u8.ToArray())
+        : this([.. "ZXTape!\x1A\x00\x00"u8])
     {
         MajorVersion = majorVersion;
         MinorVersion = minorVersion;
@@ -41,5 +41,5 @@ public sealed class TzxHeader(byte[] data) : Header(data)
     /// <summary>
     /// Gets a value indicating whether this header contains a valid TZX signature.
     /// </summary>
-    public bool IsValid => Data.Take(8).SequenceEqual("ZXTape!\x1A"u8.ToArray());
+    public bool IsValid => Data.Take(8).SequenceEqual([.. "ZXTape!\x1A"u8]);
 }

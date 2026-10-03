@@ -53,7 +53,7 @@ public sealed class PzxToTapeConverter : IOFileConverter<PzxFile, OakTapeFile>
                     : Sound.StandardOneBit();
                 var usedBits = data.Header.ExtraBits > 0 ? (int)data.Header.ExtraBits : 8;
                 bool? initialSignal = data.Header.InitialPulseLevel;
-                yield return TapeDataBlock.Create(data.DataStream.ToArray(), zeroBitSound, oneBitSound, data.Header.Tail, usedBits, initialSignal);
+                yield return TapeDataBlock.Create([.. data.DataStream], zeroBitSound, oneBitSound, data.Header.Tail, usedBits, initialSignal);
                 break;
 
             case PauseBlock pause:

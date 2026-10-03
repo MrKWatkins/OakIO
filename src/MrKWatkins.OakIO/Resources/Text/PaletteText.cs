@@ -94,5 +94,5 @@ internal static class PaletteText
     internal static byte[] Encode(string text) => Utf8.GetBytes(text);
 
     [Pure]
-    internal static byte[] Join(IEnumerable<TextLine> lines) => lines.SelectMany(line => line.Data).ToArray();
+    internal static byte[] Join(IEnumerable<TextLine> lines) => [.. lines.SelectMany(line => line.Data)];
 }

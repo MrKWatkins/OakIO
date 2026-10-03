@@ -46,7 +46,7 @@ public sealed class GplFile : PaletteFile
         foreach (var line in lines.Skip(headerLines))
         {
             body.Add(string.IsNullOrWhiteSpace(line.Text) || line.Text.TrimStart().StartsWith('#')
-                ? line : new GplColourEntry(line.AsReadOnlySpan().ToArray()));
+                ? line : new GplColourEntry([.. line.AsReadOnlySpan()]));
         }
         Lines = body;
         if (Entries.Count == 0)
@@ -73,7 +73,7 @@ public sealed class GplFile : PaletteFile
     /// <summary>
     /// Gets the colour entries in palette order.
     /// </summary>
-    public IReadOnlyList<GplColourEntry> Entries => Lines.OfType<GplColourEntry>().ToArray();
+    public IReadOnlyList<GplColourEntry> Entries => [.. Lines.OfType<GplColourEntry>()];
 
     /// <inheritdoc />
     public override PaletteData Palette => new(Entries.Select(entry => entry.Colour));

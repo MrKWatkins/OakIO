@@ -27,7 +27,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
     /// <param name="file2">The second TAP file.</param>
     /// <returns>A new <see cref="TapFile" /> containing all blocks from both files.</returns>
     [Pure]
-    public static TapFile operator +(TapFile file1, TapFile file2) => new(file1.Blocks.Concat(file2.Blocks).ToArray());
+    public static TapFile operator +(TapFile file1, TapFile file2) => new([.. file1.Blocks, .. file2.Blocks]);
 
     /// <summary>
     /// Gets the blocks in the TAP file.
@@ -117,7 +117,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
     /// <returns>A new <see cref="TapFile" /> with a BASIC loader followed by code blocks.</returns>
     [Pure]
     public static TapFile CreateLoader(string filename, [InstantHandle] params IEnumerable<(ushort Location, byte[] Data)> codeBlocks) =>
-        CreateLoader(filename, null, codeBlocks.ToArray());
+        CreateLoader(filename, null, [.. codeBlocks]);
 
     /// <summary>
     /// Creates a TAP file with a BASIC loader and code blocks, optionally specifying an entry point.
@@ -128,7 +128,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
     /// <returns>A new <see cref="TapFile" /> with a BASIC loader followed by code blocks.</returns>
     [Pure]
     public static TapFile CreateLoader(string filename, ushort? entryPoint, [InstantHandle] params IEnumerable<(ushort Location, byte[] Data)> codeBlocks) =>
-        CreateLoader(filename, entryPoint, codeBlocks.ToArray());
+        CreateLoader(filename, entryPoint, [.. codeBlocks]);
 
     /// <summary>
     /// Creates a TAP file with a BASIC loader and code blocks.

@@ -17,7 +17,7 @@ public sealed class RzxBlockHeaderTests
     [Test]
     public void Constructor_ByteArray()
     {
-        var header = new RzxBlockHeader(new RzxBlockHeader(RzxBlockType.Snapshot, 12).Data.ToArray());
+        var header = new RzxBlockHeader([.. new RzxBlockHeader(RzxBlockType.Snapshot, 12).Data]);
 
         header.Type.Should().Equal(RzxBlockType.Snapshot);
         header.BlockLength.Should().Equal(17U);

@@ -73,7 +73,7 @@ public sealed class TzxToTapeConverter : IOFileConverter<TzxFile, OakTapeFile>
             case StandardSpeedDataBlock standardSpeed:
                 var flagByte = standardSpeed.Length > 0 ? standardSpeed.Data[0] : (byte)0xFF;
                 yield return new SoundBlock(flagByte == 0x00 ? Sound.StandardHeaderPureToneAndSync() : Sound.StandardDataPureToneAndSync());
-                yield return TapeDataBlock.Create(standardSpeed.Data.ToArray());
+                yield return TapeDataBlock.Create([.. standardSpeed.Data]);
                 if (standardSpeed.Header.PauseAfterBlockMs > 0)
                 {
                     yield return new TapePauseBlock(standardSpeed.Header.PauseAfterBlockMs * 3500);
@@ -102,7 +102,7 @@ public sealed class TzxToTapeConverter : IOFileConverter<TzxFile, OakTapeFile>
             case PureDataBlock pureData:
                 var pureDataHeader = pureData.Header;
                 var pureUsedBits = pureDataHeader.UsedBitsInLastByte == 0 ? 8 : pureDataHeader.UsedBitsInLastByte;
-                yield return TapeDataBlock.Create(pureData.Data.ToArray(), Sound.Bit(pureDataHeader.TStatesInZeroBitPulse), Sound.Bit(pureDataHeader.TStatesInOneBitPulse), 0, pureUsedBits);
+                yield return TapeDataBlock.Create([.. pureData.Data], Sound.Bit(pureDataHeader.TStatesInZeroBitPulse), Sound.Bit(pureDataHeader.TStatesInOneBitPulse), 0, pureUsedBits);
                 if (pureDataHeader.PauseAfterBlockMs > 0)
                 {
                     yield return new TapePauseBlock(pureDataHeader.PauseAfterBlockMs * 3500);

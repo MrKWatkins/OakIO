@@ -27,7 +27,7 @@ public sealed class ResourceFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestResourceFile file = TestResourceFormat.Instance.Read(new byte[] { 123 });
+        TestResourceFile file = TestResourceFormat.Instance.Read([123]);
         file.Value.Should().Equal((byte)123);
         file.Format.Should().BeTheSameInstanceAs(TestResourceFormat.Instance);
     }
@@ -35,7 +35,7 @@ public sealed class ResourceFormatTests
     [Test]
     public void Read_Stream()
     {
-        using var stream = new MemoryStream(new byte[] { 234 });
+        using var stream = new MemoryStream([234]);
         TestResourceFile file = TestResourceFormat.Instance.Read(stream);
         file.Value.Should().Equal((byte)234);
     }
@@ -43,7 +43,7 @@ public sealed class ResourceFormatTests
     [Test]
     public async Task ReadAsync_Stream()
     {
-        using var stream = new MemoryStream(new byte[] { 213 });
+        using var stream = new MemoryStream([213]);
         TestResourceFile file = await TestResourceFormat.Instance.ReadAsync(stream);
         file.Value.Should().Equal((byte)213);
     }
@@ -51,7 +51,7 @@ public sealed class ResourceFormatTests
     [Test]
     public async Task ReadAsync_Stream_Cancelled()
     {
-        using var stream = new MemoryStream(new byte[] { 213 });
+        using var stream = new MemoryStream([213]);
         await stream.Awaiting(s => TestResourceFormat.Instance.ReadAsync(s, new CancellationToken(true))).Should().ThrowAsync<OperationCanceledException>();
     }
 

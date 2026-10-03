@@ -208,7 +208,7 @@ public sealed class PzxToTzxConverter : IOFileConverter<PzxFile, TzxFile>
         header.SetUInt16(5, 0);
         header.SetUInt24(7, (UInt24)dataStream.Length);
 
-        yield return new PureDataBlock(header, dataStream.ToArray());
+        yield return new PureDataBlock(header, [.. dataStream]);
     }
 
     [Pure]

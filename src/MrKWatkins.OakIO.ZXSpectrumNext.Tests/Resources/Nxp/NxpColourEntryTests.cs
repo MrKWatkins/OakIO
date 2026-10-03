@@ -8,7 +8,7 @@ public sealed class NxpColourEntryTests
     [Test]
     public void Constructor_ByteArray()
     {
-        var entry = new NxpColourEntry(new byte[] { 0b101_011_10, 1 });
+        var entry = new NxpColourEntry([0b101_011_10, 1]);
         entry.Red.Should().Equal((byte)5);
         entry.Green.Should().Equal((byte)3);
         entry.Blue.Should().Equal((byte)5);
@@ -79,7 +79,7 @@ public sealed class NxpColourEntryTests
     [TestCase(128)]
     [TestCase(255)]
     public void Constructor_ByteArray_InvalidBlueBit(byte value) =>
-        AssertThat.Invoking(() => new NxpColourEntry(new byte[] { 0, value })).Should().Throw<InvalidDataException>();
+        AssertThat.Invoking(() => new NxpColourEntry([0, value])).Should().Throw<InvalidDataException>();
 
     [TestCase(0)]
     [TestCase(128)]

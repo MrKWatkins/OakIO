@@ -5,6 +5,7 @@ The resource types are in the core `MrKWatkins.OakIO` package, under the
 Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette/gpl.md),
 [JASC PAL](formats/palette/jasc.md) and [Paint.NET](formats/palette/paintdotnet.md) palettes.
 The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes.
+It also provides [SPR](formats/tiles/spr.md) sprite patterns and [NXT](formats/tiles/nxt.md) tiles.
 Resource formats are not yet included in the CLI or online converter.
 
 ## Files and formats
@@ -30,6 +31,8 @@ Resource formats are separate from the Spectrum and Next snapshot/tape format li
 `IOFileFormat.Load` or `LoadAsync` with `ResourceFileFormats.AllFormats` to discover resource formats.
 For general and Next resource formats together, use `ZXSpectrumNextResourceFileFormats.AllFormats`
 from the Next package's `Resources` namespace.
+SPR and NXT require explicit bit depths and are excluded from unqualified discovery. Use
+`ZXSpectrumNextResourceFileFormats.WithTiles(spriteBitsPerPixel, tileBitsPerPixel)` to include them.
 
 ## Colours and palettes
 

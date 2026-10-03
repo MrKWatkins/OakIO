@@ -79,7 +79,7 @@ public abstract class Sound
     /// <param name="lengths">The lengths of the pulses in T-states.</param>
     /// <returns>A new <see cref="Sound" /> consisting of the specified pulse sequence.</returns>
     [Pure]
-    public static Sound PulseSequence(IEnumerable<ushort> lengths) => new SoundSequence(lengths.Select(l => new Pulse(l)).ToList());
+    public static Sound PulseSequence(IEnumerable<ushort> lengths) => new SoundSequence([.. lengths.Select(l => new Pulse(l))]);
 
     /// <summary>
     /// Creates a sound from a sequence of pulses with the specified lengths.

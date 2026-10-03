@@ -745,18 +745,18 @@ public sealed class IOFileComponentTests
         header.GetString(1, 4).Should().Equal("");
 
         header.SetString(1, 4, "Test");
-        header.AsReadOnlySpan().ToArray().Should().SequenceEqual("\0Test\0"u8.ToArray());
+        header.AsReadOnlySpan().ToArray().Should().SequenceEqual([.. "\0Test\0"u8]);
         header.GetString(1, 3).Should().Equal("Tes");
         header.GetString(1, 4).Should().Equal("Test");
         header.GetString(1, 5).Should().Equal("Test");
 
         header.SetString(0, 4, "AB");
-        header.AsReadOnlySpan().ToArray().Should().SequenceEqual("AB\0\0t\0"u8.ToArray());
+        header.AsReadOnlySpan().ToArray().Should().SequenceEqual([.. "AB\0\0t\0"u8]);
         header.GetString(0, 4).Should().Equal("AB");
         header.GetString(2, 4).Should().Equal("");
 
         header.SetString(0, 6, "");
-        header.AsReadOnlySpan().ToArray().Should().SequenceEqual("\0\0\0\0\0\0"u8.ToArray());
+        header.AsReadOnlySpan().ToArray().Should().SequenceEqual([.. "\0\0\0\0\0\0"u8]);
     }
 
     private sealed class TestIOFileComponent : IOFileComponent

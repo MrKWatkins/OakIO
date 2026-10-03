@@ -41,6 +41,11 @@ An online converter using this library is available [here](converter.md).
 - [Paint.NET](formats/palette/paintdotnet.md) — Text palettes with alpha support.
 - [NXP](formats/palette/nxp.md) — ZX Spectrum Next RGB333 palettes with 16 or 256 entries.
 
+### Tile Formats
+
+- [SPR](formats/tiles/spr.md) — Headerless Next 16×16 sprite patterns at four or eight bits per pixel.
+- [NXT](formats/tiles/nxt.md) — Headerless Next 8×8 tiles at one, four or eight bits per pixel.
+
 ### ZX Spectrum Tape Formats
 
 - [TAP](formats/tape/tap.md) — Simple tape format containing raw data blocks.

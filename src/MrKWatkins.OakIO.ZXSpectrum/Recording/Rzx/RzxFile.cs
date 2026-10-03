@@ -42,5 +42,5 @@ public sealed class RzxFile : ZXSpectrumRecordingFile
     /// <summary>
     /// Gets the input recording blocks.
     /// </summary>
-    public IReadOnlyList<RzxInputRecordingBlock> InputRecordings => Blocks.OfType<RzxInputRecordingBlock>().ToList();
+    public IReadOnlyList<RzxInputRecordingBlock> InputRecordings => [.. Blocks.OfType<RzxInputRecordingBlock>()];
 }
