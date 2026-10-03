@@ -21,6 +21,16 @@ If you don't know the format ahead of time, use [`IOFileFormat.Load`](API/MrKWat
 IOFile file = IOFileFormat.Load("tape.tap", TapFormat.Instance, TzxFormat.Instance, PzxFormat.Instance);
 ```
 
+For all supported Spectrum and Next formats, use the format list from the Next package:
+
+```c#
+using MrKWatkins.OakIO.ZXSpectrumNext;
+
+IOFile file = IOFileFormat.Load("program.nex", ZXSpectrumNextFileFormats.AllFormats);
+```
+
+The Spectrum package's `ZXSpectrumFileFormat.AllFormats` contains only Spectrum formats.
+
 [`Load`](API/MrKWatkins.OakIO/IOFileFormat/Load.md) also transparently decompresses `.zip`, `.gz`, `.br`, and `.zst` files — see [Compression](#compression) below.
 
 ## Writing Files

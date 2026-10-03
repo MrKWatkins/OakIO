@@ -1,5 +1,5 @@
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 

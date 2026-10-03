@@ -8,7 +8,8 @@
 
 ## Overview
 
-OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files — synchronously or asynchronously, optionally compressed — inspecting their contents, and converting between formats.
+OakIO provides a structured object model for working with emulator and resource file formats. It supports reading and writing files, synchronously or
+asynchronously, with optional compression. Once loaded their contents can be inspected and they can be converted to other formats.
 
 ## Source Code
 
@@ -38,11 +39,14 @@ An online converter using this library is available [here](converter.md).
 
 - [Z80](formats/snapshot/z80.md) — Snapshot format supporting versions 1, 2, and 3, with optional compression.
 - [SNA](formats/snapshot/sna.md) — Simple snapshot format for 48K and 128K machines.
-- [NEX](formats/snapshot/nex.md) — Snapshot format for the ZX Spectrum Next.
 
 ### ZX Spectrum Recording Formats
 
 - [RZX](formats/recording/rzx.md) — Input recording format for deterministic replay against an emulator.
+
+### ZX Spectrum Next Snapshot Formats
+
+- [NEX](formats/snapshot/nex.md) — Snapshot format for the ZX Spectrum Next.
 
 ## Architecture
 

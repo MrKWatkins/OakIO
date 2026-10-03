@@ -1,5 +1,5 @@
 using MrKWatkins.OakIO.Compression;
-using MrKWatkins.OakIO.ZXSpectrum;
+using MrKWatkins.OakIO.ZXSpectrumNext;
 
 namespace MrKWatkins.OakIO.Commands;
 
@@ -16,7 +16,7 @@ public static class ConvertCommand
 
     public static void Execute(string inputFilename, Stream inputStream, string outputFilename, Stream outputStream, CompressionFormat compressionFormat = CompressionFormat.None)
     {
-        var inputFile = ZXSpectrumFileFormat.Load(inputFilename, inputStream);
+        var inputFile = IOFileFormat.Load(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats);
         var outputFormat = GetOutputFormat(inputFile.Format, outputFilename);
         var outputFile = IOFileConversion.Convert(inputFile, outputFormat);
         outputFile.Write(outputStream, outputFilename, compressionFormat);
@@ -33,7 +33,7 @@ public static class ConvertCommand
 
     public static async Task ExecuteAsync(string inputFilename, Stream inputStream, string outputFilename, Stream outputStream, CompressionFormat compressionFormat = CompressionFormat.None, CancellationToken cancellationToken = default)
     {
-        var inputFile = await ZXSpectrumFileFormat.LoadAsync(inputFilename, inputStream, cancellationToken).ConfigureAwait(false);
+        var inputFile = await IOFileFormat.LoadAsync(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats, cancellationToken).ConfigureAwait(false);
         var outputFormat = GetOutputFormat(inputFile.Format, outputFilename);
         var outputFile = IOFileConversion.Convert(inputFile, outputFormat);
         await outputFile.WriteAsync(outputStream, outputFilename, compressionFormat, cancellationToken).ConfigureAwait(false);

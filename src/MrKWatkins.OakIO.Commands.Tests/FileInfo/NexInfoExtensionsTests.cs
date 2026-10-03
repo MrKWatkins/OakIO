@@ -1,5 +1,5 @@
 using MrKWatkins.OakIO.Commands.FileInfo;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 namespace MrKWatkins.OakIO.Commands.Tests.FileInfo;
 

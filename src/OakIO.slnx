@@ -1,0 +1,37 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../AGENTS.md" />
+    <File Path="../CLAUDE.md" />
+    <File Path="../global.json" />
+    <File Path="../License.md" />
+    <File Path="../ReadMe.md" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="Icon.png" />
+    <File Path="OakIO.runsettings" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/" />
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path="../.github/workflows/build.yml" />
+    <File Path="../.github/workflows/release.yml" />
+  </Folder>
+  <Project Path="MrKWatkins.OakIO.Commands.Tests/MrKWatkins.OakIO.Commands.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.Commands/MrKWatkins.OakIO.Commands.csproj" />
+  <Project Path="MrKWatkins.OakIO.Testing/MrKWatkins.OakIO.Testing.csproj" />
+  <Project Path="MrKWatkins.OakIO.Tests/MrKWatkins.OakIO.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.Tool.Tests/MrKWatkins.OakIO.Tool.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.Tool/MrKWatkins.OakIO.Tool.csproj" />
+  <Project Path="MrKWatkins.OakIO.Wasm.Tests/MrKWatkins.OakIO.Wasm.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj" />
+  <Project Path="MrKWatkins.OakIO.ZXSpectrum.Tests/MrKWatkins.OakIO.ZXSpectrum.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj" />
+  <Project Path="MrKWatkins.OakIO.ZXSpectrumNext.Tests/MrKWatkins.OakIO.ZXSpectrumNext.Tests.csproj" />
+  <Project Path="MrKWatkins.OakIO.ZXSpectrumNext/MrKWatkins.OakIO.ZXSpectrumNext.csproj" />
+  <Project Path="MrKWatkins.OakIO/MrKWatkins.OakIO.csproj" />
+</Solution>

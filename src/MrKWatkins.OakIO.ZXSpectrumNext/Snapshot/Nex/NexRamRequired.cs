@@ -1,4 +1,4 @@
-namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 /// <summary>
 /// The amount of RAM required for a NEX file.

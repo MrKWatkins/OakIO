@@ -1,4 +1,4 @@
-namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 /// <summary>
 /// The type of loading screen in a NEX file.

@@ -1,8 +1,8 @@
 using MrKWatkins.OakIO.Binary;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Snapshot.Nex;
 
 [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
 public sealed class NexFormatTests

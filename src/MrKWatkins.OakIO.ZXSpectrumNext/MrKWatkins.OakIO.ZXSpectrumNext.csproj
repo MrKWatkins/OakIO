@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\MrKWatkins.OakIO.ZXSpectrum\MrKWatkins.OakIO.ZXSpectrum.csproj" />
+        <Using Include="MrKWatkins.OakIO.ZXSpectrum" />
+        <Using Include="MrKWatkins.OakIO.ZXSpectrum.Snapshot" />
+    </ItemGroup>
+</Project>

@@ -11,14 +11,14 @@ C# library providing code to read, write and convert between various emulator da
 All commands run from the root directory:
 
 ```bash
-dotnet build src/OakIO.sln # Build all projects.
+dotnet build src/OakIO.slnx # Build all projects.
 
-dotnet test --solution src/OakIO.sln  # Run all tests.
-dotnet test --solution src/OakIO.sln --configuration Release -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura # Run all tests with code coverage.
+dotnet test --solution src/OakIO.slnx  # Run all tests.
+dotnet test --solution src/OakIO.slnx --configuration Release -- --coverage --coverage-output coverage.xml --coverage-output-format cobertura # Run all tests with code coverage.
 dotnet test --project src/MrKWatkins.OakIO.Tests  # Run a single test project.
 dotnet test --project src/MrKWatkins.OakIO.Tests --filter "FullyQualifiedName~BlockTests"  # Run a single test class.
 
-dotnet format src/OakIO.sln  # Format the source code.
+dotnet format src/OakIO.slnx  # Format the source code.
 ```
 The test project uses the NUnit runner with Microsoft Testing Platform (`EnableNUnitRunner`), so test executables can also be run directly.
 
@@ -31,8 +31,8 @@ The full CI build (`.github/workflows/build.yml`) does the following. Run these 
 dotnet workload install wasm-tools
 
 # 2. Build and test all C# projects.
-dotnet build src/OakIO.sln
-dotnet test --solution src/OakIO.sln
+dotnet build src/OakIO.slnx
+dotnet test --solution src/OakIO.slnx
 
 # 3. Build and test the web project.
 cd web
@@ -63,6 +63,7 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 - ** MrKWatkins.OakIO **: Main library project. Contains base classes for file formats and converters, along with Tape and Wav implementations. Tape is a generic tape file format that does not support reading/writing and is intended for use internally by emulators.
 - ** MrKWatkins.OakIO.ZXSpectrum **: File formats for the ZX Spectrum. Contains tape formats that represent an actual tape, as well as snapshot formats that represent a snapshot of the a ZX Spectrum's internal state.
+- ** MrKWatkins.OakIO.ZXSpectrumNext **: ZX Spectrum Next formats, including NEX snapshots. References the ZX Spectrum project; Next snapshots retain the Spectrum snapshot hierarchy.
 - ** MrKWatkins.OakIO.Commands **: Commands to be used by a CLI or web-based tool.
 - ** MrKWatkins.OakIO.Tool **: A console tool for inspecting and converting files. Published as a dotnet tool.
 - ** MrKWatkins.OakIO.Wasm **: A WASM library for inspecting and converting files, designed to be used by a web-based tool.
@@ -73,7 +74,7 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 - Documentation is generated using MKDocs and is found in the `doc` folder.
 - Documentation in `doc/docs/API` is generated from the assemblies using the sesharp tool from the root of the repository:
-  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
+  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll src/MrKWatkins.OakIO.ZXSpectrumNext/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrumNext.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
 - Documentation in `doc/docs/API` is not checked into source control; it is generated as part of the CI build.
 - Documentation in the root of `doc/docs` is handwritten.
 - Handwritten documentation should link to the generated API documentation and Microsoft's API docs (https://learn.microsoft.com/en-us/dotnet/api/) for types, members, etc.
@@ -101,4 +102,4 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 ## Formatting Conventions
 
 - Always include `{` and `}` around control flow statements (e.g. `if`, `for`, `while`, etc.) even if they're single-line.
-- Ensure formatting is correct by running `dotnet format src/OakIO.sln` after completing changes.
+- Ensure formatting is correct by running `dotnet format src/OakIO.slnx` after completing changes.

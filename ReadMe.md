@@ -8,13 +8,17 @@
 
 ## Overview
 
-OakIO provides a structured object model for working with emulator file formats. It supports reading and writing files, inspecting their contents, and converting between formats.
+OakIO provides a structured object model for working with emulator and resource file formats. It supports reading and writing files, synchronously or
+asynchronously, with optional compression. Once loaded their contents can be inspected and they can be converted to other formats.
 
 ## Installation
 
 ```
 dotnet add package MrKWatkins.OakIO
 ```
+
+ZX Spectrum formats are in `MrKWatkins.OakIO.ZXSpectrum`. ZX Spectrum Next formats, including NEX snapshots, are in
+`MrKWatkins.OakIO.ZXSpectrumNext`, which references the ZX Spectrum package.
 
 ## Documentation
 
@@ -27,7 +31,7 @@ An online converter using this library is available at https://mrkwatkins.github
 ## Use of AI
 
 My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
-forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, setup for the the online converter,
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some of the converters, setup for the online converter,
 and help with documentation and unit tests.
 
 ## Licencing

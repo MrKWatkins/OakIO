@@ -1,5 +1,5 @@
 using System.Globalization;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 namespace MrKWatkins.OakIO.Commands.FileInfo;
 

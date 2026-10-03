@@ -1,4 +1,4 @@
-namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 // NEX files do not store shadow register data, so the values are stubbed to zero to match the main NEX registers.
 [SuppressMessage("ReSharper", "InconsistentNaming")]

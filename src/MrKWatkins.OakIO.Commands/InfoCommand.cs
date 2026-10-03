@@ -1,11 +1,11 @@
 using System.Text.Json;
 using MrKWatkins.OakIO.Commands.FileInfo;
-using MrKWatkins.OakIO.ZXSpectrum;
 using MrKWatkins.OakIO.ZXSpectrum.Recording;
 using MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 using MrKWatkins.OakIO.ZXSpectrum.Tape;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
+using MrKWatkins.OakIO.ZXSpectrumNext;
 using Pzx = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using TzxTape = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
@@ -23,7 +23,7 @@ public static class InfoCommand
     [Pure]
     public static FileInfoResult GetFileInfo(string inputFilename, Stream inputStream)
     {
-        var file = ZXSpectrumFileFormat.Load(inputFilename, inputStream);
+        var file = IOFileFormat.Load(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats);
         return BuildFileInfo(file);
     }
 
@@ -59,7 +59,7 @@ public static class InfoCommand
     [Pure]
     public static async Task<FileInfoResult> GetFileInfoAsync(string inputFilename, Stream inputStream, CancellationToken cancellationToken = default)
     {
-        var file = await ZXSpectrumFileFormat.LoadAsync(inputFilename, inputStream, cancellationToken).ConfigureAwait(false);
+        var file = await IOFileFormat.LoadAsync(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats, cancellationToken).ConfigureAwait(false);
         return BuildFileInfo(file);
     }
 

@@ -1,6 +1,6 @@
 using MrKWatkins.OakIO.Binary;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 /// <summary>
 /// The NEX snapshot file format for the ZX Spectrum Next.

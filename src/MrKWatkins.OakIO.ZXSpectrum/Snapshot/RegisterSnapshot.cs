@@ -7,7 +7,11 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public abstract class RegisterSnapshot : Header
 {
-    private protected RegisterSnapshot(byte[] data)
+    /// <summary>
+    /// Initializes a register snapshot backed by the specified header data.
+    /// </summary>
+    /// <param name="data">The header data containing the registers.</param>
+    protected RegisterSnapshot(byte[] data)
         : base(data)
     {
     }

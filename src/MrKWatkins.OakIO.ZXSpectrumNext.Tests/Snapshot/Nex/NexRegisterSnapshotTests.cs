@@ -1,7 +1,7 @@
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
-namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Snapshot.Nex;
 
 public sealed class NexRegisterSnapshotTests
 {

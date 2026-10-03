@@ -1,7 +1,6 @@
 using MrKWatkins.OakIO.ZXSpectrum.Recording;
 using MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
-using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape;
@@ -24,7 +23,7 @@ public abstract class ZXSpectrumFileFormat : IOFileFormat
     /// <summary>
     /// All supported ZX Spectrum snapshot file formats.
     /// </summary>
-    public static readonly IReadOnlyList<ZXSpectrumSnapshotFormat> SnapshotFormats = [NexFormat.Instance, SnaFormat.Instance, Z80Format.Instance];
+    public static readonly IReadOnlyList<ZXSpectrumSnapshotFormat> SnapshotFormats = [SnaFormat.Instance, Z80Format.Instance];
 
     /// <summary>
     /// All supported ZX Spectrum input recording file formats.

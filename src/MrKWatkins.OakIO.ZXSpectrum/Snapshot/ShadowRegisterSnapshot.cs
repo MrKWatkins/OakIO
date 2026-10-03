@@ -7,7 +7,11 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
 public abstract class ShadowRegisterSnapshot : Header
 {
-    private protected ShadowRegisterSnapshot(byte[] data)
+    /// <summary>
+    /// Initializes a shadow register snapshot backed by the specified header data.
+    /// </summary>
+    /// <param name="data">The header data containing the shadow registers.</param>
+    protected ShadowRegisterSnapshot(byte[] data)
         : base(data)
     {
     }

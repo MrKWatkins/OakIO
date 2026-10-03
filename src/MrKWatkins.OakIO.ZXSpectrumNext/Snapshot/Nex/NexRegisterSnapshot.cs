@@ -1,4 +1,4 @@
-namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Nex;
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 internal sealed class NexRegisterSnapshot : RegisterSnapshot

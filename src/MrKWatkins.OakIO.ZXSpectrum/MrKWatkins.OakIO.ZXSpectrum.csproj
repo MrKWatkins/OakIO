@@ -5,5 +5,8 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\MrKWatkins.OakIO\MrKWatkins.OakIO.csproj" />
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>MrKWatkins.OakIO.ZXSpectrumNext.Tests</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 </Project>
