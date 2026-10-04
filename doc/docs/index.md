@@ -36,6 +36,7 @@ An online converter using this library is available [here](converter.md).
 - [SCR](formats/image/scr.md) — Native Spectrum bitmap and colour-attribute screen dumps.
 - [NXI](formats/image/nxi.md) — Palette-prefixed Next Layer 2 images in native screen layouts.
 - [NXM](formats/tilemap/nxm.md) — Headerless tile or block maps with explicitly selected layouts.
+- [NXB](formats/blocks/nxb.md) — Headerless collections of reusable tile-index blocks.
 
 ### Palette Formats
 

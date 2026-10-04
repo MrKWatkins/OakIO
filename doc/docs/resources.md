@@ -7,6 +7,7 @@ Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette
 The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes,
 [NXI](formats/image/nxi.md) images, [SPR](formats/tiles/spr.md) sprite patterns and [NXT](formats/tiles/nxt.md) tiles.
 It also supports [NXM](formats/tilemap/nxm.md) tile or block maps with explicitly supplied layouts.
+Reusable tile-index blocks are supported as [NXB](formats/blocks/nxb.md) files.
 The `MrKWatkins.OakIO.ZXSpectrum` package supports [SCR](formats/image/scr.md) screen dumps.
 Resource formats are not yet included in the CLI or online converter.
 
@@ -23,6 +24,7 @@ Each specialized pair has the same relationship:
 | [`PaletteFile`](API/MrKWatkins.OakIO.Resources/PaletteFile/index.md) | `PaletteFormat` | `PaletteData` |
 | [`TilesFile`](API/MrKWatkins.OakIO.Resources/TilesFile/index.md) | `TilesFormat` | `TilesData` |
 | [`TileMapFile`](API/MrKWatkins.OakIO.Resources/TileMapFile/index.md) | `TileMapFormat` | `TileMapData` |
+| [`TileBlocksFile`](API/MrKWatkins.OakIO.Resources/TileBlocksFile/index.md) | `TileBlocksFormat` | `TileBlocksData` |
 
 Each format also has a generic variant for strongly typed reads and writes. A concrete format implements its
 binary reader and writer hooks and registers applicable converters through `CreateConverters`.
@@ -93,6 +95,18 @@ Concrete files retain their byte-backed components and expose derived maps. `Res
 formats explicitly select row-major or column-major wire layouts without changing the shared view.
 NXM is excluded from unqualified discovery because its dimensions and entry encoding are not stored in
 its bytes. Supply one `NxmFormat` alongside the existing formats when loading by filename.
+
+## Tile blocks
+
+[`TileBlocksData`](API/MrKWatkins.OakIO.Resources/TileBlocksData/index.md) stores equally sized rectangles
+of `TileMapEntry` values. Width and height count map entries, not pixels; `Count` is derived from the
+entry count. Entries are block-major, with row-major ordering within each block. Empty collections are
+valid, incomplete blocks are rejected. `GetBlock(index)` returns an independent `TileMapData` view.
+
+The shared model retains attributes for future formats; NXB supports only plain indices and rejects
+attributes rather than silently removing them. Concrete block files retain their native byte-backed
+components and expose derived shared views. Referenced tile graphics and palettes remain separate.
+NXB is excluded from unqualified discovery; supply one explicit `NxbFormat` when loading by filename.
 
 ## Ownership and validation
 
