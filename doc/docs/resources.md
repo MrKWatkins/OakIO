@@ -6,6 +6,7 @@ Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette
 [JASC PAL](formats/palette/jasc.md) and [Paint.NET](formats/palette/paintdotnet.md) palettes.
 The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes,
 [NXI](formats/image/nxi.md) images, [SPR](formats/tiles/spr.md) sprite patterns and [NXT](formats/tiles/nxt.md) tiles.
+It also supports [NXM](formats/tilemap/nxm.md) tile or block maps with explicitly supplied layouts.
 The `MrKWatkins.OakIO.ZXSpectrum` package supports [SCR](formats/image/scr.md) screen dumps.
 Resource formats are not yet included in the CLI or online converter.
 
@@ -21,6 +22,7 @@ Each specialized pair has the same relationship:
 | [`ImageFile`](API/MrKWatkins.OakIO.Resources/ImageFile/index.md) | `ImageFormat` | `ImageData` |
 | [`PaletteFile`](API/MrKWatkins.OakIO.Resources/PaletteFile/index.md) | `PaletteFormat` | `PaletteData` |
 | [`TilesFile`](API/MrKWatkins.OakIO.Resources/TilesFile/index.md) | `TilesFormat` | `TilesData` |
+| [`TileMapFile`](API/MrKWatkins.OakIO.Resources/TileMapFile/index.md) | `TileMapFormat` | `TileMapData` |
 
 Each format also has a generic variant for strongly typed reads and writes. A concrete format implements its
 binary reader and writer hooks and registers applicable converters through `CreateConverters`.
@@ -76,6 +78,21 @@ is allowed, but partial tiles are not.
 Pixels are tile-major: all of tile zero, then all of tile one, and so on. Within each tile, indices are row-major
 and unpacked, with a bit depth of 1, 2, 4 or 8. Tiles do not own a palette, so a palette can be supplied separately
 and shared between images or tiles.
+
+## Tilemaps
+
+[`TileMapData`](API/MrKWatkins.OakIO.Resources/TileMapData/index.md) stores a rectangular grid of
+[`TileMapEntry`](API/MrKWatkins.OakIO.Resources/TileMapEntry/index.md) values in top-left-origin row-major
+order. Dimensions count entries, not pixels. `GetEntry(x, y)` validates coordinates. An entry refers to a
+tile or reusable block and carries a nonnegative index and palette offset, plus optional X/Y mirrors,
+clockwise rotation and a priority flag. Offset units and priority interpretation belong to the concrete
+format; unsupported fields are rejected by conversion, not discarded. No referenced graphics are embedded
+in the shared map model.
+
+Concrete files retain their byte-backed components and expose derived maps. `ResourceDataOrder` lets
+formats explicitly select row-major or column-major wire layouts without changing the shared view.
+NXM is excluded from unqualified discovery because its dimensions and entry encoding are not stored in
+its bytes. Supply one `NxmFormat` alongside the existing formats when loading by filename.
 
 ## Ownership and validation
 
