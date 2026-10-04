@@ -1,11 +1,12 @@
+using System.Globalization;
 using System.Text.Json;
 using MrKWatkins.OakIO.Commands.FileInfo;
+using MrKWatkins.OakIO.Resources;
 using MrKWatkins.OakIO.ZXSpectrum.Recording;
 using MrKWatkins.OakIO.ZXSpectrum.Recording.Rzx;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 using MrKWatkins.OakIO.ZXSpectrum.Tape;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
-using MrKWatkins.OakIO.ZXSpectrumNext;
 using Pzx = MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 using TzxTape = MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 
@@ -23,7 +24,7 @@ public static class InfoCommand
     [Pure]
     public static FileInfoResult GetFileInfo(string inputFilename, Stream inputStream)
     {
-        var file = IOFileFormat.Load(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats);
+        var file = IOFileFormat.Load(inputFilename, inputStream, CommandFileFormats.AllFormats);
         return BuildFileInfo(file);
     }
 
@@ -59,7 +60,7 @@ public static class InfoCommand
     [Pure]
     public static async Task<FileInfoResult> GetFileInfoAsync(string inputFilename, Stream inputStream, CancellationToken cancellationToken = default)
     {
-        var file = await IOFileFormat.LoadAsync(inputFilename, inputStream, ZXSpectrumNextFileFormats.AllFormats, cancellationToken).ConfigureAwait(false);
+        var file = await IOFileFormat.LoadAsync(inputFilename, inputStream, CommandFileFormats.AllFormats, cancellationToken).ConfigureAwait(false);
         return BuildFileInfo(file);
     }
 
@@ -91,11 +92,15 @@ public static class InfoCommand
     [Pure]
     private static FileInfoResult BuildFileInfo(IOFile file)
     {
+        var imageData = (file as ImageFile)?.Image;
+        var paletteData = (file as PaletteFile)?.Palette ?? (imageData as IndexedImageData)?.Palette;
         var type = file switch
         {
             ZXSpectrumTapeFile => "tape",
             ZXSpectrumSnapshotFile => "snapshot",
             ZXSpectrumRecordingFile => "recording",
+            PaletteFile => "palette",
+            ImageFile => "image",
             _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 
@@ -111,10 +116,32 @@ public static class InfoCommand
             Pzx.PzxFile pzx => pzx.ToInfoSections(),
             ZXSpectrumSnapshotFile snapshot => snapshot.ToInfoSections(),
             RzxFile rzx => rzx.ToInfoSections(),
+            PaletteFile => new List<InfoSection>
+            {
+                new("Palette", "file")
+                {
+                    Properties = [new("Colours", paletteData!.Colours.Count.ToString(CultureInfo.InvariantCulture))]
+                }
+            },
+            ImageFile => new List<InfoSection>
+            {
+                new("Image", "file")
+                {
+                    Properties =
+                    [
+                        new("Width", imageData!.Width.ToString(CultureInfo.InvariantCulture)),
+                        new("Height", imageData.Height.ToString(CultureInfo.InvariantCulture))
+                    ]
+                }
+            },
             _ => throw new NotSupportedException($"The file type {file.GetType().Name} is not supported.")
         };
 
-        return new FileInfoResult(file.Format.Name, file.Format.FileExtension, type, convertibleTo, sections);
+        return new FileInfoResult(file.Format.Name, file.Format.FileExtension, type, convertibleTo, sections)
+        {
+            Palette = paletteData?.Colours,
+            Image = imageData is not null ? ImagePreview.Create(imageData) : null
+        };
     }
 
     private static void WriteFileInfo(TextWriter output, FileInfoResult fileInfo, string indent = "    ")

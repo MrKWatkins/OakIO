@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ContentsTab } from './ContentsTab';
 import type { FileInfo } from './types';
 
@@ -12,6 +12,20 @@ const baseInfo: FileInfo = {
 };
 
 describe('ContentsTab', () => {
+  it('shows the palette when there are no content sections', () => {
+    render(<ContentsTab info={{ ...baseInfo, palette: [{ red: 255, green: 0, blue: 0, alpha: 255 }] }} />);
+    expect(screen.getByRole('img', { name: 'Index 0: #FF0000FF' })).toBeInTheDocument();
+    expect(screen.queryByText('No content sections available.')).not.toBeInTheDocument();
+  });
+
+  it('shows the image when there are no content sections', () => {
+    const getContext = vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    render(<ContentsTab info={{ ...baseInfo, image: { width: 1, height: 1, pixels: 'AAAA/w==' } }} />);
+    expect(screen.getByLabelText('1 × 1 image preview')).toHaveAttribute('width', '1');
+    expect(screen.queryByText('No content sections available.')).not.toBeInTheDocument();
+    getContext.mockRestore();
+  });
+
   it('shows empty note when there are no content sections', () => {
     render(<ContentsTab info={baseInfo} />);
     expect(screen.getByText('No content sections available.')).toBeInTheDocument();

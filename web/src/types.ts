@@ -4,6 +4,15 @@ export interface FileInfo {
   type: string;
   convertibleTo: ConvertibleFormat[];
   sections: Section[];
+  palette?: Colour[];
+  image?: { width: number; height: number; pixels: string };
+}
+
+export interface Colour {
+  red: number;
+  green: number;
+  blue: number;
+  alpha: number;
 }
 
 export interface ConvertibleFormat {

@@ -406,3 +406,8 @@
     color: #a00;
   }
 }
+.image-preview-scroll { overflow: auto; margin-top: 1rem; }
+.image-preview-scroll canvas { display: block; }
+.palette-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; }
+.palette-entry { font-family: monospace; font-size: 0.8rem; }
+.palette-swatch { height: 2rem; border: 1px solid #888; }

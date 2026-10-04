@@ -4,6 +4,14 @@ import { ConvertTab } from './ConvertTab';
 import type { ConvertibleFormat } from './types';
 
 describe('ConvertTab', () => {
+  it('passes the extension when a labelled conversion button is clicked', () => {
+    const onConvert = vi.fn();
+    render(<ConvertTab formats={[{ name: 'ZX Spectrum Screen', extension: 'scr' }]}
+      compressionFormat="None" onCompressionFormatChange={() => {}} onConvert={onConvert} converting={null} error={null} />);
+    fireEvent.click(screen.getByRole('button', { name: 'ZX Spectrum Screen (.scr)' }));
+    expect(onConvert).toHaveBeenCalledWith('scr');
+  });
+
   it('shows empty note when there are no formats', () => {
     render(<ConvertTab formats={[]} compressionFormat="None" onCompressionFormatChange={() => {}} onConvert={() => {}} converting={null} error={null} />);
     expect(screen.getByText('No conversion options available for this format.')).toBeInTheDocument();
@@ -15,14 +23,14 @@ describe('ConvertTab', () => {
       { name: 'TZX', extension: 'tzx' },
     ];
     render(<ConvertTab formats={formats} compressionFormat="None" onCompressionFormatChange={() => {}} onConvert={() => {}} converting={null} error={null} />);
-    expect(screen.getByText('WAV Audio')).toBeInTheDocument();
-    expect(screen.getByText('TZX')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'WAV Audio (.wav)' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'TZX (.tzx)' })).toBeInTheDocument();
   });
 
   it('disables buttons while converting', () => {
     const formats: ConvertibleFormat[] = [{ name: 'WAV Audio', extension: 'wav' }];
     render(<ConvertTab formats={formats} compressionFormat="None" onCompressionFormatChange={() => {}} onConvert={() => {}} converting="wav" error={null} />);
-    expect(screen.getByText('WAV Audio')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'WAV Audio (.wav)' })).toBeDisabled();
   });
 
   it('shows converting message while converting', () => {

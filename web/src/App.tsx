@@ -4,6 +4,7 @@ import type { CompressionFormat, FileInfo } from './types'
 import { FileTab } from './FileTab'
 import { ContentsTab } from './ContentsTab'
 import { ConvertTab } from './ConvertTab'
+import { formatErrorMessage } from './utils'
 import './App.css'
 
 type Tab = 'file' | 'contents' | 'convert';
@@ -42,7 +43,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
       const result = await getInfo(file.name, data);
       setInfoResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(formatErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -74,7 +75,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setConvertError(err instanceof Error ? err.message : String(err));
+      setConvertError(formatErrorMessage(err));
     } finally {
       setConverting(null);
     }
@@ -90,7 +91,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
         <input
           type="file"
           id="fileInput"
-          accept=".tap,.tzx,.pzx,.z80,.sna,.nex,.rzx"
+          accept=".tap,.tzx,.pzx,.z80,.sna,.nex,.rzx,.gpl,.pal,.txt,.nxp,.bmp,.scr,.nxi,.zip,.gz"
           onChange={handleFileChange}
         />
         {loading && <span className="loading">Loading…</span>}
@@ -132,4 +133,3 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
 }
 
 export default App
-

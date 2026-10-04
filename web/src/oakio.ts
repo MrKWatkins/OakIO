@@ -8,7 +8,7 @@ interface OakIOExports {
         OakIOInterop: {
           GetInfo: (inputFilename: string, inputData: Uint8Array) => Promise<string>;
           Convert: (inputFilename: string, inputData: Uint8Array, outputFilename: string, compressionFormat: string) => Promise<string>;
-          GetCompressedFilename: (filename: string, compressionFormat: string) => string;
+          GetCompressedFilename: (filename: string, compressionFormat: string) => Promise<string>;
         };
       };
     };
@@ -17,10 +17,15 @@ interface OakIOExports {
 
 let exportsPromise: Promise<OakIOExports> | null = null;
 
+export function getRuntimeUrl(moduleUrl: string, development: boolean): string {
+  // Serve loads this module from src; production bundles live under assets
+  // (or assets/javascripts in the documentation website).
+  const relativePath = development ? '../dotnet/dotnet.js' : '../../dotnet/dotnet.js';
+  return new URL(relativePath, moduleUrl).href;
+}
+
 async function initRuntime(): Promise<OakIOExports> {
-  // Resolve dotnet.js relative to this module so the URL works at any base path
-  // (e.g. GitHub Pages subdirectory as well as the standalone app at root).
-  const dotnetUrl = /* @vite-ignore */ new URL('../../dotnet/dotnet.js', import.meta.url).href;
+  const dotnetUrl = getRuntimeUrl(import.meta.url, import.meta.env.DEV);
   const { dotnet } = await import(/* @vite-ignore */ dotnetUrl) as typeof DotnetModule;
   const { getAssemblyExports, getConfig } = await dotnet
     .withDiagnosticTracing(false)

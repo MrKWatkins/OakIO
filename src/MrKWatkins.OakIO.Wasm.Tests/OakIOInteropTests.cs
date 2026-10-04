@@ -1,7 +1,12 @@
 using System.Text.Json;
+using System.Reflection;
+using System.Runtime.InteropServices.JavaScript;
 using MrKWatkins.OakIO.Commands.FileInfo;
 using MrKWatkins.OakIO.Compression;
+using MrKWatkins.OakIO.Resources;
+using MrKWatkins.OakIO.Resources.Bmp;
 using MrKWatkins.OakIO.Wav;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 using MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
@@ -13,6 +18,65 @@ namespace MrKWatkins.OakIO.Wasm.Tests;
 #pragma warning disable CA1416
 public sealed class OakIOInteropTests
 {
+    [Test]
+    public void JSExports_AreAsynchronous()
+    {
+        var exports = typeof(OakIOInterop).GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Where(method => method.IsDefined(typeof(JSExportAttribute))).ToArray();
+        exports.Should().NotBeEmpty();
+        foreach (var export in exports)
+        {
+            typeof(Task).IsAssignableFrom(export.ReturnType).Should().BeTrue();
+        }
+    }
+
+    [Test]
+    public async Task Convert_BmpToNxi()
+    {
+        var palette = new PaletteData(Enumerable.Range(0, 256).Select(index => new Colour((byte)index, 0, 0)));
+        var pixels = new byte[256 * 192];
+        pixels[0] = 255;
+        var image = new IndexedImageData(256, 192, pixels, palette);
+        using var stream = new MemoryStream();
+        await new BmpFile(image).WriteAsync(stream);
+        var result = NxiFormat.Instance.Read(await Convert("test.bmp", stream.ToArray(), "test.nxi"));
+        result.Image.Width.Should().Equal(256);
+        result.Image.Height.Should().Equal(192);
+        result.Image.GetPixel(0, 0).Should().Equal(new Colour(255, 0, 0));
+        result.Image.GetPixel(1, 0).Should().Equal(new Colour(0, 0, 0));
+        (await GetCompressedFilename("test.nxi", CompressionFormat.None)).Should().Equal("test.nxi");
+    }
+
+    [Test]
+    public async Task Convert_BmpToNxi_InvalidDimensions()
+    {
+        var palette = new PaletteData(Enumerable.Repeat(new Colour(0, 0, 0), 256));
+        var image = new IndexedImageData(256, 384, new byte[256 * 384], palette);
+        using var stream = new MemoryStream();
+        await new BmpFile(image).WriteAsync(stream);
+        await stream.ToArray().Awaiting(bytes => Convert("mona.bmp", bytes, "mona.nxi"))
+            .Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Test]
+    public async Task GetInfo_Palette_ReturnsColours()
+    {
+        var bytes = System.Text.Encoding.UTF8.GetBytes("JASC-PAL\n0100\n2\n255 0 0\n0 255 0\n");
+        using var json = JsonDocument.Parse(await GetInfo("test.pal", bytes));
+        json.RootElement.GetProperty("type").GetString().Should().Equal("palette");
+        json.RootElement.GetProperty("palette")[1].GetProperty("green").GetByte().Should().Equal((byte)255);
+    }
+
+    [Test]
+    public async Task GetInfo_Image_ReturnsPixels()
+    {
+        using var json = JsonDocument.Parse(await GetInfo("test.scr", new byte[6912]));
+        var image = json.RootElement.GetProperty("image");
+        image.GetProperty("width").GetInt32().Should().Equal(256);
+        image.GetProperty("height").GetInt32().Should().Equal(192);
+        System.Convert.FromBase64String(image.GetProperty("pixels").GetString()!)[3].Should().Equal((byte)255);
+    }
+
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     [Test]
@@ -163,9 +227,9 @@ public sealed class OakIOInteropTests
     [TestCase(CompressionFormat.None, "output.wav")]
     [TestCase(CompressionFormat.Zip, "output.zip")]
     [TestCase(CompressionFormat.GZip, "output.wav.gz")]
-    public void GetCompressedFilename_ReturnsExpectedFilename(CompressionFormat compressionFormat, string expected)
+    public async Task GetCompressedFilename_ReturnsExpectedFilename(CompressionFormat compressionFormat, string expected)
     {
-        GetCompressedFilename("output.wav", compressionFormat).Should().Equal(expected);
+        (await GetCompressedFilename("output.wav", compressionFormat)).Should().Equal(expected);
     }
 
     [Pure]
@@ -187,7 +251,7 @@ public sealed class OakIOInteropTests
     }
 
     [Pure]
-    private static string GetCompressedFilename(string filename, CompressionFormat compressionFormat) =>
+    private static Task<string> GetCompressedFilename(string filename, CompressionFormat compressionFormat) =>
         OakIOInterop.GetCompressedFilename(filename, compressionFormat.ToString());
 
     [Pure]

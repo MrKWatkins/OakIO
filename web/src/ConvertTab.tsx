@@ -37,7 +37,7 @@ export function ConvertTab({ formats, compressionFormat, onCompressionFormatChan
             disabled={converting !== null}
             onClick={() => onConvert(f.extension)}
           >
-            {f.name}
+            {f.name} (.{f.extension})
           </button>
         ))}
       </div>

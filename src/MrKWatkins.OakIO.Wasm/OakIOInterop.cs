@@ -24,6 +24,6 @@ public static partial class OakIOInterop
         }).ConfigureAwait(false);
 
     [JSExport]
-    public static string GetCompressedFilename(string filename, string compressionFormat) =>
-        IOFile.GetCompressedFilename(filename, Enum.Parse<CompressionFormat>(compressionFormat));
+    public static Task<string> GetCompressedFilename(string filename, string compressionFormat) =>
+        Task.Run(() => IOFile.GetCompressedFilename(filename, Enum.Parse<CompressionFormat>(compressionFormat)));
 }

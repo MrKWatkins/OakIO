@@ -20,3 +20,10 @@ export function formatFileSize(bytes: number): string {
   const mb = kb / 1024;
   return `${mb.toFixed(1)} MB`;
 }
+
+export function formatErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  // ArgumentException appends a developer-facing parameter diagnostic. WASM's
+  // invariant runtime may expose the resource key rather than its English text.
+  return message.replace(/\s+(?:Arg_ParamName_Name,\s*[^\r\n]+|\(Parameter '[^']+'\))\s*$/, '');
+}
