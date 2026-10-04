@@ -51,8 +51,8 @@ var loaded = await IOFileFormat.LoadAsync("map.nxm", inputStream, formats);
 
 Unqualified format lists exclude NXM because they cannot supply its layout. Add one chosen format to
 discovery explicitly. Synchronous, asynchronous and existing OakIO compression APIs are supported.
-Gfx2Next's optional ZX0 wrapper and non-Next Sega Master System attribute encoding are not handled by
-this native format. A raw file of the right length is assumed to use the chosen export settings.
+Non-Next Sega Master System attributes are not interpreted. A raw file of the right length is
+assumed to use the chosen export settings.
 
 [`NxmFile`](../../API/MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxm/NxmFile/index.md) retains its layout
 in `Format` and its native bytes in the byte-backed

@@ -29,12 +29,15 @@ An online converter using this library is available [here](converter.md).
 
 - [Reading, Writing and Converting](reading-writing-converting.md)
 - [Resources](resources.md) — Shared image, palette and tile models and file format bases.
+- [Next resource audit](next-resource-audit.md) — Supported interpretations and exporter variant gaps.
 
 ### Image Formats
 
 - [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
 - [SCR](formats/image/scr.md) — Native Spectrum bitmap and colour-attribute screen dumps.
 - [NXI](formats/image/nxi.md) — Palette-prefixed Next Layer 2 images in native screen layouts.
+- [SL2](formats/image/sl2.md) — Next Layer 2 screens with optional appended palette and +3DOS header.
+- [SLR](formats/image/slr.md) — Next LoRes/Radastan screen dumps.
 - [NXM](formats/tilemap/nxm.md) — Headerless tile or block maps with explicitly selected layouts.
 - [NXB](formats/blocks/nxb.md) — Headerless collections of reusable tile-index blocks.
 

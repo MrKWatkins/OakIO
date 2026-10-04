@@ -8,11 +8,56 @@ using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Spr;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Sl2;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Slr;
 
 namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources;
 
 public sealed class ZXSpectrumNextResourceFileFormatsTests
 {
+    [Test]
+    public void WithScreens()
+    {
+        ZXSpectrumNextResourceFileFormats.WithScreens(Sl2Format.HighResolution, SlrFormat.FourBit).Should().SequenceEqual(
+            [.. ZXSpectrumNextResourceFileFormats.AllFormats, Sl2Format.HighResolution, SlrFormat.FourBit]);
+        ZXSpectrumNextResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("sl2");
+        ZXSpectrumNextResourceFileFormats.AllFormats.Select(format => format.FileExtension).Should().NotContain("slr");
+    }
+
+    [Test]
+    public void WithScreens_NullLayer2() =>
+        AssertThat.Invoking(() => ZXSpectrumNextResourceFileFormats.WithScreens(null!, SlrFormat.EightBit)).Should().Throw<ArgumentNullException>();
+
+    [Test]
+    public void WithScreens_NullLowResolution() =>
+        AssertThat.Invoking(() => ZXSpectrumNextResourceFileFormats.WithScreens(Sl2Format.Standard, null!)).Should().Throw<ArgumentNullException>();
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task WithScreens_LoadAsync(bool compressed)
+    {
+        var original = Sl2Format.HighResolution.Read(new byte[81920]);
+        using var stream = new MemoryStream();
+        await original.WriteAsync(stream, "screen.sl2", compressed ? CompressionFormat.GZip : CompressionFormat.None);
+        stream.Position = 0;
+        var file = (Sl2File)await IOFileFormat.LoadAsync(compressed ? "screen.sl2.gz" : "screen.sl2", stream,
+            ZXSpectrumNextResourceFileFormats.WithScreens(Sl2Format.HighResolution, SlrFormat.EightBit));
+        file.PixelData.Width.Should().Equal(640);
+        file.PixelData.BitsPerPixel.Should().Equal(4);
+        file.ToByteArray().Should().SequenceEqual(original.ToByteArray());
+    }
+
+    [Test]
+    public void WithScreens_LoadSlr()
+    {
+        using var stream = new MemoryStream(new byte[12288]);
+        var file = (SlrFile)IOFileFormat.Load("screen.slr", stream, ZXSpectrumNextResourceFileFormats.WithScreens(Sl2Format.Standard, SlrFormat.EightBit));
+        file.PixelData.Width.Should().Equal(128);
+        file.PixelData.Height.Should().Equal(96);
+        file.Palette.Length.Should().Equal(0);
+        file.ToByteArray().Should().SequenceEqual(new byte[12288]);
+    }
+
     [TestCase(256, 192)]
     [TestCase(320, 256)]
     [TestCase(640, 256)]

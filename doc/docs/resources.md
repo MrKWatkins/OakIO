@@ -36,6 +36,12 @@ Resource formats are separate from the Spectrum and Next snapshot/tape format li
 `IOFileFormat.Load` or `LoadAsync` with `ResourceFileFormats.AllFormats` to discover resource formats.
 For general and Next resource formats together, use `ZXSpectrumNextResourceFileFormats.AllFormats`
 from the Next package's `Resources` namespace.
+
+SL2 and SLR also require explicit modes. Use
+`ZXSpectrumNextResourceFileFormats.WithScreens(Sl2Format.Wide, SlrFormat.EightBit)` to include them;
+their byte-backed optional headers, bitmaps and appended palettes expose derived indexed image views.
+See [SL2](formats/image/sl2.md), [SLR](formats/image/slr.md) and the
+[Next resource audit](next-resource-audit.md) for supported variants and exclusions.
 For general and Spectrum resources, use `ZXSpectrumResourceFileFormats.AllFormats` from the Spectrum
 package's `Resources` namespace. The Next list includes these Spectrum resources too.
 SPR and NXT require explicit bit depths and are excluded from unqualified discovery. Use

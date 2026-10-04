@@ -4,6 +4,8 @@ using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxp;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxt;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Spr;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Sl2;
+using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Slr;
 
 namespace MrKWatkins.OakIO.ZXSpectrumNext.Resources;
 
@@ -26,4 +28,18 @@ public static class ZXSpectrumNextResourceFileFormats
     [Pure]
     public static IReadOnlyList<ResourceFormat> WithTiles(int spriteBitsPerPixel, int tileBitsPerPixel) =>
         [.. AllFormats, SprFormat.ForBitsPerPixel(spriteBitsPerPixel), NxtFormat.ForBitsPerPixel(tileBitsPerPixel)];
+
+    /// <summary>
+    /// Gets resource formats including SL2 and SLR with explicitly selected screen modes.
+    /// </summary>
+    /// <remarks>
+    /// Palette-free wide SL2 modes have identical lengths; no bit depth is guessed.
+    /// </remarks>
+    [Pure]
+    public static IReadOnlyList<ResourceFormat> WithScreens(Sl2Format layer2, SlrFormat lowResolution)
+    {
+        ArgumentNullException.ThrowIfNull(layer2);
+        ArgumentNullException.ThrowIfNull(lowResolution);
+        return [.. AllFormats, layer2, lowResolution];
+    }
 }
