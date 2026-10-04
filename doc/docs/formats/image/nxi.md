@@ -1,7 +1,7 @@
 # NXI
 
 `MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi` reads and writes native Layer 2 images with an
-embedded RGB333 palette. There is no header: the exact file length identifies one of three layouts.
+embedded RGB333 palette. The exact file length identifies one of three layouts.
 
 | Dimensions | Index bits | Palette bytes | Pixel bytes | Total bytes | Pixel order |
 | --- | --- | --- | --- | --- | --- |
@@ -62,7 +62,7 @@ Creation requires exact native dimensions and exactly 256 palette entries for ei
 16 for the four-bit mode. Palette colours must be opaque and are rounded to RGB333 using NXP's rules.
 Indices and palette order are preserved; indices outside the selected depth are rejected, not truncated.
 Both four-bit and eight-bit source indexed images can produce a four-bit screen when their indices and
-palette fit. There is no implicit cropping, resizing, palette generation, padding, trimming or dithering.
+palette fit. Conversion performs no implicit cropping, resizing, palette generation, padding, trimming or dithering.
 
 [`ImageToNxiConverter`](../../API/MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxi/ImageToNxiConverter/index.md)
 converts indexed images explicitly. BMP→NXI, NXI→BMP and NXI→NXI are registered with `IOFileConversion`.

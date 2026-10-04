@@ -9,7 +9,7 @@
 | 6144 | 768 | Attributes for 32×24 cells, in row-major order |
 
 The bitmap has three 64-line thirds. Within each third it stores scan zero of the eight character rows,
-then scan one of those rows, and so on. Each byte selects ink or paper for eight pixels, with bit seven
+then scan one of those rows, continuing in sequence. Each byte selects ink or paper for 8 pixels, with bit seven
 on the left. Attributes are `FBPPPIII`: FLASH, BRIGHT, three paper bits and three ink bits.
 
 References: [Spectrum FAQ — SCR file layout](https://worldofspectrum.org/faq/reference/formats.htm),
@@ -48,7 +48,7 @@ and trailing bytes are not silently discarded. Empty files are invalid.
   `Ink`, `Paper`, `Bright`, `Flash`, `InkColour` and `PaperColour`.
 
 Writes preserve all bytes, including FLASH and attributes whose ink and paper are identical. Inputs are copied.
-There are no artificial headers or independently retained normalized pixel arrays.
+The file retains neither artificial headers nor independent normalised pixel arrays.
 
 `Image` derives an `IndexedImageData` in top-left row-major order, with unpacked indices into a 16-entry
 rendering palette. Entries 0–7 are normal black, blue, red, magenta, green, cyan, yellow and white;
@@ -77,8 +77,8 @@ Create a file from 6912 raw bytes with `new ScrFile(bytes)`, or from an `ImageDa
 palette. Each 8×8 cell may use at most two distinct colours, with a shared brightness level; black can accompany
 either normal or bright colours. Different cells may use different levels.
 
-Unsupported colours, transparency, more than two colours per cell or mixed normal/bright nonblack colours
-throw `ArgumentException`. There is no implicit cropping, scaling, quantization or dithering.
+Unsupported colours, transparency, more than two colours per cell or mixed normal/bright non-black colours
+throw `ArgumentException`. Conversion performs no implicit cropping, scaling, quantization or dithering.
 New attributes have FLASH cleared. Ink/paper assignments and bitmap bits are chosen deterministically from
 the pixels, but converting an image back need not reproduce the original SCR bytes or its FLASH settings.
 

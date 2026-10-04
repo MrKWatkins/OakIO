@@ -15,7 +15,7 @@ public sealed class BmpPixelData : IOFileComponent
 
     /// <param name="header">The information header describing the rows.</param>
     /// <param name="palette">The colour table for indexed images, or null for RGB24.</param>
-    /// <returns>The normalized image view.</returns>
+    /// <returns>The normalised image view.</returns>
     [Pure]
     public ImageData GetImage(BmpInformationHeader header, BmpPalette? palette)
     {

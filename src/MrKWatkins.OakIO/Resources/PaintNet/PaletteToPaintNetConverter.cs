@@ -1,7 +1,7 @@
 namespace MrKWatkins.OakIO.Resources.PaintNet;
 
 /// <summary>
-/// Converts palette colours to PaintNet without reordering or quantizing them.
+/// Converts palette colours to PaintNet without reordering or quantising them.
 /// </summary>
 /// <param name="sourceFormat">The source palette format.</param>
 public sealed class PaletteToPaintNetConverter(PaletteFormat sourceFormat)

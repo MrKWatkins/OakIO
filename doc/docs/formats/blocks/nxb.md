@@ -11,7 +11,7 @@ References: [Gfx2Next options](https://github.com/benbaker76/Gfx2Next) and its
 
 ## Layout
 
-There is no header, palette, embedded graphics or stored block count. Blocks occur consecutively;
+The format stores no header, palette, embedded graphics or block count. Blocks occur consecutively;
 each block stores its entries left to right within each row, then top to bottom. Dimensions count
 tile entries, not pixels. Width, height and index width must be supplied externally.
 
@@ -25,7 +25,7 @@ writer, `get_block` stores the tile number but does not retain its palette, mirr
 OakIO neither invents an attribute-bearing NXB variant nor silently discards attributes during conversion.
 
 File length must be a multiple of `width * height * bitsPerIndex / 8`. The count is derived from length;
-empty collections are valid, partial blocks throw `InvalidDataException`. There is no hardware-slot count
+empty collections are valid, partial blocks throw `InvalidDataException`. The format has no hardware-slot count
 limit or automatic deduplication. Headerless files cannot reveal whether the supplied interpretation
 matches their original export settings. Custom traversal orders are outside this format.
 Existing OakIO compression wrappers remain available.

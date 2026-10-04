@@ -23,7 +23,7 @@ BmpFile loaded = BmpFormat.Instance.Read(bytes);
 New files default to bottom-up storage and have canonical headers and zero padding. Loaded files retain
 their original bytes: headers, palette reserved bytes, packed pixel rows and padding, gaps before the
 pixel data, and trailing data (including bytes beyond the declared file size). Writing emits these
-components unchanged rather than reconstructing them from a normalized image.
+components unchanged rather than reconstructing them from a normalised image.
 
 ## File components and metadata
 
@@ -39,14 +39,14 @@ bytes; `Colours` exposes opaque RGB colours. Explicit RGB24 optimization colour 
 These components use OakIO's existing `Header` and `IOFileComponent` bases. BMP has no separate per-row
 header/trailer, so it does not introduce artificial block headers.
 
-`Image` is a normalized convenience view derived from these components, not independently stored data.
+`Image` is a normalised convenience view derived from these components, not independently stored data.
 It is reconstructed when accessed. `Gap` and `TrailingData` expose the remaining retained bytes.
 
 Alpha is not supported when creating images: all pixels and palette colours must be opaque,
 including unused palette entries.
 
 `ImageToBmpConverter` preserves RGB data and four/eight-bit indices, promotes one/two-bit indexed data
-to eight bits without changing the palette or indices, and rasterizes other `ImageData` implementations.
+to eight bits without changing the palette or indices, and rasterises other `ImageData` implementations.
 It does not quantize colours. Source formats can register it in `CreateConverters` to participate in
 `IOFileConversion`; target-specific converters will be added with their corresponding formats.
 

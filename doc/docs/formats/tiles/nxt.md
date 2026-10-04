@@ -24,7 +24,7 @@ These types are in the `MrKWatkins.OakIO.ZXSpectrumNext` package.
 | 4 | 32 | `NxtFormat.FourBit` |
 | 8 | 64 | `NxtFormat.EightBit` |
 
-There is no default `Instance`. Use a named format or `NxtFormat.ForBitsPerPixel(bitsPerPixel)`. Unsupported bit depths throw `ArgumentOutOfRangeException`.
+No default `Instance` is provided. Use a named format or `NxtFormat.ForBitsPerPixel(bitsPerPixel)`. Unsupported bit depths throw `ArgumentOutOfRangeException`.
 
 Length cannot determine the encoding: the same bytes can represent twice as many four-bit tiles as eight-bit tiles. The selected bit depth is interpretation metadata, not an on-disk field. Files must contain complete 8×8 tiles; partial data throws `InvalidDataException`. Empty collections are allowed. Asset collections are not limited to the number of patterns that fit in hardware at once.
 
@@ -55,7 +55,7 @@ IOFile file = IOFileFormat.Load("tiles.nxt", input, formats);
 
 `Entries` exposes the ordered `NxtTile` components. Each exposes its original `Data`, its selected `BitsPerPixel` and derived `Pixels` in row-major order. `Tiles` derives a shared `TilesData` view in tile-major order; it is not an independently stored copy.
 
-Within each tile, rows run from top to bottom and pixels from left to right. Four-bit data stores two indices per byte: the high nibble is the left pixel and the low nibble the right. Eight-bit data stores one index per byte. One-bit data stores eight pixels per byte, with the left pixel in bit seven. There is no row padding.
+Within each tile, rows run from top to bottom and pixels from left to right. Four-bit data stores two indices per byte: the high nibble is the left pixel and the low nibble the right. Eight-bit data stores one index per byte. One-bit data stores 8 pixels per byte, with the left pixel in bit seven. Rows have no padding.
 
 ## Creating Files
 
@@ -65,7 +65,7 @@ var tiles = new TilesData(8, 8, pixels, bitsPerPixel: 4);
 var file = new NxtFile(tiles);
 ```
 
-Creation uses the explicit bit depth in `TilesData`, and preserves indices, order and duplicates. The tile dimensions must be 8×8. There is no cropping, deduplication, palette generation or colour remapping.
+Creation uses the explicit bit depth in `TilesData`, and preserves indices, order and duplicates. The tile dimensions must be 8×8. Creation performs no cropping, deduplication, palette generation or colour remapping.
 
 ## Conversions
 

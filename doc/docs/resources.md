@@ -83,7 +83,7 @@ Colour red = image.GetPixel(1, 0);
 `Width` and `Height` describe each tile; `Count` is calculated from the pixel data. An empty tile collection
 is allowed, but partial tiles are not.
 
-Pixels are tile-major: all of tile zero, then all of tile one, and so on. Within each tile, indices are row-major
+Pixels are tile-major: all of tile zero, then all of tile one, continuing in sequence. Within each tile, indices are row-major
 and unpacked, with a bit depth of 1, 2, 4 or 8. Tiles do not own a palette, so a palette can be supplied separately
 and shared between images or tiles.
 

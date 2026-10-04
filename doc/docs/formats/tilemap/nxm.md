@@ -35,7 +35,7 @@ Gfx2Next's ordinary `-map-16bit` tile output uses the 512-tile graphics encoding
 index. Maps referencing reusable NXB blocks can instead use plain indices: choose `Index8` or `Index16`.
 The interpretation is not guessed from length or from the highest index. File length must be exactly
 `width * height * bytesPerEntry`; short, empty and trailing-data files throw `InvalidDataException`.
-There is no restriction to the hardware's visible map dimensions: larger scrolling assets are supported.
+Maps can exceed the hardware's visible dimensions to support larger scrolling assets.
 
 ## Reading and writing
 
@@ -75,7 +75,7 @@ var converted = new TileMapToNxmConverter(file.Format, target).Convert(file);
 is explicit, not globally registered: the target file type alone cannot determine its dimensions or encoding.
 It supports reordering and range-checked index-width changes, and creates independent output components.
 Wrong dimensions, overflowing indices/palette offsets and unsupported flags throw `ArgumentException`.
-There is no silent masking, attribute removal, resizing or automatic tile/block remapping.
+Conversion performs no silent masking, attribute removal, resizing or automatic tile/block remapping.
 
 Palette offsets are numeric selectors in the chosen encoding: graphics selects sixteen-colour groups,
 text selects two-colour pairs. Conversion preserves selectors, not rendered colour equivalence between

@@ -25,7 +25,7 @@ using var output = File.Create("output.nxp");
 file.Write(output);
 ```
 
-Reads and writes preserve all entry bytes, ordering and duplicate colours. There is no header or other metadata. Unsupported lengths and second bytes containing bits other than bit zero throw `InvalidDataException`. An eight-bit RGB332 palette containing 256 bytes is not an NXP file and is rejected.
+Reads and writes preserve all entry bytes, ordering and duplicate colours. The format stores no header or other metadata. Unsupported lengths and second bytes containing bits other than bit zero throw `InvalidDataException`. An eight-bit RGB332 palette containing 256 bytes is not an NXP file and is rejected.
 
 The format also supports asynchronous I/O and compression. For resource discovery, use [`ZXSpectrumNextResourceFileFormats.AllFormats`](../../API/MrKWatkins.OakIO.ZXSpectrumNext.Resources/ZXSpectrumNextResourceFileFormats/index.md), which includes general resources and NXP. Resource formats remain separate from the snapshot and tape discovery lists; CLI and online converter integration is deferred.
 
