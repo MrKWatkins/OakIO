@@ -9,7 +9,8 @@ namespace MrKWatkins.OakIO;
 /// </summary>
 public abstract class IOFileFormat
 {
-    private int convertersRegistered;
+    private readonly Lock converterRegistrationLock = new();
+    private bool convertersRegistered;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IOFileFormat" /> class.
@@ -61,9 +62,15 @@ public abstract class IOFileFormat
     /// </summary>
     internal void EnsureConvertersAreRegistered()
     {
-        if (Interlocked.CompareExchange(ref convertersRegistered, 1, 0) == 0)
+        lock (converterRegistrationLock)
         {
+            if (convertersRegistered)
+            {
+                return;
+            }
+
             IOFileConversion.RegisterConverters(CreateConverters());
+            convertersRegistered = true;
         }
     }
 

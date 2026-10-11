@@ -169,6 +169,107 @@ public sealed class IOFileFormatTests
         TestIOFileFormat.Instance.Invoking(f => f.WriteAsync(file, writer)).Should().Throw<ArgumentException>();
     }
 
+    private static readonly TimeSpan RegistrationGuard = TimeSpan.FromSeconds(20);
+
+    [Test]
+    public void EnsureConvertersAreRegistered()
+    {
+        var format = new RegistrationFormat();
+        var first = new RegistrationFile(format);
+        var second = new RegistrationFile(format);
+
+        format.CreationCount.Should().Equal(1);
+        IOFileConversion.Convert<TestIOFile>(first).Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        IOFileConversion.Convert<TestIOFile>(second).Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task EnsureConvertersAreRegistered_ConcurrentCallers(bool duringEnumeration)
+    {
+        using var entered = new ManualResetEventSlim();
+        using var release = new ManualResetEventSlim();
+        using var secondStarted = new ManualResetEventSlim();
+        var format = new RegistrationFormat
+        {
+            CreatingConverters = duringEnumeration ? null : BlockRegistration,
+            EnumeratingConverters = duringEnumeration ? BlockRegistration : null
+        };
+        var firstResult = new TaskCompletionSource<RegistrationFile>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var secondResult = new TaskCompletionSource<RegistrationFile>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var first = new Thread(() => ConstructFile(format, firstResult));
+        var second = new Thread(() =>
+        {
+            secondStarted.Set();
+            ConstructFile(format, secondResult);
+        });
+        var secondWasStarted = false;
+        first.Start();
+        try
+        {
+            entered.Wait(RegistrationGuard, CancellationToken.None).Should().BeTrue();
+            second.Start();
+            secondWasStarted = true;
+            secondStarted.Wait(RegistrationGuard, CancellationToken.None).Should().BeTrue();
+
+            // Observe a blocked caller or a completed call, rather than relying on a sleep.
+            SpinWait.SpinUntil(() => secondResult.Task.IsCompleted ||
+                (second.ThreadState & ThreadState.WaitSleepJoin) != 0, RegistrationGuard).Should().BeTrue();
+            secondResult.Task.IsCompleted.Should().BeFalse();
+            format.CreationCount.Should().Equal(1);
+        }
+        finally
+        {
+            release.Set();
+            first.Join(RegistrationGuard).Should().BeTrue();
+            if (secondWasStarted)
+            {
+                second.Join(RegistrationGuard).Should().BeTrue();
+            }
+        }
+
+        var firstFile = await firstResult.Task.WaitAsync(RegistrationGuard, CancellationToken.None);
+        var secondFile = await secondResult.Task.WaitAsync(RegistrationGuard, CancellationToken.None);
+        IOFileConversion.Convert<TestIOFile>(firstFile).Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        IOFileConversion.Convert<TestIOFile>(secondFile).Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        format.CreationCount.Should().Equal(1);
+
+        void BlockRegistration()
+        {
+            entered.Set();
+            if (!release.Wait(RegistrationGuard, CancellationToken.None))
+            {
+                throw new TimeoutException("Registration was not released.");
+            }
+        }
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void EnsureConvertersAreRegistered_RetryAfterFailure(bool duringEnumeration)
+    {
+        var attempts = 0;
+        var format = new RegistrationFormat
+        {
+            CreatingConverters = duringEnumeration ? null : FailFirstAttempt,
+            EnumeratingConverters = duringEnumeration ? FailFirstAttempt : null
+        };
+        AssertThat.Invoking(() => _ = new RegistrationFile(format)).Should().Throw<InvalidOperationException>("Registration failed.");
+
+        var file = new RegistrationFile(format);
+        IOFileConversion.Convert<TestIOFile>(file).Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
+        _ = new RegistrationFile(format);
+        format.CreationCount.Should().Equal(2);
+
+        void FailFirstAttempt()
+        {
+            if (++attempts == 1)
+            {
+                throw new InvalidOperationException("Registration failed.");
+            }
+        }
+    }
+
     [MustDisposeResource]
     private static MemoryStream CreateZipStream(params (string Name, byte[] Contents)[] entries)
     {
@@ -212,5 +313,53 @@ public sealed class IOFileFormatTests
         protected override ValueTask<IOFile> ReadAsync(IBinaryReader reader) => throw new NotSupportedException();
 
         protected internal override ValueTask WriteAsync(IOFile file, IBinaryWriter writer) => throw new NotSupportedException();
+    }
+    private static void ConstructFile(RegistrationFormat format, TaskCompletionSource<RegistrationFile> result)
+    {
+        try
+        {
+            result.SetResult(new RegistrationFile(format));
+        }
+        catch (Exception exception)
+        {
+            result.SetException(exception);
+        }
+    }
+
+    private sealed class RegistrationFile(RegistrationFormat format) : IOFile(format);
+
+    private sealed class RegistrationFormat() : IOFileFormat<RegistrationFile>("Registration", "reg")
+    {
+        private int creationCount;
+
+        public Action? CreatingConverters { get; init; }
+
+        public Action? EnumeratingConverters { get; init; }
+
+        public int CreationCount => Volatile.Read(ref creationCount);
+
+        protected override IEnumerable<IOFileConverter> CreateConverters()
+        {
+            Interlocked.Increment(ref creationCount);
+            CreatingConverters?.Invoke();
+            return EnumerateConverters();
+        }
+
+        private IEnumerable<IOFileConverter> EnumerateConverters()
+        {
+            yield return new RegistrationConverter(this);
+            // Also exercise waiting and retry after a converter has already been registered.
+            EnumeratingConverters?.Invoke();
+        }
+
+        protected override ValueTask<IOFile> ReadAsync(IBinaryReader _) => throw new NotSupportedException();
+
+        protected override ValueTask WriteAsync(RegistrationFile _, IBinaryWriter __) => throw new NotSupportedException();
+    }
+
+    private sealed class RegistrationConverter(RegistrationFormat source) : IOFileConverter<RegistrationFile, TestIOFile>(source, TestIOFileFormat.Instance)
+    {
+        [Pure]
+        public override TestIOFile Convert(RegistrationFile _) => new();
     }
 }
