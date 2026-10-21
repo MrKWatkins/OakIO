@@ -7,6 +7,36 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tests.Snapshot.Z80;
 public sealed class Z80ToSnaConverterTests
 {
     [Test]
+    public void Convert_128k([Values] bool version3)
+    {
+        var banks = Enumerable.Range(0, 8).Select(bank => (ReadOnlyMemory<byte>)Enumerable.Repeat((byte)(bank + 17), 16384).ToArray()).ToArray();
+        Z80File z80 = version3 ? Z80V3File.Create128k(banks, 0x1F) : Z80V2File.Create128k(banks, 0x1F);
+        z80.Registers.PC = 0x8123;
+        z80.Registers.SP = 0xBFFE;
+        z80.Header.IFF2 = true;
+        z80.Header.BorderColour = ZXColour.Yellow;
+        var sna = IOFileConversion.Convert<SnaFile>(z80).Should().BeOfType<Sna128kFile>().Value;
+        sna.Port7FFD.Should().Equal((byte)0x1F);
+        sna.Header.IFF2.Should().BeTrue();
+        sna.Header.BorderColour.Should().Equal(ZXColour.Yellow);
+        sna.Registers.PC.Should().Equal((ushort)0x8123);
+        sna.Registers.SP.Should().Equal((ushort)0xBFFE);
+        for (var bank = 0; bank < 8; bank++)
+        {
+            sna.GetBank(bank).ToArray().Should().SequenceEqual(banks[bank].ToArray());
+        }
+    }
+
+    [Test]
+    public void Convert_ExtraPage()
+    {
+        var snapshot = Z80V2File.Create128k(Enumerable.Repeat<ReadOnlyMemory<byte>>(new byte[16384], 8).ToArray());
+        var extra = new Page(new PageHeader(HardwareMode.Spectrum128, 65535, 0), new byte[16384]);
+        var file = new Z80V2File(snapshot.Header, snapshot.Pages.Append(extra));
+        AssertThat.Invoking(() => new Z80ToSnaConverter().Convert(file)).Should().Throw<NotSupportedException>();
+    }
+
+    [Test]
     public void Convert()
     {
         var memory = new byte[65536];

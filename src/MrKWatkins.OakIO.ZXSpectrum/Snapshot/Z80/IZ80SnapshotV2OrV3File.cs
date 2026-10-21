@@ -9,4 +9,20 @@ public interface IZ80SnapshotV2OrV3File
     /// Gets the memory pages in the snapshot.
     /// </summary>
     IReadOnlyList<Page> Pages { get; }
+
+    /// <summary>
+    /// Gets the hardware mode of the snapshot.
+    /// </summary>
+    HardwareMode HardwareMode { get; }
+
+    /// <summary>
+    /// Gets the last value written to port $7FFD.
+    /// </summary>
+    byte Port7FFD { get; }
+
+    /// <summary>
+    /// Gets an uncompressed physical 128K RAM bank, numbered 0–7.
+    /// </summary>
+    [Pure]
+    IReadOnlyList<byte> GetBank(int bankNumber);
 }

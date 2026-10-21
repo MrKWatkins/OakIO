@@ -1,5 +1,6 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Sna;
 
+// Bank ordering and footer: https://worldofspectrum.net/zx-modules/fileformats/snaformat.html
 // ReSharper disable once InconsistentNaming
 /// <summary>
 /// A 128K SNA snapshot file.
@@ -8,6 +9,22 @@ public sealed class Sna128kFile : SnaFile
 {
     private readonly byte[][] banks;
     private readonly byte[] footerData;
+
+    /// <summary>
+    /// Creates a 128K snapshot from eight physical 16 KB RAM banks, numbered 0–7. Input data is copied.
+    /// Registers are initially zero. The default paging latch selects the 48K ROM and RAM bank 0, with paging unlocked.
+    /// This does not initialize BASIC system variables, including BANKM.
+    /// </summary>
+    [Pure]
+    public static Sna128kFile Create(IReadOnlyList<ReadOnlyMemory<byte>> banks, byte port7FFD = 16, bool trDosRomPaged = false)
+    {
+        SnapshotBanks.Validate(banks);
+        var footer = new byte[]
+        {
+            0, 0, port7FFD, trDosRomPaged ? (byte)1 : (byte)0
+        };
+        return new Sna128kFile(new SnaHeader(new byte[27], footer), banks.Select(bank => bank.ToArray()).ToArray(), footer);
+    }
 
     internal Sna128kFile(SnaHeader header, byte[][] banks, byte[] footerData)
         : base(header)

@@ -61,14 +61,38 @@ public sealed class SnaToZ80ConverterTests
     }
 
     [Test]
-    public void Convert_ThrowsFor128k()
+    public void Convert_TrDosRom()
     {
-        // A 128K SNA is a 27-byte header + 8 banks + a 4-byte footer.
-        var data = new byte[27 + 8 * 16384 + 4];
-        using var stream = new MemoryStream(data);
-        var sna = (Sna128kFile)SnaFormat.Instance.Read(stream);
-
-        // Converting would silently drop five banks and the paging state, so it must be rejected.
+        var sna = Sna128kFile.Create(Enumerable.Repeat<ReadOnlyMemory<byte>>(new byte[16384], 8).ToArray(), trDosRomPaged: true);
         AssertThat.Invoking(() => new SnaToZ80Converter().Convert(sna)).Should().Throw<NotSupportedException>();
+    }
+
+    [Test]
+    public void Convert_128k([Range(0, 7)] int selected)
+    {
+        var banks = Enumerable.Range(0, 8).Select(bank => (ReadOnlyMemory<byte>)Enumerable.Repeat((byte)(bank + 17), 16384).ToArray()).ToArray();
+        var sna = Sna128kFile.Create(banks, (byte)(0x38 | selected));
+        sna.Registers.PC = 0x8123;
+        sna.Registers.SP = 0xBFFE;
+        sna.Header.BorderColour = ZXColour.Green;
+        sna.Header.IFF2 = true;
+        sna.Header.InterruptMode = 2;
+        var z80 = IOFileConversion.Convert<Z80File>(sna).Should().BeOfType<Z80V2File>().Value;
+        z80.Port7FFD.Should().Equal((byte)(0x38 | selected));
+        z80.Header.BorderColour.Should().Equal(ZXColour.Green);
+        z80.Header.IFF1.Should().BeTrue();
+        z80.Header.IFF2.Should().BeTrue();
+        z80.Header.InterruptMode.Should().Equal((byte)2);
+        z80.Registers.PC.Should().Equal((ushort)0x8123);
+        z80.Registers.SP.Should().Equal((ushort)0xBFFE);
+        var restored = IOFileConversion.Convert<SnaFile>(Z80Format.Instance.Read(z80.ToByteArray())).Should().BeOfType<Sna128kFile>().Value;
+        restored.Port7FFD.Should().Equal(sna.Port7FFD);
+        restored.Registers.PC.Should().Equal((ushort)0x8123);
+        restored.Registers.SP.Should().Equal((ushort)0xBFFE);
+        for (var bank = 0; bank < 8; bank++)
+        {
+            z80.GetBank(bank).Should().SequenceEqual(banks[bank].ToArray());
+            restored.GetBank(bank).ToArray().Should().SequenceEqual(banks[bank].ToArray());
+        }
     }
 }

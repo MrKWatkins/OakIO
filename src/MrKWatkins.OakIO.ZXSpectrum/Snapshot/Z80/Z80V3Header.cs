@@ -21,6 +21,14 @@ public sealed class Z80V3Header : Z80V2Header
     {
     }
 
+    internal override void Set128kHardware()
+    {
+        SetByte(34, 4);
+        // Standard 128K hardware has ROM in both lower 8 KB windows.
+        SetByte(61, 0xFF);
+        SetByte(62, 0xFF);
+    }
+
     /// <inheritdoc />
     [Pure]
     protected override HardwareMode GetHardwareMode(byte hardwareMode) =>

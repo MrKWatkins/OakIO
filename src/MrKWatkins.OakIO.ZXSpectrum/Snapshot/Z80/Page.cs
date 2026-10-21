@@ -54,6 +54,24 @@ public sealed class Page : Block<PageHeader>
         Create48kPage(memory, 8, compress)
     ];
 
+    /// <summary>
+    /// Creates pages 3–10 from physical 128K RAM banks 0–7. Input data is copied.
+    /// </summary>
+    // https://worldofspectrum.org/faq/reference/z80format.htm
+    [Pure]
+    public static IReadOnlyList<Page> Create128k(IReadOnlyList<ReadOnlyMemory<byte>> banks, bool compress = true)
+    {
+        SnapshotBanks.Validate(banks);
+        var pages = new Page[8];
+        for (var bank = 0; bank < pages.Length; bank++)
+        {
+            var data = compress ? Compress(banks[bank].Span) : banks[bank].ToArray();
+            pages[bank] = new Page(new PageHeader(HardwareMode.Spectrum128,
+                compress ? (ushort)data.Length : (ushort)0xFFFF, (byte)(bank + 3)), data);
+        }
+        return pages;
+    }
+
     [Pure]
     private static Page Create48kPage(Span<byte> memory, byte pageNumber, bool compress) =>
         compress

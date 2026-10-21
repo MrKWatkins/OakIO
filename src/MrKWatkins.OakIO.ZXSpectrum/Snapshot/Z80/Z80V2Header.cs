@@ -38,6 +38,17 @@ public class Z80V2Header : Z80V1Header
 #pragma warning restore CA1721
 
     /// <summary>
+    /// Gets or sets the last value written to port $7FFD, meaningful in 128K mode.
+    /// </summary>
+    public byte Port7FFD
+    {
+        get => GetByte(35);
+        set => SetByte(35, value);
+    }
+
+    internal virtual void Set128kHardware() => SetByte(34, 3);
+
+    /// <summary>
     /// Maps a raw hardware mode byte value to a <see cref="HardwareMode" /> for V2 snapshots.
     /// </summary>
     /// <param name="hardwareMode">The raw hardware mode byte from the header.</param>

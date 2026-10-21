@@ -14,13 +14,25 @@ public sealed class Z80ToSnaConverter : IOFileConverter<Z80File, Sna.SnaFile>
     [Pure]
     public override Sna.SnaFile Convert(Z80File source)
     {
-        var memory = new byte[65536];
-        if (!source.TryLoadInto(memory))
+        Sna.SnaFile sna;
+        if (source is IZ80SnapshotV2OrV3File { HardwareMode: HardwareMode.Spectrum128 } banked)
         {
-            throw new InvalidOperationException("Failed to load Z80 snapshot into memory.");
+            if (banked.Pages.Any(page => page.Header.PageNumber is < 3 or > 10))
+            {
+                throw new NotSupportedException("SNA cannot preserve additional ROM or peripheral memory pages.");
+            }
+            sna = Sna.Sna128kFile.Create(Enumerable.Range(0, 8)
+                .Select(bank => (ReadOnlyMemory<byte>)banked.GetBank(bank).ToArray()).ToArray(), banked.Port7FFD);
         }
-
-        var sna = Sna.Sna48kFile.Create(memory);
+        else
+        {
+            var memory = new byte[65536];
+            if (!source.TryLoadInto(memory))
+            {
+                throw new InvalidOperationException("Failed to load Z80 snapshot into memory.");
+            }
+            sna = Sna.Sna48kFile.Create(memory);
+        }
         CopyRegisters(source.Registers, sna.Registers);
         sna.Header.BorderColour = source.Header.BorderColour;
         sna.Header.InterruptMode = source.Header.InterruptMode;
