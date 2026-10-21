@@ -23,13 +23,6 @@ jobs:
       - name: Install WASM Workload
         run: dotnet workload install wasm-tools
 
-      - name: Publish to NuGet
-        uses: MrKWatkins/nuget-publish@main
-        with:
-          directory: src
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          version: ${{ inputs.version }}
-
       - name: Build
         uses: MrKWatkins/dotnet-build@main
         with:
@@ -55,6 +48,13 @@ jobs:
           uv run vale sync
           uv run vale docs --minAlertLevel=error
 
+      - name: Publish to NuGet
+        uses: MrKWatkins/nuget-publish@main
+        with:
+          directory: src
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          version: ${{ inputs.version }}
+          
       - name: Publish WASM
         run: dotnet publish src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm
 

@@ -1,7 +1,7 @@
 namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 
 /// <summary>
-/// Describes a code block to load with TapBAS. Bank selection is loader behavior, not TAP header metadata.
+/// Describes a code block to load with TapBAS. Bank selection is loader behaviour, not TAP header metadata.
 /// </summary>
 /// <param name="Location">The CPU address to load the bytes to.</param>
 /// <param name="Data">The bytes to load. File creation copies the data.</param>
