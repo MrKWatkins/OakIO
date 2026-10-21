@@ -224,4 +224,32 @@ public sealed class TapFile : ZXSpectrumTapeFile
 
         return memoryStream.ToArray();
     }
+
+    /// <summary>
+    /// Creates a TapBAS loader for ordered resident and optionally banked code blocks. Banked loads require
+    /// a 128K Spectrum with unlocked paging and an accurate BANKM shadow at $5B5C.
+    /// </summary>
+    /// <param name="filename">The name for code block headers.</param>
+    /// <param name="blocks">The blocks in tape loading order. Their data is copied into the file.</param>
+    /// <param name="options">Loader options, or null to use the defaults.</param>
+    /// <returns>A standard TAP file, also suitable for conversion to TZX or PZX.</returns>
+    [Pure]
+    public static TapFile CreateTapBas(string filename, IReadOnlyList<TapBasBlock> blocks, TapBasOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(filename);
+        ArgumentNullException.ThrowIfNull(blocks);
+        var snapshot = blocks.ToArray();
+        var loader = TapBasLoader.Create(snapshot, options ?? new TapBasOptions());
+        var result = new List<TapBlock>
+        {
+            HeaderBlock.CreateProgram("loader", (ushort)loader.Length, 10),
+            DataBlock.Create(loader)
+        };
+        foreach (var block in snapshot)
+        {
+            result.Add(HeaderBlock.CreateCode(filename, block.Location, (ushort)block.Data.Length));
+            result.Add(DataBlock.Create(block.Data.ToArray()));
+        }
+        return new TapFile(result);
+    }
 }
