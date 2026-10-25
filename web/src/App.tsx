@@ -82,7 +82,7 @@ function App({ showTitle = true }: { showTitle?: boolean }) {
   }, [fileName, compressionFormat]);
 
   return (
-    <div className="app">
+    <div className={showTitle ? "app" : "app embedded"}>
       {showTitle && <h1>OakIO</h1>}
       {showTitle && <p className="subtitle">ZX Spectrum file tools</p>}
 

@@ -17,15 +17,13 @@ interface OakIOExports {
 
 let exportsPromise: Promise<OakIOExports> | null = null;
 
-export function getRuntimeUrl(moduleUrl: string, development: boolean): string {
-  // Serve loads this module from src; production bundles live under assets
-  // (or assets/javascripts in the documentation website).
-  const relativePath = development ? '../dotnet/dotnet.js' : '../../dotnet/dotnet.js';
-  return new URL(relativePath, moduleUrl).href;
+export function getRuntimeUrl(moduleUrl: string): string {
+  // Development modules and production bundles each sit one directory below the app root.
+  return new URL('../dotnet/dotnet.js', moduleUrl).href;
 }
 
 async function initRuntime(): Promise<OakIOExports> {
-  const dotnetUrl = getRuntimeUrl(import.meta.url, import.meta.env.DEV);
+  const dotnetUrl = getRuntimeUrl(import.meta.url);
   const { dotnet } = await import(/* @vite-ignore */ dotnetUrl) as typeof DotnetModule;
   const { getAssemblyExports, getConfig } = await dotnet
     .withDiagnosticTracing(false)

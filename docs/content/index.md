@@ -1,0 +1,102 @@
+# Home
+
+[![Build Status](https://github.com/MrKWatkins/OakIO/actions/workflows/build.yml/badge.svg)](https://github.com/MrKWatkins/OakIO/actions/workflows/build.yml)
+[![NuGet Version](https://img.shields.io/nuget/v/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/MrKWatkins.OakIO)](https://www.nuget.org/packages/MrKWatkins.OakIO)
+
+> A C# library for reading, writing and converting between various emulator data formats.
+
+## Overview
+
+OakIO provides a structured object model for working with emulator and resource file formats. It supports reading and writing files, synchronously or
+asynchronously, with optional compression. Once loaded their contents can be inspected and they can be converted to other formats.
+
+## Source Code
+
+Source code is available on GitHub at [https://github.com/MrKWatkins/OakIO](https://github.com/MrKWatkins/OakIO).
+
+## Installation
+
+```
+dotnet add package MrKWatkins.OakIO
+```
+
+## Online Converter
+
+An online converter using this library is available [here](converter.md).
+
+## Documentation
+
+- [Reading, Writing and Converting](reading-writing-converting.md)
+- [Resources](resources.md) — Shared image, palette and tile models and file format bases.
+- [Next resource audit](next-resource-audit.md) — Supported interpretations and exporter variant gaps.
+
+### Image Formats
+
+- [BMP](formats/image/bmp.md) — Uncompressed four/eight-bit indexed and RGB24 Windows bitmaps.
+- [SCR](formats/image/scr.md) — Native Spectrum bitmap and colour-attribute screen dumps.
+- [NXI](formats/image/nxi.md) — Palette-prefixed Next Layer 2 images in native screen layouts.
+- [SL2](formats/image/sl2.md) — Next Layer 2 screens with optional appended palette and +3DOS header.
+- [SLR](formats/image/slr.md) — Next LoRes/Radastan screen dumps.
+- [NXM](formats/tilemap/nxm.md) — Headerless tile or block maps with explicitly selected layouts.
+- [NXB](formats/blocks/nxb.md) — Headerless collections of reusable tile-index blocks.
+
+### Palette Formats
+
+- [GIMP GPL](formats/palette/gpl.md) — RGB palettes with optional palette and colour names.
+- [JASC PAL](formats/palette/jasc.md) — Paint Shop Pro RGB palettes.
+- [Paint.NET](formats/palette/paintdotnet.md) — Text palettes with alpha support.
+- [NXP](formats/palette/nxp.md) — ZX Spectrum Next RGB333 palettes with 16 or 256 entries.
+
+### Tile Formats
+
+- [SPR](formats/tiles/spr.md) — Headerless Next 16×16 sprite patterns at four or eight bits per pixel.
+- [NXT](formats/tiles/nxt.md) — Headerless Next 8×8 tiles at one, four or eight bits per pixel.
+
+### ZX Spectrum Tape Formats
+
+- [TAP](formats/tape/tap.md) — Simple tape format containing raw data blocks.
+- [TZX](formats/tape/tzx.md) — The standard for preserving ZX Spectrum tape recordings.
+- [PZX](formats/tape/pzx.md) — An alternative tape format with pulse-level encoding.
+
+### ZX Spectrum Snapshot Formats
+
+- [Z80](formats/snapshot/z80.md) — Snapshot format supporting versions 1, 2, and 3, with optional compression.
+- [SNA](formats/snapshot/sna.md) — Simple snapshot format for 48K and 128K machines.
+
+### ZX Spectrum Recording Formats
+
+- [RZX](formats/recording/rzx.md) — Input recording format for deterministic replay against an emulator.
+
+### ZX Spectrum Next Snapshot Formats
+
+- [NEX](formats/snapshot/nex.md) — Snapshot format for the ZX Spectrum Next.
+
+## Architecture
+
+The library is organised around a set of base classes:
+
+- [**IOFileFormat**](api/MrKWatkins.OakIO/IOFileFormat/index.md) — Base class for file formats, providing read and write operations.
+- [**IOFile**](api/MrKWatkins.OakIO/IOFile/index.md) — Base class for a file of a given format.
+- [**Block**](api/MrKWatkins.OakIO/Block-THeader-TTrailer/index.md) — Base class for blocks within a file.
+- [**IOFileConverter**](api/MrKWatkins.OakIO/IOFileConverter-TSource-TTarget/index.md) — Base class for format converters.
+- [**IOFileConversion**](api/MrKWatkins.OakIO/IOFileConversion/index.md) — Static methods for converting between formats.
+
+## Use of AI
+
+My general rule is I'll write the interesting bits and use AI for the boring bits. I wrote the bulk of the code as part of my OakEmu project before
+forking it out into its own project. I have used AI to add in a few formats (SNA and NEX), some converters, setup for the online converter,
+and help with documentation and unit tests.
+
+## Licencing
+
+The project is licensed under GPL v3.0.
+
+The ZX Spectrum file format tests use some files found in the wild:
+
+* A snapshot of Auf Wiedersehen Monty by Gremlin Graphics. According to https://web.archive.org/web/20200228041811/http://www.worldofspectrum.org/permits/publishers.html
+  Gremlin allows distribution of their games for non-profit purposes. The original snapshot was taken from https://archive.org/details/zx_Auf_Wiedersehen_Monty_1987_Gremlin_Graphics_Software;
+  further snapshots in different formats were created from this.
+* A TAP of Z80 Tests by Raxoft, https://github.com/raxoft/z80test, which is released under the MIT license.
+
+If I've made a mistake with the above, please let me know.

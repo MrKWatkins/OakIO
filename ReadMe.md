@@ -46,3 +46,19 @@ The ZX Spectrum file format tests use some files found in the wild:
 * A TAP of Z80 Tests by Raxoft, https://github.com/raxoft/z80test, which is released under the MIT license.
 
 If I've made a mistake with the above, please let me know.
+
+## Building and documentation
+
+Build and Test runs on pushes and pull requests. Release runs the same validation and can publish packages, documentation, or both. Leave the version blank for
+the next minor version, or enter an explicit stable version. Both publication options default to true. To update only documentation, turn **publish-packages** off
+and leave **publish-docs** on. The API reference then uses the latest released source; `api-ref` can select corrected XML comments from another commit.
+
+Handwritten documentation is in `docs/content`, with navigation and API inputs in `docs/site.json`. Run `python3 docs/preview.py` with Docker, Node and the .NET 10
+SDK installed, or select **Preview documentation** in a JetBrains IDE. Open `http://localhost:5173/OakIO/`.
+
+The shared build calls `scripts/prepare.py` to prepare the WASM workload, test and build the React converter, and stage its runtime and documentation assets.
+The converter remains available on its documentation page; conversion runs entirely in the browser. Generated files stay under ignored `artifacts`, `web/dist`
+and `web/dotnet` folders. For standalone web development, run `npm run serve` from `web`.
+
+Configure NuGet trusted publishing for repository `OakIO`, workflow `release.yml`, environment `github-pages`, owner `MrKWatkins` and the OakIO packages.
+Set GitHub Pages to **GitHub Actions**, and allow `main` to deploy to the `github-pages` environment. No stored NuGet API key is required.

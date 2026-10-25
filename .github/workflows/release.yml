@@ -1,79 +1,41 @@
 name: Release
-
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version Number'
-        required: true
+        description: Optional version without v; blank increments the latest stable tag minor version
         type: string
-
+        required: false
+      publish-packages:
+        description: Publish NuGet packages and create a release
+        type: boolean
+        default: true
+      publish-docs:
+        description: Publish documentation
+        type: boolean
+        default: true
+      api-ref:
+        description: Optional API source override for docs-only XML comment corrections
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
 jobs:
-  Release:
-    name: Release ${{ inputs.version }}
-    permissions: write-all
+  release:
+    name: Release
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
-
+    environment: github-pages
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Install WASM Workload
-        run: dotnet workload install wasm-tools
-
-      - name: Build
-        uses: MrKWatkins/dotnet-build@main
+      - uses: MrKWatkins/build/dotnet/project@main
         with:
-          name: MrKWatkins.OakIO
-          directory: src
-
-      - name: Restore .NET tools
-        run: dotnet tool restore
-
-      - name: Install Sesharp
-        run: dotnet tool install MrKWatkins.Sesharp.Tool
-
-      - name: Generate API Docs - MrKWatkins.OakIO
-        run: dotnet sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll src/MrKWatkins.OakIO.ZXSpectrumNext/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrumNext.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO
-
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v10.2.0
-
-      - name: Lint docs prose
-        run: |
-          cd doc
-          uv sync
-          uv run vale sync
-          uv run vale docs --minAlertLevel=error
-
-      - name: Publish to NuGet
-        uses: MrKWatkins/nuget-publish@main
-        with:
-          directory: src
-          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          prepare: scripts/prepare.py
           version: ${{ inputs.version }}
-          
-      - name: Publish WASM
-        run: dotnet publish src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm
-
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: '20'
-
-      - name: Build doc TypeScript
-        run: |
-          cd doc
-          npm ci
-          node scripts/copy-dotnet-to-docs.mjs
-          node scripts/generate-dotnet-boot.mjs
-          npm run build:vite
-
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: doc/mkdocs.yml
-          REQUIREMENTS: doc/requirements.txt
+          publish-packages: ${{ inputs.publish-packages }}
+          publish-docs: ${{ inputs.publish-docs }}
+          api-ref: ${{ inputs.api-ref }}

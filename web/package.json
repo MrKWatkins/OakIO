@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dotnet:publish": "dotnet publish ../src/MrKWatkins.OakIO.Wasm/MrKWatkins.OakIO.Wasm.csproj -c Release -o /tmp/oakio-wasm && rm -rf dotnet && cp -r /tmp/oakio-wasm dotnet && node scripts/generate-dotnet-boot.mjs",
+    "dotnet:publish": "python3 ../scripts/prepare.py --runtime-only",
     "serve": "npm run dotnet:publish && vite",
-    "build": "npm run dotnet:publish && tsc -b && vite build && node scripts/copy-dotnet-to-dist.mjs",
+    "build": "python3 ../scripts/prepare.py",
     "lint": "eslint .",
     "test": "vitest run",
     "preview": "vite preview"

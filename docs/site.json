@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "title": "OakIO",
+  "description": "Read, inspect and convert emulator file formats.",
+  "repository": "https://github.com/MrKWatkins/OakIO",
+  "base": "/OakIO/",
+  "publicDirectory": "artifacts/docs-public",
+  "vocabularyDirectory": "docs/vocabulary",
+  "guide": [
+    {
+      "text": "Overview",
+      "link": "/"
+    },
+    {
+      "text": "Reading, writing and converting",
+      "link": "/reading-writing-converting"
+    },
+    {
+      "text": "Resources",
+      "link": "/resources"
+    },
+    {
+      "text": "File formats",
+      "link": "/formats/",
+      "items": [
+        {
+          "text": "NXB",
+          "link": "/formats/blocks/nxb"
+        },
+        {
+          "text": "BMP",
+          "link": "/formats/image/bmp"
+        },
+        {
+          "text": "NXI",
+          "link": "/formats/image/nxi"
+        },
+        {
+          "text": "SCR",
+          "link": "/formats/image/scr"
+        },
+        {
+          "text": "SL2 \u2014 Next Layer 2 screens",
+          "link": "/formats/image/sl2"
+        },
+        {
+          "text": "SLR \u2014 Next low-resolution screens",
+          "link": "/formats/image/slr"
+        },
+        {
+          "text": "GIMP GPL",
+          "link": "/formats/palette/gpl"
+        },
+        {
+          "text": "JASC PAL",
+          "link": "/formats/palette/jasc"
+        },
+        {
+          "text": "NXP",
+          "link": "/formats/palette/nxp"
+        },
+        {
+          "text": "Paint.NET",
+          "link": "/formats/palette/paintdotnet"
+        },
+        {
+          "text": "RZX",
+          "link": "/formats/recording/rzx"
+        },
+        {
+          "text": "NEX",
+          "link": "/formats/snapshot/nex"
+        },
+        {
+          "text": "SNA",
+          "link": "/formats/snapshot/sna"
+        },
+        {
+          "text": "Z80",
+          "link": "/formats/snapshot/z80"
+        },
+        {
+          "text": "PZX",
+          "link": "/formats/tape/pzx"
+        },
+        {
+          "text": "TAP",
+          "link": "/formats/tape/tap"
+        },
+        {
+          "text": "TZX",
+          "link": "/formats/tape/tzx"
+        },
+        {
+          "text": "NXM",
+          "link": "/formats/tilemap/nxm"
+        },
+        {
+          "text": "NXT",
+          "link": "/formats/tiles/nxt"
+        },
+        {
+          "text": "SPR",
+          "link": "/formats/tiles/spr"
+        }
+      ]
+    },
+    {
+      "text": "Resource format coverage",
+      "link": "/next-resource-audit"
+    }
+  ],
+  "api": {
+    "generator": "sesharp",
+    "assemblies": [
+      "src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll",
+      "src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll",
+      "src/MrKWatkins.OakIO.ZXSpectrumNext/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrumNext.dll"
+    ]
+  },
+  "head": [
+    [
+      "link",
+      {
+        "rel": "icon",
+        "href": "/OakIO/images/favicon.ico"
+      }
+    ]
+  ],
+  "nav": [
+    {
+      "text": "Guide",
+      "link": "/"
+    },
+    {
+      "text": "Converter",
+      "link": "/converter"
+    },
+    {
+      "text": "API",
+      "link": "/api/"
+    }
+  ]
+}

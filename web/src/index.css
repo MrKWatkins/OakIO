@@ -66,3 +66,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Embedded builds share the app while fitting the documentation article. */
+body:has(.app.embedded) { display: block; min-width: 0; min-height: 0; }
+.app.embedded { box-sizing: border-box; width: 100%; padding: 1rem; }

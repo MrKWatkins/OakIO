@@ -22,31 +22,13 @@ dotnet format src/OakIO.slnx  # Format the source code.
 ```
 The test project uses the NUnit runner with Microsoft Testing Platform (`EnableNUnitRunner`), so test executables can also be run directly.
 
-### CI Build
+### CI build and converter
 
-The full CI build (`.github/workflows/build.yml`) does the following. Run these locally to replicate the build server:
-
-```bash
-# 1. Install the WASM workload (needed for MrKWatkins.OakIO.Wasm).
-dotnet workload install wasm-tools
-
-# 2. Build and test all C# projects.
-dotnet build src/OakIO.slnx
-dotnet test --solution src/OakIO.slnx
-
-# 3. Build and test the web project.
-cd web
-npm ci
-npm test
-npm run build
-```
-
-The WASM workload is required to build the full solution. Without it, build individual projects:
-
-```bash
-dotnet build src/MrKWatkins.OakIO/MrKWatkins.OakIO.csproj
-dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
-```
+- Build and Release call `MrKWatkins/build/dotnet/project` with `prepare: scripts/prepare.py`.
+- Preparation reuses or installs `wasm-tools`, publishes the threaded runtime, runs the web tests and builds the React app. It prepares ignored assets under `artifacts/docs-public`.
+- Run `python3 scripts/prepare.py` to prepare the converter locally. `npm run serve` in `web` retains the standalone app development server.
+- Keep one React implementation in `web`; the converter documentation page embeds its production build. Preserve nested `/OakIO/converter-app/` URLs and `.mjs` worker files.
+- Threading requires cross-origin isolation. The converter page registers the site's service worker and reloads before mounting the app. Test real file inspection and conversion in a browser; mocked web tests alone do not prove the runtime loads.
 
 ## File Format Structure
 
@@ -73,13 +55,11 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 ## Documentation
 
-- Documentation is generated using MKDocs and is found in the `doc` folder.
-- Documentation in `doc/docs/API` is generated from the assemblies using the sesharp tool from the root of the repository:
-  - `sesharp src/MrKWatkins.OakIO/bin/Release/net10.0/MrKWatkins.OakIO.dll src/MrKWatkins.OakIO.ZXSpectrum/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrum.dll src/MrKWatkins.OakIO.ZXSpectrumNext/bin/Release/net10.0/MrKWatkins.OakIO.ZXSpectrumNext.dll --output doc/docs/API --repository https://github.com/MrKWatkins/OakIO`
-- Documentation in `doc/docs/API` is not checked into source control; it is generated as part of the CI build.
-- Documentation in the root of `doc/docs` is handwritten.
-- Handwritten documentation should link to the generated API documentation and Microsoft's API docs (https://learn.microsoft.com/en-us/dotnet/api/) for types, members, etc.
-- Use "strongly typed" rather than "strongly-typed" in documentation and comments.
+- Handwritten Markdown lives in `docs/content`; preserve its format subfolders. Navigation and the three API assembly inputs are configured in `docs/site.json`.
+- Sesharp and VitePress run in the shared docs image. Generated APIs and complete site output are ignored build artifacts; never commit them.
+- Authored static files live in `docs/public`. Preparation combines them with the converter build in `artifacts/docs-public`, configured as the site's `publicDirectory`.
+- Preview with `python3 docs/preview.py` or the JetBrains **Preview documentation** run configuration. It prepares the converter and API inputs, then serves `http://localhost:5173/OakIO/`.
+- Link to generated APIs under `api/` and Microsoft's API docs for framework types and members. Use "strongly typed" rather than "strongly-typed".
 
 ## Code Conventions
 
@@ -91,7 +71,7 @@ dotnet build src/MrKWatkins.OakIO.ZXSpectrum/MrKWatkins.OakIO.ZXSpectrum.csproj
 
 ## Testing Conventions
 
-- NUnit 4 with `MrKWatkins.Assertions`. (`.Should().Equal()`, `.Should().SequenceEqual()`, `.Should().Throw<>()`, `AssertThat.Invoking()`)
+- NUnit on Microsoft Testing Platform with `MrKWatkins.Assertions`. (`.Should().Equal()`, `.Should().SequenceEqual()`, `.Should().Throw<>()`, `AssertThat.Invoking()`)
 - Global usings for `MrKWatkins.Assertions` and `NUnit.Framework` in test projects.
 - One test class per implementation class; test methods use `[TestCase]` for parameterized tests.
 - Test names should match the method they're testing.
