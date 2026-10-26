@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using MrKWatkins.OakIO.Binary;
 using MrKWatkins.OakIO.ZXSpectrumNext.Snapshot.Nex;
 using MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
@@ -29,6 +30,8 @@ public sealed class NexFormatTests
         file.Screens.Should().HaveCount(0);
         file.CopperCode.Should().BeNull();
         file.Banks.Should().HaveCount(0);
+        file.AppendedData.Should().BeEmpty();
+        file.AppendedDataOffset.Should().Equal(512L);
     }
 
     [Test]
@@ -356,6 +359,187 @@ public sealed class NexFormatTests
         file.Palette.Should().BeNull();
         file.Screens.Should().HaveCount(1);
         file.Screens[0].Type.Should().Equal(NexScreenType.Layer2);
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(65535)]
+    [TestCase(65536)]
+    [TestCase(65537)]
+    [TestCase(2097153)]
+    public void Read_AppendedData(int length)
+    {
+        var prefix = CreateMinimalNexData("V1.2", 0, [(5, new byte[16384])]);
+        var payload = new byte[length];
+        for (var index = 0; index < length; index++)
+        {
+            payload[index] = (byte)(index * 37 + 13);
+        }
+        byte[] data = [.. prefix, .. payload];
+        var file = NexFormat.Instance.Read(data);
+
+        file.AppendedData.Should().SequenceEqual(payload);
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        file.Header.NumBanksToLoad.Should().Equal((byte)1);
+        file.Header.RamRequired.Should().Equal(NexRamRequired.Ram768K);
+        file.Banks.Should().HaveCount(1);
+        file.ToByteArray().Should().SequenceEqual(data);
+    }
+
+    [Test]
+    public void Read_AppendedDataAfterPaletteAndScreen()
+    {
+        var prefix = CreateMinimalNexData("V1.2", 1, [(2, new byte[16384])],
+            paletteData: new byte[512], screenBlocks: [new byte[49152]]);
+        AssertAppendedDataRoundTrip(prefix);
+    }
+
+    [Test]
+    public void Read_AppendedDataAfterMultipleScreens()
+    {
+        var prefix = CreateMinimalNexData("V1.2", 31, [], paletteData: new byte[512],
+            screenBlocks: [new byte[49152], new byte[6912], new byte[12288], new byte[12288], new byte[12288]]);
+        AssertAppendedDataRoundTrip(prefix);
+    }
+
+    [TestCase(NexLoadScreenMode.Layer2x320x256)]
+    [TestCase(NexLoadScreenMode.Layer2x640x256)]
+    public void Read_AppendedDataAfterFlags2Screen(NexLoadScreenMode mode)
+    {
+        var prefix = CreateMinimalNexData("V1.3", 64, [], screenBlocks: [new byte[81920]], loadScreens2: mode);
+        AssertAppendedDataRoundTrip(prefix);
+    }
+
+    [Test]
+    public void Read_AppendedDataAfterCopper()
+    {
+        var prefix = CreateMinimalNexData("V1.3", 0, [], copperCode: new byte[2048]);
+        AssertAppendedDataRoundTrip(prefix);
+    }
+
+    [Test]
+    public void Read_AppendedDataAfterAllBlocks()
+    {
+        var prefix = CreateMinimalNexData("V1.3", 1,
+            [(111, new byte[16384]), (2, new byte[16384]), (5, new byte[16384])],
+            paletteData: new byte[512], screenBlocks: [new byte[49152]], copperCode: new byte[2048]);
+        AssertAppendedDataRoundTrip(prefix);
+    }
+
+    [TestCase((ushort)0)]
+    [TestCase((ushort)1)]
+    [TestCase((ushort)0x3FFF)]
+    [TestCase((ushort)0x4000)]
+    [TestCase((ushort)0xFFFF)]
+    public void Read_AppendedDataPreservesFileHandleAddress(ushort address)
+    {
+        var file = NexFile.CreateCode([(2, [0x76])], 0x8000, 0xFF00);
+        file.Header.FileHandleAddress = address;
+        file.SetAppendedData([0xAA, 0, 0xFF]);
+        var data = file.ToByteArray();
+
+        var read = NexFormat.Instance.Read(data);
+
+        read.Header.FileHandleAddress.Should().Equal(address);
+        read.AppendedData.Should().SequenceEqual(0xAA, 0, 0xFF);
+        read.ToByteArray().Should().SequenceEqual(data);
+    }
+
+    [Test]
+    public async Task ReadAsync_AppendedData()
+    {
+        var prefix = CreateMinimalNexData("V1.3", 0, [(5, new byte[16384])], copperCode: new byte[2048]);
+        byte[] data = [.. prefix, 1, 0, 255, 2];
+        await using var input = new MemoryStream(data);
+        var file = await NexFormat.Instance.ReadAsync(input, CancellationToken.None);
+        await using var output = new MemoryStream();
+        await file.WriteAsync(output, CancellationToken.None);
+
+        file.AppendedData.Should().SequenceEqual(1, 0, 255, 2);
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        output.ToArray().Should().SequenceEqual(data);
+        input.Position.Should().Equal(data.LongLength);
+    }
+
+    [Test]
+    public void Read_AppendedDataNonSeekable()
+    {
+        var prefix = CreateMinimalNexData("V1.2", 0, [(5, new byte[16384])]);
+        byte[] data = [.. prefix, 1, 0, 255, 2];
+        using var compressed = new MemoryStream(Compress(data));
+        using var input = new GZipStream(compressed, CompressionMode.Decompress);
+        input.CanSeek.Should().BeFalse();
+
+        var file = NexFormat.Instance.Read(input);
+
+        file.AppendedData.Should().SequenceEqual(1, 0, 255, 2);
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        file.ToByteArray().Should().SequenceEqual(data);
+    }
+
+    [Test]
+    public async Task ReadAsync_AppendedDataNonSeekable()
+    {
+        var prefix = CreateMinimalNexData("V1.2", 0, [(5, new byte[16384])]);
+        byte[] data = [.. prefix, 1, 0, 255, 2];
+        await using var compressed = new MemoryStream(Compress(data));
+        await using var input = new GZipStream(compressed, CompressionMode.Decompress);
+        input.CanSeek.Should().BeFalse();
+
+        var file = await NexFormat.Instance.ReadAsync(input, CancellationToken.None);
+
+        file.AppendedData.Should().SequenceEqual(1, 0, 255, 2);
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        file.ToByteArray().Should().SequenceEqual(data);
+    }
+
+    [Pure]
+    private static byte[] Compress(ReadOnlySpan<byte> data)
+    {
+        using var compressed = new MemoryStream();
+        using (var compressor = new GZipStream(compressed, CompressionLevel.Fastest, leaveOpen: true))
+        {
+            compressor.Write(data);
+        }
+        return compressed.ToArray();
+    }
+
+    [Test]
+    public void Read_AppendedDataFromStreamPosition()
+    {
+        var prefix = CreateMinimalNexData("V1.2", 0, [(2, new byte[16384])]);
+        byte[] data = [.. prefix, 0, 255, 42];
+        byte[] embedded = [.. new byte[123], .. data];
+        using var input = new MemoryStream(embedded);
+        input.Position = 123;
+        var file = NexFormat.Instance.Read(input);
+
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        file.AppendedData.Should().SequenceEqual(0, 255, 42);
+        file.ToByteArray().Should().SequenceEqual(data);
+        input.Position.Should().Equal(embedded.LongLength);
+    }
+
+    [TestCase(0)]
+    [TestCase(16383)]
+    public void Read_TruncatedBank(int bankBytes)
+    {
+        var data = CreateMinimalNexData("V1.2", 0, [(5, new byte[16384])]);
+        Array.Resize(ref data, 512 + bankBytes);
+        AssertThat.Invoking(() =>
+        {
+            _ = NexFormat.Instance.Read(data);
+        }).Should().Throw<EndOfStreamException>();
+    }
+
+    private static void AssertAppendedDataRoundTrip(byte[] prefix)
+    {
+        byte[] payload = [0x4F, 0x41, 0, 0xFF, 0x4B];
+        byte[] data = [.. prefix, .. payload];
+        var file = NexFormat.Instance.Read(data);
+        file.AppendedData.Should().SequenceEqual(payload);
+        file.AppendedDataOffset.Should().Equal(prefix.LongLength);
+        file.ToByteArray().Should().SequenceEqual(data);
     }
 
     private static async Task<byte[]> WriteToBytesAsync(NexFile file)

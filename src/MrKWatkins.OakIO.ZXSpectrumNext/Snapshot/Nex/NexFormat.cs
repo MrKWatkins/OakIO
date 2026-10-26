@@ -32,7 +32,10 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
         var copperCode = await ReadCopperCodeAsync(reader, header).ConfigureAwait(false);
         var banks = await ReadBanksAsync(reader, header).ConfigureAwait(false);
 
-        return new NexFile(header, palette, screens, copperCode, banks);
+        // The NEX format leaves everything after the banks to the application, without a length prefix.
+        // https://wiki.specnext.dev/NEX_file_format
+        var appendedData = await reader.ReadToEndAsync().ConfigureAwait(false);
+        return new NexFile(header, palette, screens, copperCode, banks, appendedData);
     }
 
     [MustUseReturnValue]
@@ -165,5 +168,7 @@ public sealed class NexFormat : ZXSpectrumSnapshotFormat<NexFile>
                 await writer.WriteAsync(nexBank.DataMemory).ConfigureAwait(false);
             }
         }
+
+        await writer.WriteAsync(file.AppendedDataMemory).ConfigureAwait(false);
     }
 }

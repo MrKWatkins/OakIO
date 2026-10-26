@@ -9,8 +9,9 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
 
     private readonly byte[]? palette;
     private readonly byte[]? copperCode;
+    private byte[] appendedData;
 
-    internal NexFile(NexHeader header, byte[]? palette, IReadOnlyList<NexScreen> screens, byte[]? copperCode, IReadOnlyList<NexBank> banks)
+    internal NexFile(NexHeader header, byte[]? palette, IReadOnlyList<NexScreen> screens, byte[]? copperCode, IReadOnlyList<NexBank> banks, byte[] appendedData)
         : base(NexFormat.Instance)
     {
         Header = header;
@@ -18,6 +19,7 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
         Screens = screens;
         this.copperCode = copperCode;
         Banks = banks;
+        this.appendedData = appendedData;
     }
 
     /// <summary>
@@ -72,7 +74,7 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
 
         header.NumBanksToLoad = (byte)nexBanks.Count;
 
-        return new NexFile(header, null, [], null, nexBanks);
+        return new NexFile(header, null, [], null, nexBanks, []);
     }
 
     /// <summary>
@@ -103,6 +105,39 @@ public sealed class NexFile : ZXSpectrumSnapshotFile
     /// Gets the memory banks.
     /// </summary>
     public IReadOnlyList<NexBank> Banks { get; }
+
+    /// <summary>
+    /// Gets the opaque binary data following the memory banks, or an empty list when no data is appended.
+    /// </summary>
+    /// <remarks>
+    /// The NEX loader does not load these bytes into RAM. Their format is application-defined.
+    /// Format reference: https://wiki.specnext.dev/NEX_file_format.
+    /// </remarks>
+    public IReadOnlyList<byte> AppendedData => appendedData;
+
+    internal ReadOnlyMemory<byte> AppendedDataMemory => appendedData;
+
+    /// <summary>
+    /// Gets the zero-based byte offset of the appended data in the serialised NEX file.
+    /// </summary>
+    /// <remarks>
+    /// Relative to the start of the NEX header, independently of the input or output stream's position.
+    /// When no data is appended, this is the position at which appended data would begin.
+    /// </remarks>
+    public long AppendedDataOffset => NexHeader.Size + (long)PaletteMemory.Length +
+        Screens.Sum(screen => (long)screen.Data.Count) + CopperCodeMemory.Length +
+        Banks.Sum(bank => (long)bank.Data.Count);
+
+    /// <summary>
+    /// Replaces the application-defined data appended after the memory banks.
+    /// </summary>
+    /// <param name="data">The bytes to copy, or an empty span to remove existing appended data.</param>
+    /// <remarks>
+    /// Copies the supplied bytes. Does not change the bank map, RAM requirement or loader file-handle policy.
+    /// Set <see cref="NexHeader.FileHandleAddress" /> to keep the file open when the application needs to read it.
+    /// Existing checksum fields are preserved, not recalculated.
+    /// </remarks>
+    public void SetAppendedData(ReadOnlySpan<byte> data) => appendedData = data.ToArray();
 
     /// <inheritdoc />
     public override RegisterSnapshot Registers => Header.Registers;

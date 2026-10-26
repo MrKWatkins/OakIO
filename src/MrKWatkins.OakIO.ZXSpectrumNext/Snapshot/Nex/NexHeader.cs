@@ -287,8 +287,14 @@ public sealed class NexHeader : Header
     }
 
     /// <summary>
-    /// Gets or sets the file handle address.
+    /// Gets or sets how the loader returns the open NEX file handle to the application.
     /// </summary>
+    /// <remarks>
+    /// Zero closes the file before execution. Values from 1 to 0x3FFF keep the file open and return its handle in BC;
+    /// 1 is the recommended value. Values from 0x4000 to 0xFFFF keep it open and write the handle at that CPU address,
+    /// after mapping the entry bank. The application is responsible for closing the retained handle.
+    /// Format reference: https://wiki.specnext.dev/NEX_file_format.
+    /// </remarks>
     public ushort FileHandleAddress
     {
         get => GetUInt16(140);

@@ -24,6 +24,7 @@ public sealed class NexFileTests
         file.Screens.Should().BeEmpty();
         file.Palette.Should().BeNull();
         file.CopperCode.Should().BeNull();
+        file.AppendedData.Should().BeEmpty();
 
         file.Banks.Should().HaveCount(1);
         var bank = file.Banks[0];
@@ -70,5 +71,66 @@ public sealed class NexFileTests
     {
         AssertThat.Invoking(() => NexFile.CreateCode([(2, [0x01]), (2, [0x02])], pc: 0x8000, sp: 0xFEFE))
             .Should().Throw<ArgumentException>();
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(4)]
+    [TestCase(112)]
+    public void AppendedDataOffset(int bankCount)
+    {
+        var file = NexFile.CreateCode(Enumerable.Range(0, bankCount).Select(bank => (bank, (byte[])[(byte)bank])), 0x8000, 0xFF00);
+        var expected = 512L + bankCount * 16384L;
+        file.AppendedDataOffset.Should().Equal(expected);
+        file.SetAppendedData([0xAA, 0xBB]);
+        file.AppendedDataOffset.Should().Equal(expected);
+        file.ToByteArray().LongLength.Should().Equal(expected + 2);
+    }
+
+    [Test]
+    public void SetAppendedData()
+    {
+        var file = NexFile.CreateCode([(2, [0xF3, 0x76])], 0x8000, 0xFF00);
+        file.Header.FileHandleAddress = 1;
+        file.Header.NumExtraFiles = 7;
+        var prefix = file.ToByteArray();
+        byte[] data = [1, 2, 3, 4, 5];
+
+        file.SetAppendedData(data.AsSpan(1, 3));
+        data[2] = 99;
+
+        file.AppendedData.Should().SequenceEqual(2, 3, 4);
+        file.AppendedDataMemory.ToArray().Should().SequenceEqual(2, 3, 4);
+        file.ToByteArray().Should().SequenceEqual(prefix.Concat((byte[])[2, 3, 4]));
+        file.Header.FileHandleAddress.Should().Equal((ushort)1);
+        file.Header.NumExtraFiles.Should().Equal((ushort)7);
+        file.Header.NumBanksToLoad.Should().Equal((byte)1);
+        file.Header.RamRequired.Should().Equal(NexRamRequired.Ram768K);
+        file.Banks.Single().Data.Take(2).Should().SequenceEqual(0xF3, 0x76);
+    }
+
+    [Test]
+    public void SetAppendedData_Replaces()
+    {
+        var file = NexFile.CreateCode([], 0x8000, 0xFF00);
+        file.SetAppendedData([1, 2, 3, 4]);
+        file.SetAppendedData([9]);
+
+        file.AppendedData.Should().SequenceEqual(9);
+        file.ToByteArray().Length.Should().Equal(513);
+        file.ToByteArray()[512].Should().Equal((byte)9);
+    }
+
+    [Test]
+    public void SetAppendedData_Empty()
+    {
+        var file = NexFile.CreateCode([(5, [0x76])], 0x8000, 0xFF00);
+        var original = file.ToByteArray();
+        file.SetAppendedData([1, 2, 3]);
+        file.SetAppendedData([]);
+
+        file.AppendedData.Should().BeEmpty();
+        file.AppendedDataOffset.Should().Equal(original.LongLength);
+        file.ToByteArray().Should().SequenceEqual(original);
     }
 }

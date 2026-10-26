@@ -34,6 +34,41 @@ using var output = File.Create("output.nex");
 nex.Write(output);
 ```
 
+## Appended data
+
+The [NEX specification](https://wiki.specnext.dev/NEX_file_format) permits application-defined binary data after the final RAM bank. The loader leaves this data in the file instead of loading it into memory. Its size does not increase the declared bank count or RAM requirement.
+
+`NexFormat` preserves all of these bytes when reading and writing, including with asynchronous or non-seekable streams. `NexFile.AppendedData` exposes them as a read-only list; a file without appended data returns an empty list. OakIO treats the bytes as opaque data and does not impose an archive format or interpret `NumExtraFiles` as a resource count.
+
+```c#
+var nex = NexFile.CreateCode([(2, [0xF3, 0x76])], 0x8000, 0xFF00);
+
+// Copies the supplied bytes, replacing any existing suffix.
+nex.SetAppendedData(File.ReadAllBytes("assets.bin"));
+
+// Keep the NEX open and pass its handle to the program in BC.
+nex.Header.FileHandleAddress = 1;
+
+// File-relative offset, calculated from the header, palette, screens, copper and banks.
+long offset = nex.AppendedDataOffset;
+int length = nex.AppendedData.Count;
+
+using var output = File.Create("game.nex");
+nex.Write(output);
+```
+
+`AppendedDataOffset` is relative to the beginning of the NEX header, regardless of the stream's starting position. It also gives the append position when the suffix is empty. Appended data can exceed 64 KB or the target's RAM capacity; the application can read it in smaller pieces. Use `SetAppendedData([])` to remove it. Editing data preserves existing checksum fields without recalculating them.
+
+`FileHandleAddress` controls loader behaviour independently of the suffix:
+
+| Value | Loader behaviour |
+|-------|------------------|
+| `0` | Closes the file before starting the program. |
+| `1` to `0x3FFF` | Keeps it open and returns its handle in BC; `1` is recommended. |
+| `0x4000` to `0xFFFF` | Keeps it open and writes its handle at that CPU address, after mapping the entry bank. |
+
+The application owns the retained handle and must close it when finished.
+
 ## Accessing State
 
 ```c#
@@ -48,9 +83,13 @@ Console.WriteLine($"Entry Bank: {nex.Header.EntryBank}");
 
 // Banks
 foreach (NexBank bank in nex.Banks)
-    Console.WriteLine($"Bank {bank.BankNumber}: {bank.Data.Length} bytes");
+{
+    Console.WriteLine($"Bank {bank.BankNumber}: {bank.Data.Count} bytes");
+}
 
 // Screens
 foreach (NexScreen screen in nex.Screens)
+{
     Console.WriteLine($"Screen: {screen.Type}");
+}
 ```
