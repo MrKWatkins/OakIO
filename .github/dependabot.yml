@@ -44,6 +44,11 @@ updates:
   directory: /web
   schedule:
     interval: weekly
+  ignore:
+  # typescript-eslint currently requires TypeScript <6.1; remove when it supports TypeScript 7.
+  - dependency-name: typescript
+    versions:
+    - '7.x'
   groups:
     minor-and-patch:
       patterns:
