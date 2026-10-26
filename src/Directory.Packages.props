@@ -9,6 +9,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.403" />
     <PackageVersion Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.12.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.1" />
     <PackageVersion Include="MrKWatkins.Assertions" Version="2.0.0" />
     <PackageVersion Include="MrKWatkins.Ast" Version="0.9.134" />
     <PackageVersion Include="MrKWatkins.BinaryPrimitives" Version="1.7.1" />
