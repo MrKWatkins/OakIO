@@ -1,7 +1,8 @@
 # Resources
 
 The resource types are in the core `MrKWatkins.OakIO` package, under the
-`MrKWatkins.OakIO.Resources` namespace. They provide a common data model for image, palette and tile formats.
+`MrKWatkins.OakIO.Resources` namespace. They provide resource file bases for image, palette, tile and music formats.
+[AKY](formats/music/aky.md) preserves native AY music data and provides decoded register-frame views.
 Concrete formats include [BMP](formats/image/bmp.md), [GIMP GPL](formats/palette/gpl.md),
 [JASC PAL](formats/palette/jasc.md) and [Paint.NET](formats/palette/paintdotnet.md) palettes.
 The `MrKWatkins.OakIO.ZXSpectrumNext` package also supports [NXP](formats/palette/nxp.md) palettes,

@@ -24,6 +24,10 @@
       "link": "/formats/",
       "items": [
         {
+          "text": "AKY music",
+          "link": "/formats/music/aky"
+        },
+        {
           "text": "NXB",
           "link": "/formats/blocks/nxb"
         },

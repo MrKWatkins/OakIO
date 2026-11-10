@@ -1,4 +1,5 @@
 using MrKWatkins.OakIO.Resources;
+using MrKWatkins.OakIO.Resources.Aky;
 using MrKWatkins.OakIO.Resources.Bmp;
 using MrKWatkins.OakIO.Resources.Gpl;
 using MrKWatkins.OakIO.Resources.Jasc;
@@ -12,7 +13,7 @@ public sealed class ResourceFileFormatsTests
     [Test]
     public void AllFormats()
     {
-        ResourceFileFormats.AllFormats.Should().SequenceEqual(BmpFormat.Instance, GplFormat.Instance, JascFormat.Instance, PaintNetFormat.Instance);
+        ResourceFileFormats.AllFormats.Should().SequenceEqual(AkyFormat.Instance, BmpFormat.Instance, GplFormat.Instance, JascFormat.Instance, PaintNetFormat.Instance);
         using var stream = new MemoryStream(Bmp.BmpFormatTests.Create(24, false));
         var file = IOFileFormat.Load("image.bmp", stream, ResourceFileFormats.AllFormats);
         file.Should().BeOfType<BmpFile>().Value.Image.GetPixel(2, 1).Should().Equal(new Colour(5, 10, 20));

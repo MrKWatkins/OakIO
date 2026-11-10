@@ -2,6 +2,7 @@
 
 OakIO supports the following file formats. Each page describes the layout and supported operations.
 
+- [AKY music](music/aky.md)
 - [NXB](blocks/nxb.md)
 - [BMP](image/bmp.md)
 - [NXI](image/nxi.md)

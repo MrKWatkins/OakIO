@@ -1,3 +1,4 @@
+using MrKWatkins.OakIO.Resources.Aky;
 using MrKWatkins.OakIO.Resources.Bmp;
 using MrKWatkins.OakIO.Resources.Gpl;
 using MrKWatkins.OakIO.Resources.Jasc;
@@ -13,5 +14,5 @@ public static class ResourceFileFormats
     /// <summary>
     /// Gets all supported general resource formats.
     /// </summary>
-    public static readonly IReadOnlyList<ResourceFormat> AllFormats = [BmpFormat.Instance, GplFormat.Instance, JascFormat.Instance, PaintNetFormat.Instance];
+    public static readonly IReadOnlyList<ResourceFormat> AllFormats = [AkyFormat.Instance, BmpFormat.Instance, GplFormat.Instance, JascFormat.Instance, PaintNetFormat.Instance];
 }
