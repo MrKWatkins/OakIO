@@ -4,20 +4,14 @@ namespace MrKWatkins.OakIO.Resources.Aky;
 
 /// <summary>Reads and writes Arkos AKY music with an explicit pointer origin.</summary>
 /// <remarks>Format reference https://bitbucket.org/JulienNevo/arkostracker3/src/master/doc/export/AKY.md.</remarks>
-public sealed class AkyFormat : MusicFormat<AkyFile>
+/// <param name="origin">The address subtracted from stored pointers to obtain file offsets.</param>
+public sealed class AkyFormat(ushort origin = 0) : MusicFormat<AkyFile>("Arkos AKY Music", "aky")
 {
     /// <summary>The format for song-relative pointers or exports assembled at address zero.</summary>
     public static readonly AkyFormat Instance = new();
 
-    /// <summary>Creates a format with the origin used when the file was exported.</summary>
-    /// <param name="origin">The address subtracted from stored pointers to obtain file offsets.</param>
-    public AkyFormat(ushort origin = 0) : base("Arkos AKY Music", "aky")
-    {
-        Origin = origin;
-    }
-
     /// <summary>Gets the external pointer origin, which is not encoded in AKY headers.</summary>
-    public ushort Origin { get; }
+    public ushort Origin { get; } = origin;
 
     /// <inheritdoc />
     protected override async ValueTask<IOFile> ReadAsync(IBinaryReader reader) =>

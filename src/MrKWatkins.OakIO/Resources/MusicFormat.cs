@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for music file formats.
 /// </summary>
-public abstract class MusicFormat : ResourceFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete music file type.</param>
+public abstract class MusicFormat(string name, string fileExtension, Type fileType) : ResourceFormat(name, fileExtension, ValidateFileType(fileType, typeof(MusicFile)))
 {
-    /// <summary>
-    /// Initializes a music format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete music file type.</param>
-    protected MusicFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(MusicFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a music file from a byte array.

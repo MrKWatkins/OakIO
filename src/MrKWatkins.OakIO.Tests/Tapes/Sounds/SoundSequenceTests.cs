@@ -5,10 +5,7 @@ namespace MrKWatkins.OakIO.Tests.Tapes.Sounds;
 public sealed class SoundSequenceTests
 {
     [Test]
-    public void Constructor_EmptySoundsThrows()
-    {
-        AssertThat.Invoking(() => new SoundSequence()).Should().Throw<ArgumentException>();
-    }
+    public void Constructor_EmptySoundsThrows() => AssertThat.Invoking(() => new SoundSequence()).Should().Throw<ArgumentException>();
 
     [Test]
     public void Constructor_IEnumerable()

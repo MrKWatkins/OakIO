@@ -71,9 +71,9 @@ public sealed class ScrFile : ImageFile
             {
                 var paper = GetColourIndex(image.GetPixel(cellX * 8, cellY * 8));
                 var ink = paper;
-                for (var y = cellY * 8; y < cellY * 8 + 8; y++)
+                for (var y = cellY * 8; y < (cellY * 8) + 8; y++)
                 {
-                    for (var x = cellX * 8; x < cellX * 8 + 8; x++)
+                    for (var x = cellX * 8; x < (cellX * 8) + 8; x++)
                     {
                         var colour = GetColourIndex(image.GetPixel(x, y));
                         if (colour == paper)
@@ -94,7 +94,7 @@ public sealed class ScrFile : ImageFile
                     throw new ArgumentException($"Cell ({cellX}, {cellY}) mixes normal and bright colours.", nameof(image));
                 }
                 var bright = Math.Max(paper, ink) >= 8;
-                bytes[6144 + cellY * 32 + cellX] = (byte)((bright ? 64 : 0) | ((paper & 7) << 3) | (ink & 7));
+                bytes[6144 + (cellY * 32) + cellX] = (byte)((bright ? 64 : 0) | ((paper & 7) << 3) | (ink & 7));
             }
         }
         return bytes;

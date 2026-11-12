@@ -2,7 +2,6 @@ using MrKWatkins.OakIO.Tape;
 
 namespace MrKWatkins.OakIO.Tests.Tapes;
 
-
 public sealed class TapeFileTests
 {
     [Test]

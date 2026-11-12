@@ -13,9 +13,6 @@ public sealed class HeaderHeaderTests
     }
 
     [Test]
-    public void Constructor_InvalidLength()
-    {
-        AssertThat.Invoking(() => new HeaderHeader(20))
+    public void Constructor_InvalidLength() => AssertThat.Invoking(() => new HeaderHeader(20))
             .Should().ThrowArgumentOutOfRangeException("Header + flag + checksum length must be 19.", "blockFlagAndChecksumLength", (ushort)20);
-    }
 }

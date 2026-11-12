@@ -12,7 +12,7 @@ public sealed class JascFormatTests
     public void Read_ByteArray()
     {
         var bytes = Encoding.UTF8.GetBytes(Sample);
-        JascFile file = JascFormat.Instance.Read(bytes);
+        var file = JascFormat.Instance.Read(bytes);
         file.Header.ColourCount.Should().Equal(2);
         file.Palette.Colours.Should().SequenceEqual(new Colour(1, 2, 3), new Colour(255, 128, 0));
         file.Lines.Count.Should().Equal(4);

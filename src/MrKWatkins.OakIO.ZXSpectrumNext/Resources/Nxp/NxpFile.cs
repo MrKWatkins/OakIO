@@ -34,7 +34,7 @@ public sealed class NxpFile : PaletteFile
         var entries = new NxpColourEntry[bytes.Length / 2];
         for (var index = 0; index < entries.Length; index++)
         {
-            entries[index] = new NxpColourEntry(bytes[(index * 2)..(index * 2 + 2)]);
+            entries[index] = new NxpColourEntry(bytes[(index * 2)..((index * 2) + 2)]);
         }
 
         Entries = entries;

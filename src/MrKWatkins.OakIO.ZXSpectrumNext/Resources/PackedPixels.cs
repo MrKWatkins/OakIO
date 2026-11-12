@@ -23,7 +23,7 @@ internal static class PackedPixels
             {
                 throw new ArgumentException("A pixel index does not fit the target bit depth.", nameof(pixels));
             }
-            var shift = 8 - bitsPerPixel - index % pixelsPerByte * bitsPerPixel;
+            var shift = 8 - bitsPerPixel - (index % pixelsPerByte * bitsPerPixel);
             bytes[index / pixelsPerByte] |= (byte)(pixels[index] << shift);
         }
         return bytes;
@@ -38,7 +38,7 @@ internal static class PackedPixels
         var mask = (1 << bitsPerPixel) - 1;
         for (var index = 0; index < pixels.Length; index++)
         {
-            var shift = 8 - bitsPerPixel - index % pixelsPerByte * bitsPerPixel;
+            var shift = 8 - bitsPerPixel - (index % pixelsPerByte * bitsPerPixel);
             pixels[index] = (byte)((bytes[index / pixelsPerByte] >> shift) & mask);
         }
         return pixels;
@@ -66,7 +66,7 @@ internal static class PackedPixels
                 {
                     for (var x = 0; x < tileSize; x++)
                     {
-                        pixels[destination++] = image.Pixels[(tileY + y) * image.Width + tileX + x];
+                        pixels[destination++] = image.Pixels[((tileY + y) * image.Width) + tileX + x];
                     }
                 }
             }

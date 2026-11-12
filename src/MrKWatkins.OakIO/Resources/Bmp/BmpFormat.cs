@@ -94,7 +94,7 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
         }
 
         var pixelOffset = data.GetUInt32(10);
-        if (pixelOffset < HeaderSize + colourCount * 4)
+        if (pixelOffset < HeaderSize + (colourCount * 4))
         {
             throw new InvalidDataException("The BMP pixel offset overlaps the header or palette.");
         }
@@ -118,7 +118,7 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
         {
             for (var row = 0; row < height; row++)
             {
-                var source = (int)(pixelOffset + row * stride);
+                var source = (int)(pixelOffset + (row * stride));
                 for (var x = 0; x < width; x++)
                 {
                     var packed = data[source + (bitsPerPixel == 8 ? x : x / 2)];
@@ -153,7 +153,7 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
         var bitsPerPixel = BmpFile.ValidateImage(image);
         var indexed = image as IndexedImageData;
         var colourCount = indexed?.Palette.Colours.Count ?? 0;
-        var pixelOffset = HeaderSize + colourCount * 4;
+        var pixelOffset = HeaderSize + (colourCount * 4);
         var stride = checked((int)GetRowStride(image.Width, bitsPerPixel));
         var pixelBytes = checked(stride * image.Height);
         var data = new byte[checked(pixelOffset + pixelBytes)];
@@ -173,7 +173,7 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
             for (var i = 0; i < colourCount; i++)
             {
                 var colour = indexed.Palette.Colours[i];
-                var offset = HeaderSize + i * 4;
+                var offset = HeaderSize + (i * 4);
                 data[offset] = colour.Blue;
                 data[offset + 1] = colour.Green;
                 data[offset + 2] = colour.Red;
@@ -182,27 +182,27 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
         for (var row = 0; row < image.Height; row++)
         {
             var y = isTopDown ? row : image.Height - 1 - row;
-            var destination = pixelOffset + row * stride;
+            var destination = pixelOffset + (row * stride);
             for (var x = 0; x < image.Width; x++)
             {
                 if (indexed == null)
                 {
                     var colour = image.GetPixel(x, y);
-                    var offset = destination + x * 3;
+                    var offset = destination + (x * 3);
                     data[offset] = colour.Blue;
                     data[offset + 1] = colour.Green;
                     data[offset + 2] = colour.Red;
                 }
                 else
                 {
-                    var index = indexed.Pixels[y * image.Width + x];
+                    var index = indexed.Pixels[(y * image.Width) + x];
                     if (bitsPerPixel == 8)
                     {
                         data[destination + x] = index;
                     }
                     else
                     {
-                        data[destination + x / 2] |= (byte)(x % 2 == 0 ? index << 4 : index);
+                        data[destination + (x / 2)] |= (byte)(x % 2 == 0 ? index << 4 : index);
                     }
                 }
             }
@@ -211,5 +211,5 @@ public sealed class BmpFormat : ImageFormat<BmpFile>
     }
 
     [Pure]
-    private static long GetRowStride(int width, int bitsPerPixel) => ((long)width * bitsPerPixel + 31) / 32 * 4;
+    private static long GetRowStride(int width, int bitsPerPixel) => (((long)width * bitsPerPixel) + 31) / 32 * 4;
 }

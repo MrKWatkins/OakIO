@@ -3,16 +3,9 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for tile blocks files whose concrete components represent their on-disk format.
 /// </summary>
-public abstract class TileBlocksFile : ResourceFile
+/// <param name="format">The file format.</param>
+public abstract class TileBlocksFile(TileBlocksFormat format) : ResourceFile(format ?? throw new ArgumentNullException(nameof(format)))
 {
-    /// <summary>
-    /// Initializes a tile blocks file.
-    /// </summary>
-    /// <param name="format">The file format.</param>
-    protected TileBlocksFile(TileBlocksFormat format)
-        : base(format ?? throw new ArgumentNullException(nameof(format)))
-    {
-    }
 
     /// <summary>
     /// Gets the tile blocks file format.

@@ -79,7 +79,7 @@ public sealed class SprFormatTests
     [TestCase(4)]
     [TestCase(8)]
     public void Read_InvalidLength(int bits) =>
-        AssertThat.Invoking(() => SprFormat.ForBitsPerPixel(bits).Read(new byte[256 * bits / 8 - 1])).Should().Throw<InvalidDataException>();
+        AssertThat.Invoking(() => SprFormat.ForBitsPerPixel(bits).Read(new byte[(256 * bits / 8) - 1])).Should().Throw<InvalidDataException>();
     [Test]
     public async Task ReadAsync_Cancelled()
     {

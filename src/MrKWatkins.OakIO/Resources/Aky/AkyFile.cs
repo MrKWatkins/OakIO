@@ -19,7 +19,7 @@ public sealed class AkyFile : MusicFile
         {
             throw new InvalidDataException("AKY channel count must be positive.");
         }
-        var headerLength = 2 + (channelCount + 2) / 3 * 4;
+        var headerLength = 2 + ((channelCount + 2) / 3 * 4);
         if (headerLength > bytes.Length || (bytes[0] & 15) > 1 || (bytes[0] & 64) != 0 || ((bytes[0] >> 4) & 3) == 3)
         {
             throw new InvalidDataException("The AKY header is truncated or uses unsupported version or flag values.");
@@ -60,7 +60,7 @@ public sealed class AkyFile : MusicFile
     public int GetLoopPatternIndex()
     {
         var patterns = ReadPatterns();
-        var loopOffset = Header.Length + patterns.Count * (2 + 2 * Header.ChannelCount);
+        var loopOffset = Header.Length + (patterns.Count * (2 + (2 * Header.ChannelCount)));
         var destination = ReadPointer(loopOffset + 2);
         for (var index = 0; index < patterns.Count; ++index)
         {
@@ -85,9 +85,9 @@ public sealed class AkyFile : MusicFile
         var offset = Header.Length;
         while (ReadWord(offset) != 0)
         {
-            CheckRange(offset, 2 + Header.ChannelCount * 2);
+            CheckRange(offset, 2 + (Header.ChannelCount * 2));
             patterns.Add(new AkyPattern(this, offset));
-            offset += 2 + Header.ChannelCount * 2;
+            offset += 2 + (Header.ChannelCount * 2);
         }
         var loop = ReadPointer(offset + 2);
         if (patterns.All(pattern => pattern.Offset != loop))
@@ -118,7 +118,7 @@ public sealed class AkyFile : MusicFile
         CheckRange(offset, 2);
         var first = ReadByte(offset);
         var second = ReadByte(offset + 1);
-        return (ushort)(Header.IsLittleEndian ? first | second << 8 : first << 8 | second);
+        return (ushort)(Header.IsLittleEndian ? first | (second << 8) : (first << 8) | second);
     }
 
     [Pure]

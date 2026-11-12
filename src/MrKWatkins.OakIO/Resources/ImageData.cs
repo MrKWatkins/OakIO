@@ -3,34 +3,25 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Image pixels in top-left-origin, row-major order, independent of an on-disk layout.
 /// </summary>
-public abstract class ImageData
+/// <param name="width">The positive width in pixels.</param>
+/// <param name="height">The positive height in pixels.</param>
+public abstract class ImageData(int width, int height)
 {
-    /// <summary>
-    /// Initializes image dimensions.
-    /// </summary>
-    /// <param name="width">The positive width in pixels.</param>
-    /// <param name="height">The positive height in pixels.</param>
-    protected ImageData(int width, int height)
-    {
-        PixelCount = ValidateDimensions(width, height);
-        Width = width;
-        Height = height;
-    }
 
     /// <summary>
     /// Gets the width in pixels.
     /// </summary>
-    public int Width { get; }
+    public int Width { get; } = width;
 
     /// <summary>
     /// Gets the height in pixels.
     /// </summary>
-    public int Height { get; }
+    public int Height { get; } = height;
 
     /// <summary>
     /// Gets the total number of pixels.
     /// </summary>
-    public int PixelCount { get; }
+    public int PixelCount { get; } = ValidateDimensions(width, height);
 
     /// <summary>
     /// Gets the colour at the specified coordinates.
@@ -54,7 +45,7 @@ public abstract class ImageData
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(x, Width);
         ArgumentOutOfRangeException.ThrowIfNegative(y);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(y, Height);
-        return y * Width + x;
+        return (y * Width) + x;
     }
 
     [Pure]

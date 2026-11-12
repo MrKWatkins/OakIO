@@ -20,10 +20,8 @@ public sealed class SprFormat : TilesFormat<SprFile>
     /// </summary>
     public static readonly SprFormat EightBit = new(8);
 
-    private SprFormat(int bitsPerPixel) : base($"ZX Spectrum Next Sprites ({bitsPerPixel}-bit)", "spr")
-    {
+    private SprFormat(int bitsPerPixel) : base($"ZX Spectrum Next Sprites ({bitsPerPixel}-bit)", "spr") =>
         BitsPerPixel = bitsPerPixel;
-    }
     /// <summary>
     /// Gets the bit depth used to interpret the headerless file.
     /// </summary>

@@ -3,18 +3,11 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 /// <summary>
 /// A snapshot of the Z80 CPU registers.
 /// </summary>
+/// <param name="data">The header data containing the registers.</param>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
-public abstract class RegisterSnapshot : Header
+public abstract class RegisterSnapshot(byte[] data) : Header(data)
 {
-    /// <summary>
-    /// Initializes a register snapshot backed by the specified header data.
-    /// </summary>
-    /// <param name="data">The header data containing the registers.</param>
-    protected RegisterSnapshot(byte[] data)
-        : base(data)
-    {
-    }
 
     /// <summary>
     /// Gets or sets the AF register pair.

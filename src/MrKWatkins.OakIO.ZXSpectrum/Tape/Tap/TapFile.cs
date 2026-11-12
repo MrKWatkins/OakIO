@@ -9,16 +9,12 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 public sealed class TapFile : ZXSpectrumTapeFile
 {
     internal TapFile(params TapBlock[] blocks)
-        : base(TapFormat.Instance)
-    {
+        : base(TapFormat.Instance) =>
         Blocks = blocks;
-    }
 
     internal TapFile(IReadOnlyList<TapBlock> blocks)
-        : base(TapFormat.Instance)
-    {
+        : base(TapFormat.Instance) =>
         Blocks = blocks;
-    }
 
     /// <summary>
     /// Concatenates two TAP files into a single file containing all blocks from both.
@@ -150,7 +146,7 @@ public sealed class TapFile : ZXSpectrumTapeFile
     [Pure]
     public static TapFile CreateLoader(string filename, ushort? entryPoint, params IReadOnlyList<(ushort Location, byte[] Data)> codeBlocks)
     {
-        var blocks = new List<TapBlock>(2 + codeBlocks.Count * 2);
+        var blocks = new List<TapBlock>(2 + (codeBlocks.Count * 2));
 
         var loader = BuildLoader(entryPoint, codeBlocks.Count);
         blocks.Add(HeaderBlock.CreateProgram(filename, (ushort)loader.Length, 10));

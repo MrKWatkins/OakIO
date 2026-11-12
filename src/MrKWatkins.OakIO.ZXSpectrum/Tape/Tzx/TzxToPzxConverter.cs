@@ -137,10 +137,7 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
             header.TStatesInZeroBitPulse, header.TStatesInOneBitPulse, 0, header.PauseAfterBlockMs);
     }
 
-    private static void ConvertPureTone(ConversionContext context, PureToneBlock block)
-    {
-        RenderPulses(context, block.Header.NumberOfPulses, block.Header.LengthOfPulse);
-    }
+    private static void ConvertPureTone(ConversionContext context, PureToneBlock block) => RenderPulses(context, block.Header.NumberOfPulses, block.Header.LengthOfPulse);
 
     private static void ConvertPulseSequence(ConversionContext context, TzxPulseSequenceBlock block)
     {
@@ -423,13 +420,13 @@ public sealed class TzxToPzxConverter : IOFileConverter<TzxFile, PzxFile>
             var dataByteCount = (int)((bitCount + 7) / 8);
 
             var header = new byte[12];
-            header.SetUInt32(0, (uint)(8 + numZero * 2 + numOne * 2 + dataByteCount));
+            header.SetUInt32(0, (uint)(8 + (numZero * 2) + (numOne * 2) + dataByteCount));
             header.SetUInt32(4, (initialLevel ? 0x80000000u : 0) | bitCount);
             header.SetUInt16(8, tailCycles);
             header[10] = numZero;
             header[11] = numOne;
 
-            var bodySize = numZero * 2 + numOne * 2 + dataByteCount;
+            var bodySize = (numZero * 2) + (numOne * 2) + dataByteCount;
             var body = new byte[bodySize];
             var offset = 0;
             foreach (var p in zeroPulseSeq)

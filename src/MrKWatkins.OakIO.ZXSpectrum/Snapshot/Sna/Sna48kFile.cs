@@ -9,10 +9,8 @@ public sealed class Sna48kFile : SnaFile
     private readonly byte[] ram;
 
     internal Sna48kFile(SnaHeader header, byte[] ram)
-        : base(header)
-    {
+        : base(header) =>
         this.ram = ram;
-    }
 
     /// <summary>
     /// Creates a new 48K SNA file from the given memory contents.

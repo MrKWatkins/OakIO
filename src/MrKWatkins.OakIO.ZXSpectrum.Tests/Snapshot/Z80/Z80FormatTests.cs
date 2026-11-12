@@ -13,6 +13,7 @@ public sealed class Z80FormatTests : ZXSpectrumTestFixture
     {
         var header = new Z80V1Header
         {
+            DataIsCompressed = isCompressed,
             Registers =
             {
                 PC = 0

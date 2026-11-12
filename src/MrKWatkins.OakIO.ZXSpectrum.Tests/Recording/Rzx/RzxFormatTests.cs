@@ -117,16 +117,10 @@ public sealed class RzxFormatTests
     }
 
     [Test]
-    public void Read_EmptyStream_Throws()
-    {
-        AssertThat.Invoking(() => _ = RzxFormat.Instance.Read([])).Should().Throw<EndOfStreamException>();
-    }
+    public void Read_EmptyStream_Throws() => AssertThat.Invoking(() => _ = RzxFormat.Instance.Read([])).Should().Throw<EndOfStreamException>();
 
     [Test]
-    public void Read_TruncatedHeader_Throws()
-    {
-        AssertThat.Invoking(() => _ = RzxFormat.Instance.Read(new byte[5])).Should().Throw<EndOfStreamException>();
-    }
+    public void Read_TruncatedHeader_Throws() => AssertThat.Invoking(() => _ = RzxFormat.Instance.Read(new byte[5])).Should().Throw<EndOfStreamException>();
 
     [Test]
     public void Read_TruncatedBlockBody_Throws()
@@ -286,7 +280,7 @@ public sealed class RzxFormatTests
         {
             writer.Write((ushort)3);
             writer.Write((ushort)2);
-            writer.Write(new byte[] { 0xFE, 0xFD });
+            writer.Write([0xFE, 0xFD]);
             writer.Write((ushort)4);
             writer.Write(RzxInputFrame.RepeatedInputReads);
         }

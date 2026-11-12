@@ -12,7 +12,7 @@ public sealed class GplFormatTests
     public void Read_ByteArray()
     {
         var bytes = Encoding.UTF8.GetBytes(Sample);
-        GplFile file = GplFormat.Instance.Read(bytes);
+        var file = GplFormat.Instance.Read(bytes);
         file.Header.Name.Should().Equal("Téšt");
         file.Header.Columns.Should().Equal(3);
         file.Palette.Colours.Should().SequenceEqual(new Colour(1, 2, 3), new Colour(255, 0, 128));

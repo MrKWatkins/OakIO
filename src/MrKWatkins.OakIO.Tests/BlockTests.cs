@@ -195,10 +195,8 @@ public sealed class BlockTests
         }
 
         public TestBlock(Header header, byte[] data, bool canLoad = true)
-            : base(header, data)
-        {
+            : base(header, data) =>
             this.canLoad = canLoad;
-        }
 
         public override bool TryLoadInto(Span<byte> memory)
         {

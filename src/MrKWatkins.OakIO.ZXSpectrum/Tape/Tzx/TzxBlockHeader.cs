@@ -6,10 +6,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 public abstract class TzxBlockHeader : Header
 {
     internal TzxBlockHeader(TzxBlockType type, byte[] data)
-        : base(data)
-    {
+        : base(data) =>
         Type = type;
-    }
 
     /// <summary>
     /// Gets the type of this TZX block.

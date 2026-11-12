@@ -52,22 +52,14 @@ public sealed class RzxSnapshotBlockTests
     }
 
     [Test]
-    public void Constructor_NullExtension_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxSnapshotBlock((string)null!, [1, 2])).Should().Throw<ArgumentNullException>();
-    }
+    public void Constructor_NullExtension_Throws() => AssertThat.Invoking(() => _ = new RzxSnapshotBlock((string)null!, [1, 2])).Should().Throw<ArgumentNullException>();
 
     [Test]
-    public void Constructor_NullData_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxSnapshotBlock("Z80", null!)).Should().Throw<ArgumentNullException>();
-    }
+    public void Constructor_NullData_Throws() => AssertThat.Invoking(() => _ = new RzxSnapshotBlock("Z80", null!)).Should().Throw<ArgumentNullException>();
 
     [Test]
-    public void Constructor_Compressed_Throws()
-    {
+    public void Constructor_Compressed_Throws() =>
         AssertThat.Invoking(() => _ = new RzxSnapshotBlock("Z80", [1, 2], RzxSnapshotFlags.Compressed)).Should().Throw<InvalidDataException>();
-    }
 
     [Test]
     public void Read_TooShort_Throws()

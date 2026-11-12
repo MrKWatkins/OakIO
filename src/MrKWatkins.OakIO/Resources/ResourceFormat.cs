@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for resource file formats.
 /// </summary>
-public abstract class ResourceFormat : IOFileFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete resource file type.</param>
+public abstract class ResourceFormat(string name, string fileExtension, Type fileType) : IOFileFormat(name, fileExtension, ValidateFileType(fileType, typeof(ResourceFile)))
 {
-    /// <summary>
-    /// Initializes a resource format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete resource file type.</param>
-    protected ResourceFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(ResourceFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a resource file from a byte array.

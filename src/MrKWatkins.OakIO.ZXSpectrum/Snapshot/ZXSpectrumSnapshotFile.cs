@@ -3,16 +3,9 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot;
 /// <summary>
 /// Base class for ZX Spectrum snapshot files.
 /// </summary>
-public abstract class ZXSpectrumSnapshotFile : ZXSpectrumFile
+/// <param name="format">The snapshot format of the file.</param>
+public abstract class ZXSpectrumSnapshotFile(ZXSpectrumSnapshotFormat format) : ZXSpectrumFile(format)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ZXSpectrumSnapshotFile" /> class.
-    /// </summary>
-    /// <param name="format">The snapshot format of the file.</param>
-    protected ZXSpectrumSnapshotFile(ZXSpectrumSnapshotFormat format)
-        : base(format)
-    {
-    }
 
     /// <summary>
     /// Gets the snapshot format.

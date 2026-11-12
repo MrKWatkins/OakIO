@@ -93,10 +93,7 @@ public sealed class InfoCommandTests : ToolTestFixture
     }
 
     [Test]
-    public void Execute_MissingFile_ReturnsError()
-    {
-        RunInfoCommand("/non/existent/file.tap").Should().NotEqual(0);
-    }
+    public void Execute_MissingFile_ReturnsError() => RunInfoCommand("/non/existent/file.tap").Should().NotEqual(0);
 
     private static int RunInfoCommand(string inputPath)
     {

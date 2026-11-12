@@ -7,10 +7,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class PulseSequenceBlock : PzxBlock<PulseSequenceHeader>
 {
-    internal PulseSequenceBlock(byte[] headerData, byte[] bodyData) : base(new PulseSequenceHeader(headerData), bodyData)
-    {
+    internal PulseSequenceBlock(byte[] headerData, byte[] bodyData) : base(new PulseSequenceHeader(headerData), bodyData) =>
         Pulses = ReadPulses();
-    }
 
     /// <summary>
     /// Gets the pulses in this block.

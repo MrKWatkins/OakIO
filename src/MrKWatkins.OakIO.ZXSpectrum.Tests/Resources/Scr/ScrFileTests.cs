@@ -64,8 +64,8 @@ public sealed class ScrFileTests
         var ink = blackIsPaper ? colour : black;
         var pixels = Enumerable.Repeat(paper, 256 * 192).ToArray();
         // Interior cell at (2, 8), across the boundary into the middle third; first and last bits in its second scan.
-        pixels[65 * 256 + 16] = ink;
-        pixels[65 * 256 + 23] = ink;
+        pixels[(65 * 256) + 16] = ink;
+        pixels[(65 * 256) + 23] = ink;
         var file = new ScrFile(new ColourImageData(256, 192, pixels));
         file.Bitmap.Data[2306].Should().Equal((byte)129);
         file.Bitmap.Data.Sum(value => value).Should().Equal(129);
@@ -82,7 +82,7 @@ public sealed class ScrFileTests
     public void Constructor_ImageData_Solid(int colourIndex)
     {
         var colour = ScrTestData.Colours[colourIndex];
-        var image = new ColourImageData(256, 192, Enumerable.Repeat(colour, 256 * 192).ToArray());
+        var image = new ColourImageData(256, 192, [.. Enumerable.Repeat(colour, 256 * 192)]);
         var file = new ScrFile(image);
         file.Bitmap.Data.Should().SequenceEqual(new byte[6144]);
         file.Attributes.Data.Should().SequenceEqual(Enumerable.Repeat((byte)((colourIndex == 8 ? 0 : colourIndex >= 8 ? 64 : 0) | (colourIndex % 8 * 9)), 768));
@@ -132,7 +132,7 @@ public sealed class ScrFileTests
         {
             for (var x = 8; x < 16; x++)
             {
-                pixels[y * 256 + x] = new Colour(0, 255, 0);
+                pixels[(y * 256) + x] = new Colour(0, 255, 0);
             }
         }
         var file = new ScrFile(new ColourImageData(256, 192, pixels));

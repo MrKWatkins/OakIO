@@ -7,10 +7,8 @@ namespace MrKWatkins.OakIO.Resources.Gpl;
 /// </summary>
 public sealed class GplColourEntry : TextLine
 {
-    internal GplColourEntry(byte[] data) : base(data)
-    {
+    internal GplColourEntry(byte[] data) : base(data) =>
         _ = PaletteText.ParseRgb(Text, allowName: true);
-    }
 
     /// <summary>
     /// Gets the RGB colour.

@@ -15,10 +15,8 @@ public class Z80V1Header : Header
     }
 
     internal Z80V1Header(byte[] data)
-        : base(data)
-    {
+        : base(data) =>
         Registers = new Z80RegisterSnapshot(data, GetType() == typeof(Z80V1Header));
-    }
 
     /// <summary>
     /// Gets the register snapshot from this header.

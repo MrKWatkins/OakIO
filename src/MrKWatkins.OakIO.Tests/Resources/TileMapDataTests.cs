@@ -43,7 +43,7 @@ public sealed class TileMapDataTests
     [TestCase(2, 1, 5)]
     public void GetEntry(int x, int y, int expected)
     {
-        var map = new TileMapData(3, 2, Enumerable.Range(0, 6).Select(index => new TileMapEntry(index)).ToArray());
+        var map = new TileMapData(3, 2, [.. Enumerable.Range(0, 6).Select(index => new TileMapEntry(index))]);
         map.GetEntry(x, y).TileIndex.Should().Equal(expected);
     }
 

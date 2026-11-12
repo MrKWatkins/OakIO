@@ -46,7 +46,7 @@ public sealed class NxpColourEntry : IOFileComponent
     public Colour Colour => new(Expand(Red), Expand(Green), Expand(Blue));
 
     [Pure]
-    private static byte Expand(byte value) => (byte)((value * 255 + 3) / 7);
+    private static byte Expand(byte value) => (byte)(((value * 255) + 3) / 7);
 
     [Pure]
     private static byte[] Encode(Colour colour)
@@ -56,9 +56,9 @@ public sealed class NxpColourEntry : IOFileComponent
             throw new ArgumentException("NXP palettes do not support alpha.", nameof(colour));
         }
 
-        var red = (colour.Red * 7 + 127) / 255;
-        var green = (colour.Green * 7 + 127) / 255;
-        var blue = (colour.Blue * 7 + 127) / 255;
+        var red = ((colour.Red * 7) + 127) / 255;
+        var green = ((colour.Green * 7) + 127) / 255;
+        var blue = ((colour.Blue * 7) + 127) / 255;
         return [(byte)((red << 5) | (green << 2) | (blue >> 1)), (byte)(blue & 1)];
     }
 }

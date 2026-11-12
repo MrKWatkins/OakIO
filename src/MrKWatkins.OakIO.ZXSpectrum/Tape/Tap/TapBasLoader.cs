@@ -82,7 +82,7 @@ internal static class TapBasLoader
 
     private static void Validate(IReadOnlyList<TapBasBlock> blocks, TapBasOptions options, bool paging)
     {
-        if (options.ClearAddress < ProgramStart || paging && options.ClearAddress >= 0xC000)
+        if (options.ClearAddress < ProgramStart || (paging && options.ClearAddress >= 0xC000))
         {
             throw new ArgumentOutOfRangeException(nameof(options), "ClearAddress must leave BASIC workspace in fixed RAM when paging.");
         }
@@ -96,7 +96,7 @@ internal static class TapBasLoader
             {
                 throw new ArgumentException("Load blocks require nonempty RAM ranges, valid bank numbers and TAP-sized payloads.", nameof(blocks));
             }
-            if (block is { Bank: not null, Location: < 0xC000 } || paging && block.Bank == null && block.Location + block.Data.Length > 0xC000)
+            if (block is { Bank: not null, Location: < 0xC000 } || (paging && block.Bank == null && block.Location + block.Data.Length > 0xC000))
             {
                 throw new ArgumentException("Banked blocks must fit at $C000–$FFFF; unbanked blocks must stay below $C000 when paging.", nameof(blocks));
             }

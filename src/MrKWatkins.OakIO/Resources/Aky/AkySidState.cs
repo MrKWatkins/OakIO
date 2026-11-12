@@ -4,10 +4,7 @@ namespace MrKWatkins.OakIO.Resources.Aky;
 /// <remarks>SID alternates the channel's ordinary volume with its low-shelf volume between frame ticks.</remarks>
 public abstract class AkySidState
 {
-    private protected AkySidState(byte lowShelfVolume)
-    {
-        LowShelfVolume = lowShelfVolume;
-    }
+    private protected AkySidState(byte lowShelfVolume) => LowShelfVolume = lowShelfVolume;
 
     /// <summary>Gets the native timing encoding.</summary>
     public abstract AkySidProfile Profile { get; }

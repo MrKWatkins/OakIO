@@ -29,7 +29,7 @@ public sealed class TileMapFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestTileMapFile file = TestTileMapFormat.Instance.Read([123]);
+        var file = TestTileMapFormat.Instance.Read([123]);
         file.TileMap.Entries[0].TileIndex.Should().Equal(123);
         file.Format.Should().BeTheSameInstanceAs(TestTileMapFormat.Instance);
     }
@@ -38,7 +38,7 @@ public sealed class TileMapFormatTests
     public void Read_Stream()
     {
         using var stream = new MemoryStream([234]);
-        TestTileMapFile file = TestTileMapFormat.Instance.Read(stream);
+        var file = TestTileMapFormat.Instance.Read(stream);
         file.TileMap.Entries[0].TileIndex.Should().Equal(234);
     }
 
@@ -46,7 +46,7 @@ public sealed class TileMapFormatTests
     public async Task ReadAsync_Stream()
     {
         using var stream = new MemoryStream([213]);
-        TestTileMapFile file = await TestTileMapFormat.Instance.ReadAsync(stream);
+        var file = await TestTileMapFormat.Instance.ReadAsync(stream);
         file.TileMap.Entries[0].TileIndex.Should().Equal(213);
     }
 

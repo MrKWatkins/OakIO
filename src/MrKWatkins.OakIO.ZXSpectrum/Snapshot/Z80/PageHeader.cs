@@ -5,10 +5,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 /// </summary>
 public sealed class PageHeader : Header
 {
-    internal PageHeader(HardwareMode hardwareMode, byte[] header) : base(header)
-    {
+    internal PageHeader(HardwareMode hardwareMode, byte[] header) : base(header) =>
         HardwareMode = hardwareMode;
-    }
 
     internal PageHeader(HardwareMode hardwareMode, ushort compressedLength, byte pageNumber)
         : this(hardwareMode, new byte[3])

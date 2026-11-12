@@ -76,6 +76,6 @@ public sealed class NxiPixelDataTests
     {
         var bytes = new byte[81920];
         bytes[offset] = value;
-        new NxiPixelData(bytes, width, 256).Pixels[y * width + x].Should().Equal(expected);
+        new NxiPixelData(bytes, width, 256).Pixels[(y * width) + x].Should().Equal(expected);
     }
 }

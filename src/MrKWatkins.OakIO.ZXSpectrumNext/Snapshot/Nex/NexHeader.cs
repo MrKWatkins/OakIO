@@ -19,10 +19,8 @@ public sealed class NexHeader : Header
     }
 
     internal NexHeader(byte[] data)
-        : base(data)
-    {
+        : base(data) =>
         Registers = new NexRegisterSnapshot(data);
-    }
 
     /// <summary>
     /// Gets the CPU registers stored in the header.

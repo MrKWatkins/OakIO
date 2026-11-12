@@ -11,10 +11,7 @@ internal sealed class Decompressor
     private byte toRepeat;
     private bool endMarkerReached;
 
-    internal Decompressor(bool endMarker)
-    {
-        this.endMarker = endMarker;
-    }
+    internal Decompressor(bool endMarker) => this.endMarker = endMarker;
 
     [MustUseReturnValue]
     internal int Read(Stream stream, Span<byte> buffer)

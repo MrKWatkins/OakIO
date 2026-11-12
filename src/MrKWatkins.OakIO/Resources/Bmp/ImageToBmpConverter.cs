@@ -30,7 +30,7 @@ public sealed class ImageToBmpConverter(ImageFormat sourceFormat)
         {
             for (var x = 0; x < image.Width; x++)
             {
-                pixels[y * image.Width + x] = image.GetPixel(x, y);
+                pixels[(y * image.Width) + x] = image.GetPixel(x, y);
             }
         }
         return new BmpFile(new ColourImageData(image.Width, image.Height, pixels));

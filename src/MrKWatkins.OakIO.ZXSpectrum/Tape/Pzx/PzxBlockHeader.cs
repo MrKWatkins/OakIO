@@ -11,10 +11,8 @@ public abstract class PzxBlockHeader : Header
     protected const int StartIndex = 4;
 
     internal PzxBlockHeader(PzxBlockType type, byte[] data)
-        : base(data)
-    {
+        : base(data) =>
         Type = type;
-    }
 
     /// <summary>
     /// Gets the type of this PZX block.

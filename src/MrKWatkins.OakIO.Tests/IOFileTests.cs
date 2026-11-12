@@ -112,10 +112,7 @@ public sealed class IOFileTests
     [TestCase(CompressionFormat.GZip, "name.tst.gz")]
     [TestCase(CompressionFormat.Zip, "name.zip")]
     [TestCase(CompressionFormat.Zstandard, "name.tst.zst")]
-    public void GetCompressedFilename(CompressionFormat compressionFormat, string expected)
-    {
-        IOFile.GetCompressedFilename("name.tst", compressionFormat).Should().Equal(expected);
-    }
+    public void GetCompressedFilename(CompressionFormat compressionFormat, string expected) => IOFile.GetCompressedFilename("name.tst", compressionFormat).Should().Equal(expected);
 
     [Test]
     public void GetCompressedFilename_ThrowsIfCompressionFormatNotSupported()

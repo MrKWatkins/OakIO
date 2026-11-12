@@ -26,10 +26,8 @@ public sealed class NxtFormat : TilesFormat<NxtFile>
     /// </summary>
     public static readonly NxtFormat EightBit = new(8);
 
-    private NxtFormat(int bitsPerPixel) : base($"ZX Spectrum Next Tiles ({bitsPerPixel}-bit)", "nxt")
-    {
+    private NxtFormat(int bitsPerPixel) : base($"ZX Spectrum Next Tiles ({bitsPerPixel}-bit)", "nxt") =>
         BitsPerPixel = bitsPerPixel;
-    }
     /// <summary>
     /// Gets the bit depth used to interpret the headerless file.
     /// </summary>

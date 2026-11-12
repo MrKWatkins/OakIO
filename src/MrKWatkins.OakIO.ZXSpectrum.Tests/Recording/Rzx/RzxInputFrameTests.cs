@@ -26,16 +26,12 @@ public sealed class RzxInputFrameTests
     }
 
     [Test]
-    public void Constructor_RepeatedWithData_Throws()
-    {
+    public void Constructor_RepeatedWithData_Throws() =>
         AssertThat.Invoking(() => _ = new RzxInputFrame(1, [1], repeatsPreviousInputReads: true)).Should().Throw<ArgumentException>();
-    }
 
     [Test]
-    public void Constructor_TooManyInputReads_Throws()
-    {
+    public void Constructor_TooManyInputReads_Throws() =>
         AssertThat.Invoking(() => _ = new RzxInputFrame(1, new byte[RzxInputFrame.RepeatedInputReads])).Should().Throw<ArgumentException>();
-    }
 
     [Test]
     public void Read()

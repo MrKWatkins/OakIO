@@ -19,7 +19,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat.Read(byte[]) hides the base IOFile-returning overload.
-        ZXSpectrumSnapshotFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Should().BeOfType<Sna48kFile>();
     }
@@ -31,7 +31,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat.Read(Stream) hides the base IOFile-returning overload.
-        ZXSpectrumSnapshotFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Should().BeOfType<Sna48kFile>();
     }
@@ -43,7 +43,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat.ReadAsync hides the base IOFile-returning overload.
-        ZXSpectrumSnapshotFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Should().BeOfType<Sna48kFile>();
     }
@@ -55,7 +55,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat<SnaFile> format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat<TFile>.Read(byte[]) hides the ZXSpectrumSnapshotFile-returning overload.
-        SnaFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Should().BeOfType<Sna48kFile>();
     }
@@ -67,7 +67,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat<SnaFile> format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat<TFile>.Read(Stream) hides the ZXSpectrumSnapshotFile-returning overload.
-        SnaFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Should().BeOfType<Sna48kFile>();
     }
@@ -79,7 +79,7 @@ public sealed class ZXSpectrumSnapshotFormatTests
         ZXSpectrumSnapshotFormat<SnaFile> format = SnaFormat.Instance;
 
         // No cast required: proves ZXSpectrumSnapshotFormat<TFile>.ReadAsync hides the ZXSpectrumSnapshotFile-returning overload.
-        SnaFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Should().BeOfType<Sna48kFile>();
     }

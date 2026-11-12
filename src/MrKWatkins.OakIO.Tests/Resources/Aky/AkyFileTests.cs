@@ -26,7 +26,7 @@ public sealed class AkyFileTests
         file.Header.AsReadOnlySpan().ToArray().Concat(file.Body.AsReadOnlySpan().ToArray()).Should().SequenceEqual(bytes);
         bytes[^1] = 255;
         file.ToByteArray()[^1].Should().Equal((byte)0);
-        file.Header.GetClock((channels + 2) / 3 - 1).Should().Equal((uint)(1773400 + (channels + 2) / 3 - 1));
+        file.Header.GetClock(((channels + 2) / 3) - 1).Should().Equal((uint)(1773400 + ((channels + 2) / 3) - 1));
     }
 
     [Test]

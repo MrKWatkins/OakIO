@@ -2,53 +2,22 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <LangVersion>Preview</LangVersion>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <PackageProjectUrl>https://github.com/MrKWatkins/OakIO</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/MrKWatkins/OakIO</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations"/>
-
-        <Using Include="System.Diagnostics.CodeAnalysis"/>
-        <Using Include="System.Diagnostics.Contracts"/>
-        <Using Include="System.Diagnostics.Contracts.PureAttribute" Alias="PureAttribute"/>
-        <Using Include="JetBrains.Annotations"/>
+        <PackageReference Include="MrKWatkins.CSharpConventions" PrivateAssets="All" />
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
     </ItemGroup>
 
-    <ItemGroup Condition="!$(MSBuildProjectName.EndsWith('Tests')) And !$(MSBuildProjectName.EndsWith('Testing'))">
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
-        </AssemblyAttribute>
-    </ItemGroup>
-
-    <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
-        <!-- Allow underscores in test method names (CA1707) and don't require ConfigureAwait in tests (CA2007). -->
-        <NoWarn>CA1707;CA2007</NoWarn>
-        <IsTestProject>true</IsTestProject>
-        <EnableNUnitRunner>true</EnableNUnitRunner>
-        <OutputType>Exe</OutputType>
-        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-        <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    </PropertyGroup>
-
-    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
-        <ProjectReference Include="..\MrKWatkins.OakIO.Testing\MrKWatkins.OakIO.Testing.csproj"/>
-
-        <PackageReference Include="MrKWatkins.Assertions"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+    <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+        <ProjectReference Include="..\MrKWatkins.OakIO.Testing\MrKWatkins.OakIO.Testing.csproj" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
         <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" PrivateAssets="All" />
-        <PackageReference Include="NUnit"/>
-        <PackageReference Include="NUnit3TestAdapter"/>
-
-        <Using Include="MrKWatkins.Assertions"/>
-        <Using Include="NUnit.Framework"/>
+        <PackageReference Include="MrKWatkins.Assertions" />
+        <PackageReference Include="NUnit" PrivateAssets="All" />
+        <PackageReference Include="NUnit3TestAdapter" PrivateAssets="All" />
     </ItemGroup>
-
 </Project>

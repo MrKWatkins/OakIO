@@ -5,10 +5,8 @@ internal sealed class TestIOFile : IOFile
     private readonly bool canLoad;
 
     internal TestIOFile(bool canLoad = true)
-        : base(TestIOFileFormat.Instance)
-    {
+        : base(TestIOFileFormat.Instance) =>
         this.canLoad = canLoad;
-    }
 
     public override bool TryLoadInto(Span<byte> memory)
     {

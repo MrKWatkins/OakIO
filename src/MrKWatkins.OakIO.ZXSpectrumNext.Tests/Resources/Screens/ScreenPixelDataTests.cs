@@ -23,9 +23,9 @@ public sealed class ScreenPixelDataTests
         {
             for (var x = 0; x < width; x += 8 / bits)
             {
-                var expected = bits == 8 ? image.Pixels[y * width + x] :
-                    (byte)((image.Pixels[y * width + x] << 4) | image.Pixels[y * width + x + 1]);
-                var offset = width is 320 or 640 ? x / (8 / bits) * height + y : (y * width + x) / (8 / bits);
+                var expected = bits == 8 ? image.Pixels[(y * width) + x] :
+                    (byte)((image.Pixels[(y * width) + x] << 4) | image.Pixels[(y * width) + x + 1]);
+                var offset = width is 320 or 640 ? (x / (8 / bits) * height) + y : ((y * width) + x) / (8 / bits);
                 component.Data[offset].Should().Equal(expected);
             }
         }

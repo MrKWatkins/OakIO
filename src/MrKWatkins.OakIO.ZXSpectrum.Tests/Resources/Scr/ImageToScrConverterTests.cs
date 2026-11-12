@@ -57,13 +57,13 @@ public sealed class ImageToScrConverterTests
     [TestCase(256, 191)]
     public void Convert_ImageFile_InvalidDimensions(int width, int height)
     {
-        var source = new BmpFile(new ColourImageData(width, height, Enumerable.Repeat(new Colour(0, 0, 0), width * height).ToArray()));
+        var source = new BmpFile(new ColourImageData(width, height, [.. Enumerable.Repeat(new Colour(0, 0, 0), width * height)]));
         AssertThat.Invoking(() => new ImageToScrConverter(source.Format).Convert(source)).Should().Throw<ArgumentException>();
     }
     [Test]
     public void Convert_ImageFile_InvalidColour()
     {
-        var source = new BmpFile(new ColourImageData(256, 192, Enumerable.Repeat(new Colour(128, 0, 0), 256 * 192).ToArray()));
+        var source = new BmpFile(new ColourImageData(256, 192, [.. Enumerable.Repeat(new Colour(128, 0, 0), 256 * 192)]));
         AssertThat.Invoking(() => new ImageToScrConverter(source.Format).Convert(source)).Should().Throw<ArgumentException>();
     }
     [Test]

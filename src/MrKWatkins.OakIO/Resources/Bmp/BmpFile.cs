@@ -24,11 +24,11 @@ public sealed class BmpFile : ImageFile
         InformationHeader = new BmpInformationHeader(data[14..54]);
         var colourCount = InformationHeader.BitsPerPixel == 24 ? (int)InformationHeader.ColoursUsed
             : InformationHeader.ColoursUsed == 0 ? 1 << InformationHeader.BitsPerPixel : (int)InformationHeader.ColoursUsed;
-        var paletteEnd = 54 + colourCount * 4;
+        var paletteEnd = 54 + (colourCount * 4);
         Palette = colourCount == 0 ? null : new BmpPalette(data[54..paletteEnd]);
         var pixelOffset = (int)Header.PixelDataOffset;
         gap = data[paletteEnd..pixelOffset];
-        var pixelEnd = pixelOffset + InformationHeader.RowStride * Math.Abs(InformationHeader.Height);
+        var pixelEnd = pixelOffset + (InformationHeader.RowStride * Math.Abs(InformationHeader.Height));
         PixelData = new BmpPixelData(data[pixelOffset..pixelEnd]);
         trailingData = data[pixelEnd..];
     }

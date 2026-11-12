@@ -24,6 +24,6 @@ public sealed class ScrAttributes : IOFileComponent
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(x, 32);
         ArgumentOutOfRangeException.ThrowIfNegative(y);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(y, 24);
-        return new ScrAttribute(GetByte(y * 32 + x));
+        return new ScrAttribute(GetByte((y * 32) + x));
     }
 }

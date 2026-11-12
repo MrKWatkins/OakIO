@@ -29,7 +29,7 @@ public sealed class TileBlocksFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestTileBlocksFile file = TestTileBlocksFormat.Instance.Read([123]);
+        var file = TestTileBlocksFormat.Instance.Read([123]);
         file.Blocks.Entries[0].TileIndex.Should().Equal(123);
         file.Format.Should().BeTheSameInstanceAs(TestTileBlocksFormat.Instance);
     }
@@ -38,7 +38,7 @@ public sealed class TileBlocksFormatTests
     public void Read_Stream()
     {
         using var stream = new MemoryStream([234]);
-        TestTileBlocksFile file = TestTileBlocksFormat.Instance.Read(stream);
+        var file = TestTileBlocksFormat.Instance.Read(stream);
         file.Blocks.Entries[0].TileIndex.Should().Equal(234);
     }
 
@@ -46,7 +46,7 @@ public sealed class TileBlocksFormatTests
     public async Task ReadAsync_Stream()
     {
         using var stream = new MemoryStream([213]);
-        TestTileBlocksFile file = await TestTileBlocksFormat.Instance.ReadAsync(stream);
+        var file = await TestTileBlocksFormat.Instance.ReadAsync(stream);
         file.Blocks.Entries[0].TileIndex.Should().Equal(213);
     }
 

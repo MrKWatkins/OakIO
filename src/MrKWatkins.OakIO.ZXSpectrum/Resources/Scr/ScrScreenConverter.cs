@@ -20,7 +20,7 @@ internal static class ScrScreenConverter
         {
             for (var column = 0; column < 32; column++)
             {
-                var attribute = attributes[y / 8 * 32 + column];
+                var attribute = attributes[(y / 8 * 32) + column];
                 var bright = (attribute & 64) >> 3;
                 var ink = (byte)((attribute & 7) | bright);
                 var paper = (byte)(((attribute >> 3) & 7) | bright);
@@ -31,7 +31,7 @@ internal static class ScrScreenConverter
                 var bits = bitmap[ScrBitmap.GetByteOffset(column * 8, y)];
                 for (var bit = 0; bit < 8; bit++)
                 {
-                    pixels[y * 256 + column * 8 + bit] = (bits & (128 >> bit)) != 0 ? ink : paper;
+                    pixels[(y * 256) + (column * 8) + bit] = (bits & (128 >> bit)) != 0 ? ink : paper;
                 }
             }
         }
@@ -68,7 +68,7 @@ internal static class ScrScreenConverter
                 var bits = Vector256.Shuffle(row, shuffle) & bitMask;
                 var selection = Vector256.Equals(bits, bitMask);
                 var result = Vector256.ConditionalSelect(selection, Vector256.Shuffle(ink, shuffle), Vector256.Shuffle(paper, shuffle));
-                result.StoreUnsafe(ref destination, (nuint)(y * 256 + section * 32));
+                result.StoreUnsafe(ref destination, (nuint)((y * 256) + (section * 32)));
             }
         }
         return pixels;

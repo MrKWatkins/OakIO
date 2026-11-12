@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for image file formats.
 /// </summary>
-public abstract class ImageFormat : ResourceFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete image file type.</param>
+public abstract class ImageFormat(string name, string fileExtension, Type fileType) : ResourceFormat(name, fileExtension, ValidateFileType(fileType, typeof(ImageFile)))
 {
-    /// <summary>
-    /// Initializes a image format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete image file type.</param>
-    protected ImageFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(ImageFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a image file from a byte array.

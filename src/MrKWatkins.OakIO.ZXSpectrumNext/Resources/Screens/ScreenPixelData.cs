@@ -43,7 +43,7 @@ public sealed class ScreenPixelData : IOFileComponent
                 for (var x = 0; x < Width; x++)
                 {
                     var packed = Data[GetOffset(x, y)];
-                    pixels[y * Width + x] = BitsPerPixel == 8 ? packed : (byte)((x % 2 == 0 ? packed >> 4 : packed) & 15);
+                    pixels[(y * Width) + x] = BitsPerPixel == 8 ? packed : (byte)((x % 2 == 0 ? packed >> 4 : packed) & 15);
                 }
             }
             return pixels;
@@ -52,8 +52,8 @@ public sealed class ScreenPixelData : IOFileComponent
 
     [Pure]
     private int GetOffset(int x, int y) => Width is 320 or 640
-        ? x / (8 / BitsPerPixel) * Height + y
-        : (y * Width + x) / (8 / BitsPerPixel);
+        ? (x / (8 / BitsPerPixel) * Height) + y
+        : ((y * Width) + x) / (8 / BitsPerPixel);
 
     [Pure]
     internal static ScreenPixelData Create(IndexedImageData image, int width, int height, int bits)
@@ -68,7 +68,7 @@ public sealed class ScreenPixelData : IOFileComponent
         {
             for (var x = 0; x < width; x++)
             {
-                var pixel = image.Pixels[y * width + x];
+                var pixel = image.Pixels[(y * width) + x];
                 if (pixel >= 1 << bits)
                 {
                     throw new ArgumentException("A pixel index does not fit the native screen depth.", nameof(image));

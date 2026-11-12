@@ -88,7 +88,7 @@ public sealed class ResourceInfoTests
         info.Image!.Width.Should().Equal(256);
         info.Image.Height.Should().Equal(192);
         info.Image.Pixels.Length.Should().Equal(256 * 192 * 4);
-        info.Image.Pixels.Take(4).Should().SequenceEqual(extension == "scr" ? new byte[] { 0, 0, 0, 255 } : new byte[] { 255, 0, 0, 255 });
+        info.Image.Pixels.Take(4).Should().SequenceEqual(extension == "scr" ? new byte[] { 0, 0, 0, 255 } : [255, 0, 0, 255]);
         info.Palette!.Count.Should().Equal(extension == "scr" ? 16 : 256);
         var converted = ConvertCommand.Execute($"test.{extension}", stream.ToArray(), "output.bmp");
         BmpFormat.Instance.Read(converted).Image.GetPixel(0, 0).Should().Equal(file.Image.GetPixel(0, 0));

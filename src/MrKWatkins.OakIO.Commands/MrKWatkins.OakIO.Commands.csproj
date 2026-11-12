@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+    </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\MrKWatkins.OakIO.ZXSpectrumNext\MrKWatkins.OakIO.ZXSpectrumNext.csproj" />
     </ItemGroup>

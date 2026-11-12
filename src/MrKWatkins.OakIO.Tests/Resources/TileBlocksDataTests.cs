@@ -54,7 +54,7 @@ public sealed class TileBlocksDataTests
         block.Height.Should().Equal(2);
         block.Entries.Should().SequenceEqual(entries.Skip(index * 6).Take(6));
         block.GetEntry(0, 0).TileIndex.Should().Equal(index * 6);
-        block.GetEntry(2, 1).TileIndex.Should().Equal(index * 6 + 5);
+        block.GetEntry(2, 1).TileIndex.Should().Equal((index * 6) + 5);
         block.Should().NotBeTheSameInstanceAs(blocks.GetBlock(index));
         blocks.Entries.Should().SequenceEqual(entries);
     }

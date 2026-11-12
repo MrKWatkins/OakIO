@@ -3,16 +3,9 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for palette files whose concrete components represent their on-disk format.
 /// </summary>
-public abstract class PaletteFile : ResourceFile
+/// <param name="format">The file format.</param>
+public abstract class PaletteFile(PaletteFormat format) : ResourceFile(format ?? throw new ArgumentNullException(nameof(format)))
 {
-    /// <summary>
-    /// Initializes a palette file.
-    /// </summary>
-    /// <param name="format">The file format.</param>
-    protected PaletteFile(PaletteFormat format)
-        : base(format ?? throw new ArgumentNullException(nameof(format)))
-    {
-    }
 
     /// <summary>
     /// Gets the palette file format.

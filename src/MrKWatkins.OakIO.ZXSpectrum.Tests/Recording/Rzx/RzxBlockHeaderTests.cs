@@ -38,8 +38,5 @@ public sealed class RzxBlockHeaderTests
     [TestCase(RzxBlockType.Creator, "Creator")]
     [TestCase(RzxBlockType.Snapshot, "Snapshot")]
     [TestCase(RzxBlockType.InputRecording, "InputRecording")]
-    public void ToStringTest(RzxBlockType type, string expected)
-    {
-        new RzxBlockHeader(type, 13).ToString().Should().Equal(expected);
-    }
+    public void ToStringTest(RzxBlockType type, string expected) => new RzxBlockHeader(type, 13).ToString().Should().Equal(expected);
 }

@@ -7,10 +7,8 @@ namespace MrKWatkins.OakIO.Resources.Jasc;
 /// </summary>
 public sealed class JascColourEntry : TextLine
 {
-    internal JascColourEntry(byte[] data) : base(data)
-    {
+    internal JascColourEntry(byte[] data) : base(data) =>
         _ = PaletteText.ParseRgb(Text, allowName: false);
-    }
 
     /// <summary>
     /// Gets the RGB colour.

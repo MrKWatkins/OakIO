@@ -60,18 +60,12 @@ public sealed class NexFileTests
     }
 
     [Test]
-    public void CreateCode_BankTooBig()
-    {
-        AssertThat.Invoking(() => NexFile.CreateCode([(2, new byte[16385])], pc: 0x8000, sp: 0xFEFE))
+    public void CreateCode_BankTooBig() => AssertThat.Invoking(() => NexFile.CreateCode([(2, new byte[16385])], pc: 0x8000, sp: 0xFEFE))
             .Should().Throw<ArgumentException>();
-    }
 
     [Test]
-    public void CreateCode_DuplicateBank()
-    {
-        AssertThat.Invoking(() => NexFile.CreateCode([(2, [0x01]), (2, [0x02])], pc: 0x8000, sp: 0xFEFE))
+    public void CreateCode_DuplicateBank() => AssertThat.Invoking(() => NexFile.CreateCode([(2, [0x01]), (2, [0x02])], pc: 0x8000, sp: 0xFEFE))
             .Should().Throw<ArgumentException>();
-    }
 
     [TestCase(0)]
     [TestCase(1)]
@@ -80,7 +74,7 @@ public sealed class NexFileTests
     public void AppendedDataOffset(int bankCount)
     {
         var file = NexFile.CreateCode(Enumerable.Range(0, bankCount).Select(bank => (bank, (byte[])[(byte)bank])), 0x8000, 0xFF00);
-        var expected = 512L + bankCount * 16384L;
+        var expected = 512L + (bankCount * 16384L);
         file.AppendedDataOffset.Should().Equal(expected);
         file.SetAppendedData([0xAA, 0xBB]);
         file.AppendedDataOffset.Should().Equal(expected);

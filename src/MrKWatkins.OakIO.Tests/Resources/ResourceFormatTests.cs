@@ -27,7 +27,7 @@ public sealed class ResourceFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestResourceFile file = TestResourceFormat.Instance.Read([123]);
+        var file = TestResourceFormat.Instance.Read([123]);
         file.Value.Should().Equal((byte)123);
         file.Format.Should().BeTheSameInstanceAs(TestResourceFormat.Instance);
     }
@@ -36,7 +36,7 @@ public sealed class ResourceFormatTests
     public void Read_Stream()
     {
         using var stream = new MemoryStream([234]);
-        TestResourceFile file = TestResourceFormat.Instance.Read(stream);
+        var file = TestResourceFormat.Instance.Read(stream);
         file.Value.Should().Equal((byte)234);
     }
 
@@ -44,7 +44,7 @@ public sealed class ResourceFormatTests
     public async Task ReadAsync_Stream()
     {
         using var stream = new MemoryStream([213]);
-        TestResourceFile file = await TestResourceFormat.Instance.ReadAsync(stream);
+        var file = await TestResourceFormat.Instance.ReadAsync(stream);
         file.Value.Should().Equal((byte)213);
     }
 

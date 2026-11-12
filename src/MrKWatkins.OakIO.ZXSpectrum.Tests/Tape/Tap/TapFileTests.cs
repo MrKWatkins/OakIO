@@ -46,12 +46,12 @@ public sealed class TapFileTests : TapTestFixture
         byte[][] expected = [[0xF3, 0xAF], [12, 34, 56], [78, 90]];
         for (var index = 0; index < expected.Length; index++)
         {
-            var header = file.Blocks[2 + index * 2].Should().BeOfType<HeaderBlock>().Value;
+            var header = file.Blocks[2 + (index * 2)].Should().BeOfType<HeaderBlock>().Value;
             header.HeaderType.Should().Equal(TapHeaderType.Code);
             header.Filename.Should().Equal("game");
             header.Location.Should().Equal((ushort)locations[index]);
             header.DataBlockLength.Should().Equal((ushort)expected[index].Length);
-            file.Blocks[3 + index * 2].Data.Should().SequenceEqual(expected[index]);
+            file.Blocks[3 + (index * 2)].Data.Should().SequenceEqual(expected[index]);
         }
         var bytes = file.ToByteArray();
         var read = TapFormat.Instance.Read(bytes);

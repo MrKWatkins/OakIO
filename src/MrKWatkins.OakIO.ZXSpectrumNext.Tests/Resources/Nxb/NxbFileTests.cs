@@ -56,7 +56,7 @@ public sealed class NxbFileTests
     {
         var blocks = new TileBlocksData(1, 1, [new(255)]);
         var file = new NxbFile(blocks, new NxbFormat(1, 1, bits));
-        file.ToByteArray().Should().SequenceEqual(bits == 8 ? new byte[] { 255 } : new byte[] { 255, 0 });
+        file.ToByteArray().Should().SequenceEqual(bits == 8 ? new byte[] { 255 } : [255, 0]);
         file.Blocks.Count.Should().Equal(1);
     }
 

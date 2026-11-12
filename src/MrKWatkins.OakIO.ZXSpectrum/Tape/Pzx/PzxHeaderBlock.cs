@@ -8,15 +8,11 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Pzx;
 /// </summary>
 public sealed class PzxHeaderBlock : PzxBlock<PzxHeader>
 {
-    internal PzxHeaderBlock(byte[] headerData) : base(new PzxHeader(headerData), [])
-    {
+    internal PzxHeaderBlock(byte[] headerData) : base(new PzxHeader(headerData), []) =>
         Info = [.. ReadInfos()];
-    }
 
-    internal PzxHeaderBlock(byte[] headerData, byte[] data) : base(new PzxHeader(headerData), data)
-    {
+    internal PzxHeaderBlock(byte[] headerData, byte[] data) : base(new PzxHeader(headerData), data) =>
         Info = [.. ReadInfos()];
-    }
 
     /// <summary>
     /// Gets the information entries from the header.

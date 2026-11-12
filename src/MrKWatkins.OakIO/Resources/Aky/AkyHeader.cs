@@ -34,6 +34,6 @@ public sealed class AkyHeader : Header
     {
         ArgumentOutOfRangeException.ThrowIfNegative(chip);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(chip, ChipCount);
-        return GetUInt32(2 + chip * 4, IsLittleEndian ? Endian.Little : Endian.Big);
+        return GetUInt32(2 + (chip * 4), IsLittleEndian ? Endian.Little : Endian.Big);
     }
 }

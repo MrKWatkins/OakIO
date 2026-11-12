@@ -1,5 +1,7 @@
 # AGENTS.md
 
+- For C# changes, load and follow the `csharp-conventions` skill.
+
 This file provides guidance to AI agents when working with code in this repository.
 
 ## Project Overview
@@ -63,9 +65,13 @@ The test project uses the NUnit runner with Microsoft Testing Platform (`EnableN
 
 ## Code Conventions
 
+- Shared compiler rules, test defaults and packaging assets come from `MrKWatkins.CSharpConventions`.
+- Hard wrap C# and Markdown at 180 characters.
+- Missing XML comments remain allowed in internal tooling and test helpers through explicit project settings.
+
 - Use `MrKWatkins.BinaryPrimitives` extension methods for binary I/O (`stream.WriteUInt16()`, `stream.WriteUInt24()`, `stream.WriteUInt32()`, `array.SetUInt16()`, `array.SetUInt32()`, etc.). Do not create custom binary write helpers.
 - Prefer building binary data as byte arrays using `array.SetUInt16(...)`, `array.SetUInt32(...)`, etc., over writing to a `MemoryStream`. Where block classes accept byte-array constructors, pass the byte arrays directly — do not wrap them in a `MemoryStream`.
-- Global usings configured in Directory.Build.props: `System.Diagnostics.CodeAnalysis`, `System.Diagnostics.Contracts`, `PureAttribute`, `JetBrains.Annotations`.
+- Global usings supplied by `MrKWatkins.CSharpConventions`: `System.Diagnostics.CodeAnalysis`, `System.Diagnostics.Contracts`, `PureAttribute`, `JetBrains.Annotations`.
 - Warnings are errors; CA1707 (underscores in names) is suppressed in test projects only.
 - Use `[Pure]` on methods where possible.
 
@@ -83,4 +89,4 @@ The test project uses the NUnit runner with Microsoft Testing Platform (`EnableN
 ## Formatting Conventions
 
 - Always include `{` and `}` around control flow statements (e.g. `if`, `for`, `while`, etc.) even if they're single-line.
-- Ensure formatting is correct by running `dotnet format src/OakIO.slnx` after completing changes.
+- Ensure formatting is correct by running `dotnet format whitespace src/OakIO.slnx --no-restore --verify-no-changes` after completing changes.

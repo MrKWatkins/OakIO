@@ -7,10 +7,7 @@ internal sealed class BasicWriter
 {
     private readonly Stream stream;
 
-    internal BasicWriter(Stream stream)
-    {
-        this.stream = stream;
-    }
+    internal BasicWriter(Stream stream) => this.stream = stream;
 
     internal void WriteLine(int lineNumber, params object[] symbols)
     {

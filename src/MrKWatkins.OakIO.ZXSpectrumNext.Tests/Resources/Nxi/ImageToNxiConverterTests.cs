@@ -57,7 +57,7 @@ public sealed class ImageToNxiConverterTests
     [Test]
     public void Convert_ImageFile_NonIndexed()
     {
-        var source = new BmpFile(new ColourImageData(256, 192, Enumerable.Repeat(new Colour(0, 0, 0), 256 * 192).ToArray()));
+        var source = new BmpFile(new ColourImageData(256, 192, [.. Enumerable.Repeat(new Colour(0, 0, 0), 256 * 192)]));
         AssertThat.Invoking(() => new ImageToNxiConverter(source.Format).Convert(source)).Should().Throw<NotSupportedException>();
     }
 

@@ -6,10 +6,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Snapshot.Z80;
 public abstract class Z80File : ZXSpectrumSnapshotFile
 {
     private protected Z80File(Z80V1Header header)
-        : base(Z80Format.Instance)
-    {
+        : base(Z80Format.Instance) =>
         Header = header;
-    }
 
     /// <summary>
     /// Gets the V1 header for this Z80 file.

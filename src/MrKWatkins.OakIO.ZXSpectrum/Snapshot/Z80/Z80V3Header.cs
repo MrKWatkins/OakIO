@@ -11,10 +11,8 @@ public sealed class Z80V3Header : Z80V2Header
     /// Initializes a new instance of the <see cref="Z80V3Header" /> class with default values.
     /// </summary>
     public Z80V3Header()
-        : this(new byte[87])
-    {
+        : this(new byte[87]) =>
         ExtraLength = 55;
-    }
 
     internal Z80V3Header(byte[] data)
         : base(data)

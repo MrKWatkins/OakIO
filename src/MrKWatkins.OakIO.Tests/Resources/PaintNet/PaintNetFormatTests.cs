@@ -12,7 +12,7 @@ public sealed class PaintNetFormatTests
     public void Read_ByteArray()
     {
         var bytes = Encoding.UTF8.GetBytes(Sample);
-        PaintNetFile file = PaintNetFormat.Instance.Read(bytes);
+        var file = PaintNetFormat.Instance.Read(bytes);
         file.Palette.Colours.Should().SequenceEqual(new Colour(1, 2, 3, 128), new Colour(255, 128, 0));
         file.Lines.Count.Should().Equal(6);
         file.Lines[0].Text.Should().Equal("; Original 名");

@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for palette file formats.
 /// </summary>
-public abstract class PaletteFormat : ResourceFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete palette file type.</param>
+public abstract class PaletteFormat(string name, string fileExtension, Type fileType) : ResourceFormat(name, fileExtension, ValidateFileType(fileType, typeof(PaletteFile)))
 {
-    /// <summary>
-    /// Initializes a palette format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete palette file type.</param>
-    protected PaletteFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(PaletteFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a palette file from a byte array.

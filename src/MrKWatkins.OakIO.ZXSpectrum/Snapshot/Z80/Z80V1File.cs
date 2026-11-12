@@ -11,10 +11,8 @@ public sealed class Z80V1File : Z80File<Z80V1Header>
 {
     private readonly byte[] compressedData;
 
-    internal Z80V1File(Z80V1Header header, byte[] compressedData) : base(header)
-    {
+    internal Z80V1File(Z80V1Header header, byte[] compressedData) : base(header) =>
         this.compressedData = compressedData;
-    }
 
     /// <summary>
     /// Creates a new V1 Z80 snapshot file for a 48K Spectrum from the given memory.

@@ -15,16 +15,12 @@ public sealed class SnaHeader : Header
     }
 
     internal SnaHeader(byte[] data)
-        : base(data)
-    {
+        : base(data) =>
         Registers = new SnaRegisterSnapshot(data, new byte[2]);
-    }
 
     internal SnaHeader(byte[] data, byte[] footerData)
-        : base(data)
-    {
+        : base(data) =>
         Registers = new SnaRegisterSnapshot(data, footerData);
-    }
 
     /// <summary>
     /// Gets the CPU register snapshot.

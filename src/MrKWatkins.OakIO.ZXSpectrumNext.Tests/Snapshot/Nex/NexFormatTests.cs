@@ -373,7 +373,7 @@ public sealed class NexFormatTests
         var payload = new byte[length];
         for (var index = 0; index < length; index++)
         {
-            payload[index] = (byte)(index * 37 + 13);
+            payload[index] = (byte)((index * 37) + 13);
         }
         byte[] data = [.. prefix, .. payload];
         var file = NexFormat.Instance.Read(data);
@@ -622,10 +622,10 @@ public sealed class NexFormatTests
 
         foreach (var bankNumber in NexHeader.BankOrder)
         {
-            var bankEntry = banks.FirstOrDefault(b => b.bank == bankNumber);
-            if (bankEntry.data != null)
+            var (_, data) = banks.FirstOrDefault(b => b.bank == bankNumber);
+            if (data != null)
             {
-                stream.Write(bankEntry.data);
+                stream.Write(data);
             }
         }
 

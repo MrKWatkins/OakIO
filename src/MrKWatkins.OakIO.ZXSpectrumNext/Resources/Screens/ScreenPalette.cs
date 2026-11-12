@@ -54,20 +54,20 @@ public sealed class ScreenPalette : IOFileComponent
     {
         ArgumentOutOfRangeException.ThrowIfNegative(index);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Count);
-        return Encoding == ScreenPaletteEncoding.Rgb333 && (Data[index * 2 + 1] & 128) != 0;
+        return Encoding == ScreenPaletteEncoding.Rgb333 && (Data[(index * 2) + 1] & 128) != 0;
     }
 
     [Pure]
     private Colour GetColour(int index)
     {
         var packed = Encoding == ScreenPaletteEncoding.None ? (byte)index : Data[index * (Encoding == ScreenPaletteEncoding.Rgb333 ? 2 : 1)];
-        var blue = Encoding == ScreenPaletteEncoding.Rgb333 ? ((packed & 3) << 1) | (Data[index * 2 + 1] & 1) :
+        var blue = Encoding == ScreenPaletteEncoding.Rgb333 ? ((packed & 3) << 1) | (Data[(index * 2) + 1] & 1) :
             ((packed & 3) << 1) | ((packed & 3) == 0 ? 0 : 1);
         return new Colour(Expand(packed >> 5), Expand((packed >> 2) & 7), Expand(blue));
     }
 
     [Pure]
-    private static byte Expand(int value) => (byte)((value * 255 + 3) / 7);
+    private static byte Expand(int value) => (byte)(((value * 255) + 3) / 7);
 
     [Pure]
     internal static ScreenPalette Create(PaletteData palette, int count, ScreenPaletteEncoding encoding)
@@ -98,18 +98,18 @@ public sealed class ScreenPalette : IOFileComponent
                 }
                 continue;
             }
-            var red = (colour.Red * 7 + 127) / 255;
-            var green = (colour.Green * 7 + 127) / 255;
-            var blue = (colour.Blue * 7 + 127) / 255;
+            var red = ((colour.Red * 7) + 127) / 255;
+            var green = ((colour.Green * 7) + 127) / 255;
+            var blue = ((colour.Blue * 7) + 127) / 255;
             if (encoding == ScreenPaletteEncoding.Rgb332)
             {
-                var blue2 = Enumerable.Range(0, 4).MinBy(value => Math.Abs(Expand(value == 0 ? 0 : value * 2 + 1) - colour.Blue));
+                var blue2 = Enumerable.Range(0, 4).MinBy(value => Math.Abs(Expand(value == 0 ? 0 : (value * 2) + 1) - colour.Blue));
                 bytes[index] = (byte)((red << 5) | (green << 2) | blue2);
             }
             else
             {
                 bytes[index * 2] = (byte)((red << 5) | (green << 2) | (blue >> 1));
-                bytes[index * 2 + 1] = (byte)(blue & 1);
+                bytes[(index * 2) + 1] = (byte)(blue & 1);
             }
         }
         return new ScreenPalette(bytes, count);

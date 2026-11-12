@@ -3,9 +3,9 @@ using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Sl2;
 using MrKWatkins.OakIO.ZXSpectrumNext.Resources.Screens;
 using MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources.Screens;
 
-namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources.Sl2;
-
 using MrKWatkins.OakIO.Resources.Bmp;
+
+namespace MrKWatkins.OakIO.ZXSpectrumNext.Tests.Resources.Sl2;
 
 public sealed class ImageToSl2ConverterTests
 {

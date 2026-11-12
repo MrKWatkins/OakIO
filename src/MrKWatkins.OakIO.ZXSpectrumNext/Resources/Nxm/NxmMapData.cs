@@ -12,10 +12,8 @@ namespace MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxm;
 /// </remarks>
 public sealed class NxmMapData : IOFileComponent
 {
-    internal NxmMapData(byte[] bytes, NxmFormat format) : base(format.Length, bytes)
-    {
+    internal NxmMapData(byte[] bytes, NxmFormat format) : base(format.Length, bytes) =>
         Format = format;
-    }
 
     internal NxmMapData(TileMapData map, NxmFormat format) : this(Encode(map, format), format)
     {
@@ -40,7 +38,7 @@ public sealed class NxmMapData : IOFileComponent
                 {
                     var offset = GetOffset(x, y, Format);
                     var value = Format.BytesPerEntry == 1 ? GetByte(offset) : GetUInt16(offset);
-                    entries[y * Format.Width + x] = DecodeEntry(value, Format.Encoding);
+                    entries[(y * Format.Width) + x] = DecodeEntry(value, Format.Encoding);
                 }
             }
             return new TileMapData(Format.Width, Format.Height, entries);
@@ -49,7 +47,7 @@ public sealed class NxmMapData : IOFileComponent
 
     [Pure]
     private static int GetOffset(int x, int y, NxmFormat format) =>
-        (format.Order == ResourceDataOrder.RowMajor ? y * format.Width + x : x * format.Height + y) * format.BytesPerEntry;
+        (format.Order == ResourceDataOrder.RowMajor ? (y * format.Width) + x : (x * format.Height) + y) * format.BytesPerEntry;
 
     [Pure]
     private static TileMapEntry DecodeEntry(ushort value, NxmEncoding encoding)

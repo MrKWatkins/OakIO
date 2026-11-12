@@ -23,7 +23,7 @@ internal static class AkyDecoder
                 var hardware = new bool[file.Header.ChipCount];
                 for (var chip = 0; chip < file.Header.ChipCount; ++chip)
                 {
-                    registers[chip * 14 + 7] = 63;
+                    registers[(chip * 14) + 7] = 63;
                 }
                 for (var channel = 0; channel < channels.Length; ++channel)
                 {
@@ -43,10 +43,10 @@ internal static class AkyDecoder
                 }
                 for (var chip = 0; chip < file.Header.ChipCount; ++chip)
                 {
-                    retriggers[chip] |= hardware[chip] && registers[chip * 14 + 13] != lastEnvelope[chip];
+                    retriggers[chip] |= hardware[chip] && registers[(chip * 14) + 13] != lastEnvelope[chip];
                     if (retriggers[chip])
                     {
-                        lastEnvelope[chip] = registers[chip * 14 + 13];
+                        lastEnvelope[chip] = registers[(chip * 14) + 13];
                     }
                 }
                 yield return new AkyFrame((byte[])registers.Clone(), retriggers, channels.Select(channel => channel.Sid).ToArray());
@@ -60,7 +60,7 @@ internal static class AkyDecoder
         var voice = channel % 3;
         var start = chip * 14;
         var volume = start + 8 + voice;
-        var tone = start + voice * 2;
+        var tone = start + (voice * 2);
         var code = ReadPacketCode(file, state);
         var kind = code & 3;
         var noise = false;

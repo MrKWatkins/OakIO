@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for tilemap file formats.
 /// </summary>
-public abstract class TileMapFormat : ResourceFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete tilemap file type.</param>
+public abstract class TileMapFormat(string name, string fileExtension, Type fileType) : ResourceFormat(name, fileExtension, ValidateFileType(fileType, typeof(TileMapFile)))
 {
-    /// <summary>
-    /// Initializes a tilemap format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete tilemap file type.</param>
-    protected TileMapFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(TileMapFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a tilemap file from a byte array.

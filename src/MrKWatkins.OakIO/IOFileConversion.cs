@@ -144,7 +144,7 @@ public static class IOFileConversion
                 .. Converters.Keys
                     .Where(key => key.Source == sourceFormat)
                     .Select(key => key.Target)
-                    .OrderBy(converter => converter.Name)
+                    .OrderBy(converter => converter.Name, StringComparer.Ordinal)
             ];
         }
     }

@@ -31,7 +31,7 @@ public sealed class BmpPixelData : IOFileComponent
                 var destination = (header.IsTopDown ? row : height - 1 - row) * width;
                 for (var x = 0; x < width; x++)
                 {
-                    var offset = row * stride + x * 3;
+                    var offset = (row * stride) + (x * 3);
                     pixels[destination + x] = new Colour(GetByte(offset + 2), GetByte(offset + 1), GetByte(offset));
                 }
             }
@@ -44,7 +44,7 @@ public sealed class BmpPixelData : IOFileComponent
             var destination = (header.IsTopDown ? row : height - 1 - row) * width;
             for (var x = 0; x < width; x++)
             {
-                var packed = GetByte(row * stride + (header.BitsPerPixel == 8 ? x : x / 2));
+                var packed = GetByte((row * stride) + (header.BitsPerPixel == 8 ? x : x / 2));
                 indices[destination + x] = header.BitsPerPixel == 8 ? packed : (byte)(x % 2 == 0 ? packed >> 4 : packed & 15);
             }
         }

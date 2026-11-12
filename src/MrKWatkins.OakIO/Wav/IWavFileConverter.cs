@@ -8,7 +8,7 @@ public interface IWavFileConverter
     /// <summary>
     /// The default sample rate in Hz used for WAV conversion.
     /// </summary>
-    public const uint DefaultSampleRateHz = 44100;
+    const uint DefaultSampleRateHz = 44100;
 
     /// <summary>
     /// Converts the specified source file to a WAV file.

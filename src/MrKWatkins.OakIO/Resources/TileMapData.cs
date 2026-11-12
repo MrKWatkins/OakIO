@@ -50,6 +50,6 @@ public sealed class TileMapData
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(x, Width);
         ArgumentOutOfRangeException.ThrowIfNegative(y);
         ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(y, Height);
-        return Entries[y * Width + x];
+        return Entries[(y * Width) + x];
     }
 }

@@ -2,10 +2,7 @@ namespace MrKWatkins.OakIO.Testing;
 
 public sealed class TemporaryDirectory : IDisposable
 {
-    private TemporaryDirectory(string path)
-    {
-        Path = path;
-    }
+    private TemporaryDirectory(string path) => Path = path;
 
     public string Path { get; }
 

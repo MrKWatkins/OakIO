@@ -72,6 +72,6 @@ public sealed class BmpInformationHeader : Header
     /// <summary>
     /// Gets the stored row size, including four-byte alignment padding.
     /// </summary>
-    public int RowStride => checked((int)(((long)Width * BitsPerPixel + 31) / 32 * 4));
+    public int RowStride => checked((int)((((long)Width * BitsPerPixel) + 31) / 32 * 4));
 
 }

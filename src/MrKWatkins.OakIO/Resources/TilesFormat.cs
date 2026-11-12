@@ -5,18 +5,11 @@ namespace MrKWatkins.OakIO.Resources;
 /// <summary>
 /// Base class for tiles file formats.
 /// </summary>
-public abstract class TilesFormat : ResourceFormat
+/// <param name="name">The display name.</param>
+/// <param name="fileExtension">The file extension without a leading dot.</param>
+/// <param name="fileType">The concrete tiles file type.</param>
+public abstract class TilesFormat(string name, string fileExtension, Type fileType) : ResourceFormat(name, fileExtension, ValidateFileType(fileType, typeof(TilesFile)))
 {
-    /// <summary>
-    /// Initializes a tiles format.
-    /// </summary>
-    /// <param name="name">The display name.</param>
-    /// <param name="fileExtension">The file extension without a leading dot.</param>
-    /// <param name="fileType">The concrete tiles file type.</param>
-    protected TilesFormat(string name, string fileExtension, Type fileType)
-        : base(name, fileExtension, ValidateFileType(fileType, typeof(TilesFile)))
-    {
-    }
 
     /// <summary>
     /// Reads a tiles file from a byte array.

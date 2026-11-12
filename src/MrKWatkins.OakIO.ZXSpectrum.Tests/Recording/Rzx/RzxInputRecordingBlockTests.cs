@@ -66,17 +66,11 @@ public sealed class RzxInputRecordingBlockTests
     }
 
     [Test]
-    public void Constructor_NullFrames_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxInputRecordingBlock(null!)).Should().Throw<ArgumentNullException>();
-    }
+    public void Constructor_NullFrames_Throws() => AssertThat.Invoking(() => _ = new RzxInputRecordingBlock(null!)).Should().Throw<ArgumentNullException>();
 
     [Test]
-    public void Constructor_Protected_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxInputRecordingBlock([new RzxInputFrame(1)], flags: RzxInputRecordingFlags.Protected))
+    public void Constructor_Protected_Throws() => AssertThat.Invoking(() => _ = new RzxInputRecordingBlock([new RzxInputFrame(1)], flags: RzxInputRecordingFlags.Protected))
             .Should().Throw<InvalidDataException>();
-    }
 
     [Test]
     public void Read_TooShort_Throws()

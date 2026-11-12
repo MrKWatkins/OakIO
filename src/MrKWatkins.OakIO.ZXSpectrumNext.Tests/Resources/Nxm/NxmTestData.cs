@@ -16,7 +16,7 @@ internal static class NxmTestData
         int[] permutation = order == ResourceDataOrder.RowMajor ? [0, 1, 2, 3, 4, 5] : [0, 3, 1, 4, 2, 5];
         return [.. permutation.SelectMany(index => encoding == NxmEncoding.Index8
             ? new[] { (byte)values[index] }
-            : new[] { (byte)values[index], (byte)(values[index] / 256) })];
+            : [(byte)values[index], (byte)(values[index] / 256)])];
     }
 
     // Independent expectations use literal attribute meanings, not the production decoder.

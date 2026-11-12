@@ -8,10 +8,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tap;
 public abstract class TapHeader : Header
 {
     internal TapHeader(TapBlockType type, ushort blockFlagAndChecksumLength)
-        : base(3, [(byte)blockFlagAndChecksumLength, (byte)(blockFlagAndChecksumLength >> 8), (byte)type])
-    {
+        : base(3, [(byte)blockFlagAndChecksumLength, (byte)(blockFlagAndChecksumLength >> 8), (byte)type]) =>
         Type = type;
-    }
 
     /// <summary>
     /// Gets the block type of this header.

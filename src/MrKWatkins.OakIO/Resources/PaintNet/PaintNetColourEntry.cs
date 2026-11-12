@@ -7,10 +7,8 @@ namespace MrKWatkins.OakIO.Resources.PaintNet;
 /// </summary>
 public sealed class PaintNetColourEntry : TextLine
 {
-    internal PaintNetColourEntry(byte[] data) : base(data)
-    {
+    internal PaintNetColourEntry(byte[] data) : base(data) =>
         _ = PaletteText.ParseArgb(Text);
-    }
 
     /// <summary>
     /// Gets the stored colour, including its alpha component.

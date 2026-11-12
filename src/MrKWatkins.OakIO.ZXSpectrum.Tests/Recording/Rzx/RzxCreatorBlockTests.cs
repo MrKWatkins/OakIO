@@ -56,22 +56,13 @@ public sealed class RzxCreatorBlockTests
     }
 
     [Test]
-    public void Constructor_NullCreator_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxCreatorBlock(null!, 1, 2)).Should().Throw<ArgumentNullException>();
-    }
+    public void Constructor_NullCreator_Throws() => AssertThat.Invoking(() => _ = new RzxCreatorBlock(null!, 1, 2)).Should().Throw<ArgumentNullException>();
 
     [Test]
-    public void Constructor_CreatorTooLong_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxCreatorBlock(new string('x', 21), 1, 2)).Should().Throw<ArgumentException>();
-    }
+    public void Constructor_CreatorTooLong_Throws() => AssertThat.Invoking(() => _ = new RzxCreatorBlock(new string('x', 21), 1, 2)).Should().Throw<ArgumentException>();
 
     [Test]
-    public void Constructor_CreatorNotAscii_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxCreatorBlock("café", 1, 2)).Should().Throw<ArgumentException>();
-    }
+    public void Constructor_CreatorNotAscii_Throws() => AssertThat.Invoking(() => _ = new RzxCreatorBlock("café", 1, 2)).Should().Throw<ArgumentException>();
 
     [Test]
     public void Constructor_ByteArrayTooShort_Throws()

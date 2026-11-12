@@ -15,10 +15,8 @@ public sealed class NxmFile : TileMapFile
     /// </summary>
     /// <param name="map">The row-major map.</param>
     /// <param name="format">The explicit output layout.</param>
-    public NxmFile(TileMapData map, NxmFormat format) : base(format)
-    {
+    public NxmFile(TileMapData map, NxmFormat format) : base(format) =>
         MapData = new NxmMapData(map, format);
-    }
 
     internal NxmFile(byte[] bytes, NxmFormat format) : base(format)
     {

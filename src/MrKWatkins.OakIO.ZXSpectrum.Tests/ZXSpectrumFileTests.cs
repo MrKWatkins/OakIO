@@ -58,7 +58,7 @@ public sealed class ZXSpectrumFileFormatTests : ZXSpectrumTestFixture
         ZXSpectrumFileFormat format = Z80Format.Instance;
 
         // No cast required: proves ZXSpectrumFileFormat.Read(byte[]) hides the base IOFile-returning overload.
-        ZXSpectrumFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Should().BeOfType<Z80V2File>();
     }
@@ -71,7 +71,7 @@ public sealed class ZXSpectrumFileFormatTests : ZXSpectrumTestFixture
         ZXSpectrumFileFormat format = Z80Format.Instance;
 
         // No cast required: proves ZXSpectrumFileFormat.Read(Stream) hides the base IOFile-returning overload.
-        ZXSpectrumFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Should().BeOfType<Z80V2File>();
     }
@@ -84,22 +84,16 @@ public sealed class ZXSpectrumFileFormatTests : ZXSpectrumTestFixture
         ZXSpectrumFileFormat format = Z80Format.Instance;
 
         // No cast required: proves ZXSpectrumFileFormat.ReadAsync hides the base IOFile-returning overload.
-        ZXSpectrumFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Should().BeOfType<Z80V2File>();
     }
 
     [Test]
-    public void Constructor_FileTypeIsZXSpectrumFile_Throws()
-    {
-        AssertThat.Invoking(() => _ = new StubFormat(typeof(ZXSpectrumFile))).Should().Throw<ArgumentException>();
-    }
+    public void Constructor_FileTypeIsZXSpectrumFile_Throws() => AssertThat.Invoking(() => _ = new StubFormat(typeof(ZXSpectrumFile))).Should().Throw<ArgumentException>();
 
     [Test]
-    public void Constructor_FileTypeIsNotZXSpectrumFile_Throws()
-    {
-        AssertThat.Invoking(() => _ = new StubFormat(typeof(WavFile))).Should().Throw<ArgumentException>();
-    }
+    public void Constructor_FileTypeIsNotZXSpectrumFile_Throws() => AssertThat.Invoking(() => _ = new StubFormat(typeof(WavFile))).Should().Throw<ArgumentException>();
 
     private sealed class StubFormat(Type fileType) : ZXSpectrumFileFormat("Stub", "stub", fileType)
     {

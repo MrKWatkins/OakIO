@@ -7,7 +7,8 @@ internal sealed class TestTileMapFile : TileMapFile
 {
     internal TestTileMapFile(byte value) : this(new TileMapData(1, 1, [new TileMapEntry(value)])) { }
     internal TestTileMapFile(TileMapData tilemap) : this(TestTileMapFormat.Instance, tilemap) { }
-    internal TestTileMapFile(TileMapFormat format, TileMapData tilemap) : base(format) => TileMap = tilemap ?? throw new ArgumentNullException(nameof(tilemap));
+    internal TestTileMapFile(TileMapFormat format, TileMapData tilemap) : base(format) =>
+        TileMap = tilemap ?? throw new ArgumentNullException(nameof(tilemap));
     public override TileMapData TileMap { get; }
 }
 

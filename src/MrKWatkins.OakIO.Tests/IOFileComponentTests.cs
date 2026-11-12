@@ -17,11 +17,8 @@ public sealed class IOFileComponentTests
     }
 
     [Test]
-    public void Constructor_Int_InvalidSize()
-    {
-        AssertThat.Invoking(() => new TestIOFileComponent(-1))
+    public void Constructor_Int_InvalidSize() => AssertThat.Invoking(() => new TestIOFileComponent(-1))
             .Should().ThrowArgumentOutOfRangeException("length ('-1') must be a non-negative value.", "length", -1);
-    }
 
     [Test]
     public void Constructor_ByteArray()
@@ -65,19 +62,13 @@ public sealed class IOFileComponentTests
     }
 
     [Test]
-    public void Constructor_Int_IEnumerable_InvalidSize()
-    {
-        AssertThat.Invoking(() => new TestIOFileComponent(-1, [1, 2, 3, 4, 5]))
+    public void Constructor_Int_IEnumerable_InvalidSize() => AssertThat.Invoking(() => new TestIOFileComponent(-1, [1, 2, 3, 4, 5]))
             .Should().ThrowArgumentOutOfRangeException("length ('-1') must be a non-negative value.", "length", -1);
-    }
 
     [TestCase(2)]
     [TestCase(4)]
-    public void Constructor_Int_IEnumerable_IncorrectSize(int length)
-    {
-        AssertThat.Invoking(() => new TestIOFileComponent(length, [1, 2, 3]))
+    public void Constructor_Int_IEnumerable_IncorrectSize(int length) => AssertThat.Invoking(() => new TestIOFileComponent(length, [1, 2, 3]))
             .Should().ThrowArgumentException($"Expected value to have {length} bytes, found 3.", "bytes");
-    }
 
     [Test]
     public void Data()

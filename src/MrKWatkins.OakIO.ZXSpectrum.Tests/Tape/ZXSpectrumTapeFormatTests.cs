@@ -15,7 +15,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat.Read(byte[]) hides the base IOFile-returning overload.
-        ZXSpectrumTapeFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Should().BeOfType<TapFile>();
     }
@@ -27,7 +27,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat.Read(Stream) hides the base IOFile-returning overload.
-        ZXSpectrumTapeFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Should().BeOfType<TapFile>();
     }
@@ -39,7 +39,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat.ReadAsync hides the base IOFile-returning overload.
-        ZXSpectrumTapeFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Should().BeOfType<TapFile>();
     }
@@ -51,7 +51,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat<TapFile> format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat<TFile>.Read(byte[]) hides the ZXSpectrumTapeFile-returning overload.
-        TapFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Blocks.Should().HaveCount(2);
     }
@@ -63,7 +63,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat<TapFile> format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat<TFile>.Read(Stream) hides the ZXSpectrumTapeFile-returning overload.
-        TapFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Blocks.Should().HaveCount(2);
     }
@@ -75,7 +75,7 @@ public sealed class ZXSpectrumTapeFormatTests
         ZXSpectrumTapeFormat<TapFile> format = TapFormat.Instance;
 
         // No cast required: proves ZXSpectrumTapeFormat<TFile>.ReadAsync hides the ZXSpectrumTapeFile-returning overload.
-        TapFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Blocks.Should().HaveCount(2);
     }

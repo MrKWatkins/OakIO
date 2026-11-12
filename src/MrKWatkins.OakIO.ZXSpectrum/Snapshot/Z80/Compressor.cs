@@ -9,10 +9,7 @@ public sealed class Compressor
     private byte? previousByte;
     private int repeatCount;
 
-    internal Compressor(bool endMarker)
-    {
-        this.endMarker = endMarker;
-    }
+    internal Compressor(bool endMarker) => this.endMarker = endMarker;
 
     internal void Write(Stream stream, ReadOnlySpan<byte> buffer)
     {

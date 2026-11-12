@@ -142,11 +142,8 @@ public sealed class OakIOInteropTests
     }
 
     [Test]
-    public async Task GetInfo_UnsupportedExtension_Throws()
-    {
-        await "test.blah".Awaiting(f => GetInfo(f, CreateTapData()))
+    public async Task GetInfo_UnsupportedExtension_Throws() => await "test.blah".Awaiting(f => GetInfo(f, CreateTapData()))
             .Should().ThrowAsync<NotSupportedException>();
-    }
 
     [Test]
     public async Task Convert_TapToWav_ReturnsNonEmptyData()
@@ -204,33 +201,22 @@ public sealed class OakIOInteropTests
     }
 
     [Test]
-    public async Task Convert_UnsupportedInputExtension_Throws()
-    {
-        await "test.blah".Awaiting(f => Convert(f, CreateTapData(), "output.wav"))
+    public async Task Convert_UnsupportedInputExtension_Throws() => await "test.blah".Awaiting(f => Convert(f, CreateTapData(), "output.wav"))
             .Should().ThrowAsync<NotSupportedException>();
-    }
 
     [Test]
-    public async Task Convert_UnsupportedOutputExtension_Throws()
-    {
-        await "output.blah".Awaiting(f => Convert("test.tap", CreateTapData(), f))
+    public async Task Convert_UnsupportedOutputExtension_Throws() => await "output.blah".Awaiting(f => Convert("test.tap", CreateTapData(), f))
             .Should().ThrowAsync<NotSupportedException>();
-    }
 
     [Test]
-    public async Task Convert_UnsupportedConversion_Throws()
-    {
-        await "test.z80".Awaiting(f => Convert(f, CreateZ80Data(), "output.wav"))
+    public async Task Convert_UnsupportedConversion_Throws() => await "test.z80".Awaiting(f => Convert(f, CreateZ80Data(), "output.wav"))
             .Should().ThrowAsync<NotSupportedException>();
-    }
 
     [TestCase(CompressionFormat.None, "output.wav")]
     [TestCase(CompressionFormat.Zip, "output.zip")]
     [TestCase(CompressionFormat.GZip, "output.wav.gz")]
-    public async Task GetCompressedFilename_ReturnsExpectedFilename(CompressionFormat compressionFormat, string expected)
-    {
+    public async Task GetCompressedFilename_ReturnsExpectedFilename(CompressionFormat compressionFormat, string expected) =>
         (await GetCompressedFilename("output.wav", compressionFormat)).Should().Equal(expected);
-    }
 
     [Pure]
     private static Task<string> GetInfo(string inputFilename, byte[] inputData) =>

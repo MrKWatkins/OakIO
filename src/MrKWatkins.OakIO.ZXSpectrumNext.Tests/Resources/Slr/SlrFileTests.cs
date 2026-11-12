@@ -37,7 +37,7 @@ public sealed class SlrFileTests
         file.Palette.Encoding.Should().Equal(encoding);
         (file.Header != null).Should().Equal(header);
         var bytes = file.ToByteArray();
-        bytes.Length.Should().Equal(format.Width * format.Height * format.BitsPerPixel / 8 + (1 << format.BitsPerPixel) * (int)encoding + (header ? 128 : 0));
+        bytes.Length.Should().Equal((format.Width * format.Height * format.BitsPerPixel / 8) + ((1 << format.BitsPerPixel) * (int)encoding) + (header ? 128 : 0));
         var restored = format.Read(bytes);
         restored.ToByteArray().Should().SequenceEqual(bytes);
         restored.Image.Should().BeOfType<IndexedImageData>().Value.Pixels.Should().SequenceEqual(image.Pixels);

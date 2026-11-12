@@ -8,11 +8,8 @@ namespace MrKWatkins.OakIO.Tests;
 public sealed class IOFileFormatTests
 {
     [Test]
-    public void Constructor_ThrowsIfFileTypeNotIOFile()
-    {
-        AssertThat.Invoking(() => new InvalidFileTypeFormat())
+    public void Constructor_ThrowsIfFileTypeNotIOFile() => AssertThat.Invoking(() => new InvalidFileTypeFormat())
             .Should().ThrowArgumentException("Value is not of type IOFile.", "fileType");
-    }
 
     [Test]
     public void FileType() => TestIOFileFormat.Instance.FileType.Should().Equal(typeof(TestIOFile));
@@ -114,7 +111,7 @@ public sealed class IOFileFormatTests
         using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         // No cast required: proves IOFileFormat<TFile>.ReadAsync hides the base IOFile-returning overload.
-        TestIOFile result = await TestIOFileFormat.Instance.ReadAsync(stream);
+        var result = await TestIOFileFormat.Instance.ReadAsync(stream);
 
         result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
@@ -145,7 +142,7 @@ public sealed class IOFileFormatTests
     public void Read_ByteArray()
     {
         // No cast required: proves IOFileFormat<TFile>.Read(byte[]) hides the base IOFile-returning overload.
-        TestIOFile result = TestIOFileFormat.Instance.Read(TestIOFileFormat.Contents);
+        var result = TestIOFileFormat.Instance.Read(TestIOFileFormat.Contents);
         result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }
 
@@ -155,7 +152,7 @@ public sealed class IOFileFormatTests
         using var stream = new MemoryStream([.. TestIOFileFormat.Contents]);
 
         // No cast required: proves IOFileFormat<TFile>.Read(Stream) hides the base IOFile-returning overload.
-        TestIOFile result = TestIOFileFormat.Instance.Read(stream);
+        var result = TestIOFileFormat.Instance.Read(stream);
 
         result.Format.Should().BeTheSameInstanceAs(TestIOFileFormat.Instance);
     }

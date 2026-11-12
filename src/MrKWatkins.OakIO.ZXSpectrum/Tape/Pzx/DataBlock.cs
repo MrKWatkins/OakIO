@@ -30,7 +30,7 @@ public sealed class DataBlock : PzxBlock<DataHeader>
     /// Gets the pulse sequence for a zero bit.
     /// </summary>
     [Pure]
-    public ReadOnlySpan<ushort> ZeroBitPulseSequence => MemoryMarshal.Cast<byte, ushort>(AsSpan().Slice(IndexOfZeroBitPulseSequence, LengthOfZeroBitPulseSequence));
+    public ReadOnlySpan<ushort> ZeroBitPulseSequence => MemoryMarshal.Cast<byte, ushort>(AsSpan()[..LengthOfZeroBitPulseSequence]);
 
     /// <summary>
     /// Gets the pulse sequence for a one bit.

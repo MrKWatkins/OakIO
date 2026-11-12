@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
         <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <SupportedOSPlatformVersion>1.0</SupportedOSPlatformVersion>

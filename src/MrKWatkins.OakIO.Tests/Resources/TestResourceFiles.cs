@@ -5,10 +5,8 @@ namespace MrKWatkins.OakIO.Tests.Resources;
 
 internal sealed class TestResourceFile : ResourceFile
 {
-    public TestResourceFile(byte value) : base(TestResourceFormat.Instance)
-    {
+    public TestResourceFile(byte value) : base(TestResourceFormat.Instance) =>
         Value = value;
-    }
 
     public TestResourceFile(ResourceFormat format) : base(format)
     {

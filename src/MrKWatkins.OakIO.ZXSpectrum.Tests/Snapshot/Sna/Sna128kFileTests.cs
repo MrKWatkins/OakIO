@@ -33,7 +33,7 @@ public sealed class Sna128kFileTests
         var remaining = new[] { 0, 1, 3, 4, 6, 7 }.Where(bank => bank != selected).ToArray();
         for (var index = 0; index < remaining.Length; index++)
         {
-            bytes.AsSpan(49183 + index * 16384, 16384).ToArray().Should().SequenceEqual(Enumerable.Repeat((byte)(remaining[index] + 17), 16384));
+            bytes.AsSpan(49183 + (index * 16384), 16384).ToArray().Should().SequenceEqual(Enumerable.Repeat((byte)(remaining[index] + 17), 16384));
         }
         var read = SnaFormat.Instance.Read(bytes).Should().BeOfType<Sna128kFile>().Value;
         for (var bank = 0; bank < 8; bank++)

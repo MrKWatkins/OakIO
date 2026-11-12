@@ -13,7 +13,7 @@ internal static class ScrTestData
         new(0, 255, 0), new(0, 255, 255), new(255, 255, 0), new(255, 255, 255)
     ];
 
-    internal static byte[] Bytes() => [.. Enumerable.Range(0, 6912).Select(index => (byte)(index * 37 + index / 256 + 11))];
+    internal static byte[] Bytes() => [.. Enumerable.Range(0, 6912).Select(index => (byte)((index * 37) + (index / 256) + 11))];
 
     internal static byte[] Pixels(byte[] data, bool flashPhase)
     {
@@ -25,12 +25,12 @@ internal static class ScrTestData
             {
                 for (var characterRow = 0; characterRow < 8; characterRow++)
                 {
-                    var y = third * 64 + characterRow * 8 + scan;
+                    var y = (third * 64) + (characterRow * 8) + scan;
                     for (var column = 0; column < 32; column++)
                     {
-                        var attribute = data[6144 + (third * 8 + characterRow) * 32 + column];
-                        var ink = attribute % 8 + (attribute / 64 % 2) * 8;
-                        var paper = attribute / 8 % 8 + (attribute / 64 % 2) * 8;
+                        var attribute = data[6144 + (((third * 8) + characterRow) * 32) + column];
+                        var ink = (attribute % 8) + (attribute / 64 % 2 * 8);
+                        var paper = (attribute / 8 % 8) + (attribute / 64 % 2 * 8);
                         var bits = Convert.ToString(data[source++], 2).PadLeft(8, '0');
                         for (var bit = 0; bit < 8; bit++)
                         {
@@ -39,7 +39,7 @@ internal static class ScrTestData
                             {
                                 isInk = !isInk;
                             }
-                            pixels[y * 256 + column * 8 + bit] = (byte)(isInk ? ink : paper);
+                            pixels[(y * 256) + (column * 8) + bit] = (byte)(isInk ? ink : paper);
                         }
                     }
                 }

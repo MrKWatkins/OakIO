@@ -11,10 +11,8 @@ public class Z80V2Header : Z80V1Header
     /// Initializes a new instance of the <see cref="Z80V2Header" /> class with default values.
     /// </summary>
     public Z80V2Header()
-        : this(new byte[55])
-    {
+        : this(new byte[55]) =>
         ExtraLength = 23;
-    }
 
     internal Z80V2Header(byte[] data)
         : base(data)

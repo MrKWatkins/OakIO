@@ -22,7 +22,7 @@ public sealed class BmpFormatTests
         {
             for (var x = 0; x < 3; x++)
             {
-                file.Image.GetPixel(x, y).Should().Equal(new Colour((byte)(x + y * 3), 10, 20));
+                file.Image.GetPixel(x, y).Should().Equal(new Colour((byte)(x + (y * 3)), 10, 20));
             }
         }
     }
@@ -145,7 +145,7 @@ public sealed class BmpFormatTests
     {
         var offset = depth == 24 ? 54 : 78;
         var stride = depth == 24 ? 12 : 4;
-        var bytes = new byte[offset + stride * 2];
+        var bytes = new byte[offset + (stride * 2)];
         bytes[0] = (byte)'B';
         bytes[1] = (byte)'M';
         Set(bytes, 2, (uint)bytes.Length);
@@ -161,9 +161,9 @@ public sealed class BmpFormatTests
             Set(bytes, 46, 6);
             for (var i = 0; i < 6; i++)
             {
-                bytes[54 + i * 4] = 20;
-                bytes[55 + i * 4] = 10;
-                bytes[56 + i * 4] = (byte)i;
+                bytes[54 + (i * 4)] = 20;
+                bytes[55 + (i * 4)] = 10;
+                bytes[56 + (i * 4)] = (byte)i;
             }
         }
         for (var row = 0; row < 2; row++)
@@ -171,12 +171,12 @@ public sealed class BmpFormatTests
             var first = (topDown ? row : 1 - row) * 3;
             for (var x = 0; x < 3; x++)
             {
-                var position = offset + row * stride;
+                var position = offset + (row * stride);
                 if (depth == 24)
                 {
-                    bytes[position + x * 3] = 20;
-                    bytes[position + x * 3 + 1] = 10;
-                    bytes[position + x * 3 + 2] = (byte)(first + x);
+                    bytes[position + (x * 3)] = 20;
+                    bytes[position + (x * 3) + 1] = 10;
+                    bytes[position + (x * 3) + 2] = (byte)(first + x);
                 }
                 else if (depth == 8)
                 {
@@ -184,7 +184,7 @@ public sealed class BmpFormatTests
                 }
                 else
                 {
-                    bytes[position + x / 2] |= (byte)((first + x) << (x % 2 == 0 ? 4 : 0));
+                    bytes[position + (x / 2)] |= (byte)((first + x) << (x % 2 == 0 ? 4 : 0));
                 }
             }
         }
@@ -199,7 +199,7 @@ public sealed class BmpFormatTests
     {
         var original = Create(depth, true);
         var count = 1 << depth;
-        var offset = 54 + count * 4;
+        var offset = 54 + (count * 4);
         var bytes = new byte[offset + 8];
         original.AsSpan(0, 78).CopyTo(bytes);
         original.AsSpan(78).CopyTo(bytes.AsSpan(offset));
@@ -224,10 +224,10 @@ public sealed class BmpFormatTests
             ImageData image = depth == 24 ? new ColourImageData(width, 1, colours)
                 : new IndexedImageData(width, 1, [.. Enumerable.Range(0, width).Select(i => (byte)i)], new PaletteData(colours), depth);
             var bytes = new BmpFile(image).ToByteArray();
-            var offset = depth == 24 ? 54 : 54 + width * 4;
-            var stride = ((width * depth + 31) / 32) * 4;
+            var offset = depth == 24 ? 54 : 54 + (width * 4);
+            var stride = ((width * depth) + 31) / 32 * 4;
             bytes.Length.Should().Equal(offset + stride);
-            var pixelBytes = (width * depth + 7) / 8;
+            var pixelBytes = ((width * depth) + 7) / 8;
             bytes.AsSpan(offset + pixelBytes).ToArray().Should().SequenceEqual(new byte[stride - pixelBytes]);
             var read = BmpFormat.Instance.Read(bytes);
             for (var x = 0; x < width; x++)

@@ -29,7 +29,7 @@ public sealed class PaletteFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestPaletteFile file = TestPaletteFormat.Instance.Read([123]);
+        var file = TestPaletteFormat.Instance.Read([123]);
         file.Palette.Colours[0].Red.Should().Equal((byte)123);
         file.Format.Should().BeTheSameInstanceAs(TestPaletteFormat.Instance);
     }
@@ -38,7 +38,7 @@ public sealed class PaletteFormatTests
     public void Read_Stream()
     {
         using var stream = new MemoryStream([234]);
-        TestPaletteFile file = TestPaletteFormat.Instance.Read(stream);
+        var file = TestPaletteFormat.Instance.Read(stream);
         file.Palette.Colours[0].Red.Should().Equal((byte)234);
     }
 
@@ -46,7 +46,7 @@ public sealed class PaletteFormatTests
     public async Task ReadAsync_Stream()
     {
         using var stream = new MemoryStream([213]);
-        TestPaletteFile file = await TestPaletteFormat.Instance.ReadAsync(stream);
+        var file = await TestPaletteFormat.Instance.ReadAsync(stream);
         file.Palette.Colours[0].Red.Should().Equal((byte)213);
     }
 

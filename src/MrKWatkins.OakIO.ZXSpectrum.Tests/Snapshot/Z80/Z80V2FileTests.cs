@@ -20,10 +20,10 @@ public sealed class Z80V2FileTests
         bytes[35].Should().Equal(port);
         if (!compress)
         {
-            bytes.Length.Should().Equal(55 + 8 * 16387);
+            bytes.Length.Should().Equal(55 + (8 * 16387));
             for (var bank = 0; bank < 8; bank++)
             {
-                var offset = 55 + bank * 16387;
+                var offset = 55 + (bank * 16387);
                 bytes.AsSpan(offset, 3).ToArray().Should().SequenceEqual(255, 255, (byte)(bank + 3));
                 bytes.AsSpan(offset + 3, 16384).ToArray().Should().SequenceEqual(banks[bank].ToArray());
             }

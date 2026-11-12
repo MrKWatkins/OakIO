@@ -11,7 +11,8 @@ namespace MrKWatkins.OakIO.ZXSpectrumNext.Resources.Nxb;
 /// </remarks>
 public sealed class NxbBlock : IOFileComponent
 {
-    internal NxbBlock(byte[] bytes, NxbFormat format) : base(format.BytesPerBlock, bytes) => Format = format;
+    internal NxbBlock(byte[] bytes, NxbFormat format) : base(format.BytesPerBlock, bytes) =>
+        Format = format;
 
     internal NxbBlock(TileMapData map, NxbFormat format) : this([.. new NxmMapData(map, format.MapFormat).Data], format)
     {

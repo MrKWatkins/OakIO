@@ -16,7 +16,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat.Read(byte[]) hides the base IOFile-returning overload.
-        ZXSpectrumRecordingFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Should().BeOfType<RzxFile>();
     }
@@ -28,7 +28,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat.Read(Stream) hides the base IOFile-returning overload.
-        ZXSpectrumRecordingFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Should().BeOfType<RzxFile>();
     }
@@ -40,7 +40,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat.ReadAsync hides the base IOFile-returning overload.
-        ZXSpectrumRecordingFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Should().BeOfType<RzxFile>();
     }
@@ -52,7 +52,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat<RzxFile> format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat<TFile>.Read(byte[]) hides the ZXSpectrumRecordingFile-returning overload.
-        RzxFile file = format.Read(bytes);
+        var file = format.Read(bytes);
 
         file.Blocks.Should().HaveCount(3);
     }
@@ -64,7 +64,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat<RzxFile> format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat<TFile>.Read(Stream) hides the ZXSpectrumRecordingFile-returning overload.
-        RzxFile file = format.Read(stream);
+        var file = format.Read(stream);
 
         file.Blocks.Should().HaveCount(3);
     }
@@ -76,7 +76,7 @@ public sealed class ZXSpectrumRecordingFormatTests
         ZXSpectrumRecordingFormat<RzxFile> format = RzxFormat.Instance;
 
         // No cast required: proves ZXSpectrumRecordingFormat<TFile>.ReadAsync hides the ZXSpectrumRecordingFile-returning overload.
-        RzxFile file = await format.ReadAsync(stream);
+        var file = await format.ReadAsync(stream);
 
         file.Blocks.Should().HaveCount(3);
     }

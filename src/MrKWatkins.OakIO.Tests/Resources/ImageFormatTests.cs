@@ -29,7 +29,7 @@ public sealed class ImageFormatTests
     [Test]
     public void Read_ByteArray()
     {
-        TestImageFile file = TestImageFormat.Instance.Read([123]);
+        var file = TestImageFormat.Instance.Read([123]);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)123);
         file.Format.Should().BeTheSameInstanceAs(TestImageFormat.Instance);
     }
@@ -38,7 +38,7 @@ public sealed class ImageFormatTests
     public void Read_Stream()
     {
         using var stream = new MemoryStream([234]);
-        TestImageFile file = TestImageFormat.Instance.Read(stream);
+        var file = TestImageFormat.Instance.Read(stream);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)234);
     }
 
@@ -46,7 +46,7 @@ public sealed class ImageFormatTests
     public async Task ReadAsync_Stream()
     {
         using var stream = new MemoryStream([213]);
-        TestImageFile file = await TestImageFormat.Instance.ReadAsync(stream);
+        var file = await TestImageFormat.Instance.ReadAsync(stream);
         file.Image.GetPixel(0, 0).Red.Should().Equal((byte)213);
     }
 

@@ -23,7 +23,7 @@ public sealed class Sna128kFile : SnaFile
         {
             0, 0, port7FFD, trDosRomPaged ? (byte)1 : (byte)0
         };
-        return new Sna128kFile(new SnaHeader(new byte[27], footer), banks.Select(bank => bank.ToArray()).ToArray(), footer);
+        return new Sna128kFile(new SnaHeader(new byte[27], footer), [.. banks.Select(bank => bank.ToArray())], footer);
     }
 
     internal Sna128kFile(SnaHeader header, byte[][] banks, byte[] footerData)

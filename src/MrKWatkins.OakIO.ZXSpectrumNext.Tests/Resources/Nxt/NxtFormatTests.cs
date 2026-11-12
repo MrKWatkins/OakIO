@@ -85,7 +85,7 @@ public sealed class NxtFormatTests
     [TestCase(4)]
     [TestCase(8)]
     public void Read_InvalidLength(int bits) =>
-        AssertThat.Invoking(() => NxtFormat.ForBitsPerPixel(bits).Read(new byte[64 * bits / 8 - 1])).Should().Throw<InvalidDataException>();
+        AssertThat.Invoking(() => NxtFormat.ForBitsPerPixel(bits).Read(new byte[(64 * bits / 8) - 1])).Should().Throw<InvalidDataException>();
     [Test]
     public async Task ReadAsync_Cancelled()
     {

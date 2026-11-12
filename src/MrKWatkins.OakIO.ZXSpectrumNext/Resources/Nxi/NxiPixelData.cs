@@ -54,15 +54,15 @@ public sealed class NxiPixelData : IOFileComponent
             {
                 for (var y = 0; y < Height; y++)
                 {
-                    var packed = GetByte(x / pixelsPerByte * Height + y);
+                    var packed = GetByte((x / pixelsPerByte * Height) + y);
                     if (BitsPerPixel == 8)
                     {
-                        pixels[y * Width + x] = packed;
+                        pixels[(y * Width) + x] = packed;
                     }
                     else
                     {
-                        pixels[y * Width + x] = (byte)(packed >> 4);
-                        pixels[y * Width + x + 1] = (byte)(packed & 15);
+                        pixels[(y * Width) + x] = (byte)(packed >> 4);
+                        pixels[(y * Width) + x + 1] = (byte)(packed & 15);
                     }
                 }
             }
@@ -90,8 +90,8 @@ public sealed class NxiPixelData : IOFileComponent
         {
             for (var y = 0; y < image.Height; y++)
             {
-                var offset = y * image.Width + x;
-                bytes[x / pixelsPerByte * image.Height + y] = bits == 8
+                var offset = (y * image.Width) + x;
+                bytes[(x / pixelsPerByte * image.Height) + y] = bits == 8
                     ? image.Pixels[offset]
                     : (byte)((image.Pixels[offset] << 4) | image.Pixels[offset + 1]);
             }

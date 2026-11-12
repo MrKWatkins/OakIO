@@ -24,10 +24,7 @@ public sealed class RzxFileTests
     }
 
     [Test]
-    public void Constructor_NullBlocks_Throws()
-    {
-        AssertThat.Invoking(() => _ = new RzxFile(null!)).Should().Throw<ArgumentNullException>();
-    }
+    public void Constructor_NullBlocks_Throws() => AssertThat.Invoking(() => _ = new RzxFile(null!)).Should().Throw<ArgumentNullException>();
 
     [Test]
     public void Creator()

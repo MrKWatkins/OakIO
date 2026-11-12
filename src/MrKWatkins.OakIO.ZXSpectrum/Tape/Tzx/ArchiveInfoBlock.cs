@@ -8,10 +8,8 @@ namespace MrKWatkins.OakIO.ZXSpectrum.Tape.Tzx;
 public sealed class ArchiveInfoBlock : TzxBlock<ArchiveInfoHeader>
 {
     internal ArchiveInfoBlock(byte[] headerData, byte[] data)
-        : base(new ArchiveInfoHeader(headerData), data)
-    {
+        : base(new ArchiveInfoHeader(headerData), data) =>
         Entries = GetEntries(Header.NumberOfTextStrings, AsSpan());
-    }
 
     /// <summary>
     /// Gets the archive info entries in this block.

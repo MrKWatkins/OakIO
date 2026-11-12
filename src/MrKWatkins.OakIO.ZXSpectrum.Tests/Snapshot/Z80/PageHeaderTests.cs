@@ -7,42 +7,27 @@ public sealed class PageHeaderTests
     [TestCase((byte)4, (ushort)0x8000)]
     [TestCase((byte)5, (ushort)0xC000)]
     [TestCase((byte)8, (ushort)0x4000)]
-    public void GetLocation_Spectrum48(byte pageNumber, ushort expectedLocation)
-    {
-        PageHeader.GetLocation(HardwareMode.Spectrum48, pageNumber).Should().Equal(expectedLocation);
-    }
+    public void GetLocation_Spectrum48(byte pageNumber, ushort expectedLocation) => PageHeader.GetLocation(HardwareMode.Spectrum48, pageNumber).Should().Equal(expectedLocation);
 
     [TestCase((byte)8, (ushort)0x4000)]
     [TestCase((byte)5, (ushort)0x8000)]
     [TestCase((byte)3, (ushort)0xC000)]
-    public void GetLocation_Spectrum128(byte pageNumber, ushort expectedLocation)
-    {
-        PageHeader.GetLocation(HardwareMode.Spectrum128, pageNumber).Should().Equal(expectedLocation);
-    }
+    public void GetLocation_Spectrum128(byte pageNumber, ushort expectedLocation) => PageHeader.GetLocation(HardwareMode.Spectrum128, pageNumber).Should().Equal(expectedLocation);
 
     [Test]
-    public void GetLocation_Spectrum48_UnsupportedPage()
-    {
-        AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.Spectrum48, 0))
+    public void GetLocation_Spectrum48_UnsupportedPage() => AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.Spectrum48, 0))
             .Should().Throw<NotSupportedException>()
             .Exception.Message.Should().Match(".*Spectrum48.*");
-    }
 
     [Test]
-    public void GetLocation_Spectrum128_UnsupportedPage()
-    {
-        AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.Spectrum128, 99))
+    public void GetLocation_Spectrum128_UnsupportedPage() => AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.Spectrum128, 99))
             .Should().Throw<NotSupportedException>()
             .Exception.Message.Should().Match(".*Spectrum128.*");
-    }
 
     [Test]
-    public void GetLocation_SamRam_ThrowsNotSupported()
-    {
-        AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.SamRam, 0))
+    public void GetLocation_SamRam_ThrowsNotSupported() => AssertThat.Invoking(() => PageHeader.GetLocation(HardwareMode.SamRam, 0))
             .Should().Throw<NotSupportedException>()
             .Exception.Message.Should().Match(".*SamRam.*");
-    }
 
     [Test]
     public void Constructor_Properties()

@@ -42,7 +42,7 @@ public sealed class TileMapToNxmConverterTests
         var source = new NxmFile(new TileMapData(2, 1, [new(0), new(255)]), sourceFormat);
         var target = new NxmFormat(2, 1, targetEncoding);
         var file = new TileMapToNxmConverter(sourceFormat, target).Convert(source);
-        file.ToByteArray().Should().SequenceEqual(targetEncoding == NxmEncoding.Index8 ? new byte[] { 0, 255 } : new byte[] { 0, 0, 255, 0 });
+        file.ToByteArray().Should().SequenceEqual(targetEncoding == NxmEncoding.Index8 ? new byte[] { 0, 255 } : [0, 0, 255, 0]);
     }
 
     [Test]

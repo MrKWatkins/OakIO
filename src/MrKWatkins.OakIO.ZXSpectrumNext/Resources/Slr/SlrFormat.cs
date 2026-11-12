@@ -22,10 +22,8 @@ public sealed class SlrFormat : ImageFormat<SlrFile>
     /// </summary>
     public static readonly SlrFormat FourBit = new(4);
 
-    private SlrFormat(int bits) : base("ZX Spectrum Next Low Resolution Screen", "slr")
-    {
+    private SlrFormat(int bits) : base("ZX Spectrum Next Low Resolution Screen", "slr") =>
         BitsPerPixel = bits;
-    }
     /// <summary>
     /// Gets the screen width.
     /// </summary>

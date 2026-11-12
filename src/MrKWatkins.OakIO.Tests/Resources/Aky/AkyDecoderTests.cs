@@ -175,7 +175,7 @@ public sealed class AkyDecoderTests
         var secondBlock = bytes.Length;
         bytes = [.. bytes, 0xA4, 7, 8, 0x79, 0x45, 0x03, 0x25];
         var track = 10 + 2 + 12 + 4;
-        bytes.SetUInt16(track + 4 * 3 + 1, (ushort)secondBlock);
+        bytes.SetUInt16(track + (4 * 3) + 1, (ushort)secondBlock);
         var frames = new AkyFile(bytes).DecodeFrames().ToArray();
         var first = (AkyCpcSidState)frames[0].SidStates[0]!;
         var second = (AkyCpcSidState)frames[0].SidStates[4]!;
@@ -251,7 +251,7 @@ public sealed class AkyDecoderTests
         frame.SidStates.Should().SequenceEqual(new AkySidState?[channels]);
         for (var chip = 0; chip < (channels + 2) / 3; ++chip)
         {
-            frame.Registers[chip * 14 + 7].Should().Equal((byte)63);
+            frame.Registers[(chip * 14) + 7].Should().Equal((byte)63);
         }
     }
 
@@ -325,12 +325,12 @@ public sealed class AkyDecoderTests
         bytes[0] |= (byte)((int)profile << 4);
         var file = new AkyFile(bytes, new AkyFormat(0x4000));
         file.ToByteArray().Should().SequenceEqual(bytes);
-        return file.DecodeFrames().ToArray();
+        return [.. file.DecodeFrames()];
     }
 
     [Pure]
     private static AkyFrame Frame(byte[] bytes) => Frames(bytes, 1)[0];
 
     [Pure]
-    private static AkyFrame[] Frames(byte[] bytes, int duration) => new AkyFile(AkyTestData.Create(bytes, duration)).DecodeFrames().ToArray();
+    private static AkyFrame[] Frames(byte[] bytes, int duration) => [.. new AkyFile(AkyTestData.Create(bytes, duration)).DecodeFrames()];
 }
